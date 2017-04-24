@@ -1,0 +1,33 @@
+# In game it is possible to tag items and objects using the 'tagger'
+
+var score = 0
+
+on start:
+    state main = beginroom
+
+on obtainitem minecraft:netherstar:
+    var score = score+1
+
+while main = beginroom:
+    on obtaintag firstroomkey:
+        message With this key you can open the door to the second room!
+        state main = secondroom
+        tag firstroomdoor = open
+
+while main = secondroom:
+    on blockat rubble = minecraft:air:
+        message You destroy the rubble blocking the door!
+        state main = finalroom
+
+while main = finalroom:
+    on delay = 100:
+        message You have the feeling there must be some treasure here
+
+    on open treasurechest:
+        message There it is!
+        state main = theend
+
+while state = theend:
+    on start:
+        message You win the game!
+
