@@ -2,9 +2,12 @@ package mcjty.enigma.parser;
 
 import mcjty.enigma.Enigma;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.StrTokenizer;
 import org.apache.logging.log4j.Level;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RuleParser {
 
@@ -56,23 +59,49 @@ public class RuleParser {
             endsWithColon = true;
             line = line.substring(0, line.length() - 1);
         }
-        String[] tokens = StringUtils.split(line);
 
-        MainToken mainToken = MainToken.getTokenByName(tokens[0]);
-        if (mainToken == null) {
-            System.out.println("ERROR: Unknown token '" + tokens[0] + "'!");
+        StrTokenizer tokenizer = new StrTokenizer(line, ' ', '"');
+        if (!tokenizer.hasNext()) {
+            System.out.println("ERROR: Truncated line!");
             return null;
         }
+
+        int parameters = 0;
+
+        String token = tokenizer.next();
+        MainToken mainToken = MainToken.getTokenByName(token);
+        if (mainToken == null) {
+            System.out.println("ERROR: Unknown token '" + token + "'!");
+            return null;
+        }
+        parameters = mainToken.getParameters();
+
         Token secondaryToken = null;
         if (mainToken.isHasSecondaryToken()) {
-            secondaryToken = Token.getTokenByName(tokens[1]);
-            if (secondaryToken == null) {
-                System.out.println("ERROR: Unknown token '" + tokens[1] + "'!");
+            if (!tokenizer.hasNext()) {
+                System.out.println("ERROR: Truncated line!");
                 return null;
             }
+            token = tokenizer.next();
+            secondaryToken = Token.getTokenByName(token);
+            if (secondaryToken == null) {
+                System.out.println("ERROR: Unknown token '" + token + "'!");
+                return null;
+            }
+            parameters = secondaryToken.getParameters();
         }
 
-        return new TokenizedLine(indentation, mainToken, secondaryToken, tokens, endsWithColon);
+        List<String> params = new ArrayList<>(parameters);
+        for (int t = 0 ; t < parameters ; t++) {
+            if (!tokenizer.hasNext()) {
+                System.out.println("ERROR: Truncated line!");
+                return null;
+            }
+            token = tokenizer.next();
+            params.add(token);
+        }
+
+        return new TokenizedLine(indentation, mainToken, secondaryToken, params, endsWithColon);
     }
 
     public static void main(String[] args) {

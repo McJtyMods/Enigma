@@ -4,14 +4,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum MainToken {
-    STATE,
-    VAR,
-    ON(true),
-    WHILE,
-    MESSAGE,
-    TAG;
+    STATE(false, 3),        // state <statename> = <name>
+    VAR(false, 3),          // var <varname> = <value>
+    ON(true, 0),
+    WHILE(false, 3),        // while <statename> = <name>
+    MESSAGE(false, 1),      // message <msg>
+    TAG(false, 3);          // tag <object> = <tagname>
 
     private final boolean hasSecondaryToken;
+    private final int parameters;
 
     private static final Map<String, MainToken> MAP = new HashMap<>();
 
@@ -21,16 +22,17 @@ public enum MainToken {
         }
     }
 
-    MainToken(boolean hasSecondaryToken) {
+    MainToken(boolean hasSecondaryToken, int parameters) {
         this.hasSecondaryToken = hasSecondaryToken;
-    }
-
-    MainToken() {
-        this(false);
+        this.parameters = parameters;
     }
 
     public boolean isHasSecondaryToken() {
         return hasSecondaryToken;
+    }
+
+    public int getParameters() {
+        return parameters;
     }
 
     public static MainToken getTokenByName(String name) {

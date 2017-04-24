@@ -2,19 +2,20 @@ package mcjty.enigma.parser;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class TokenizedLine {
     private final int indentation;
     @Nonnull private final MainToken mainToken;
     @Nullable private final Token secondaryToken;
-    private final String[] tokens;
+    @Nonnull private final List<String> parameters;
     private final boolean endsWithColon;
 
-    public TokenizedLine(int indentation, @Nonnull MainToken mainToken, @Nullable Token secondaryToken, String[] tokens, boolean endsWithColon) {
+    public TokenizedLine(int indentation, @Nonnull MainToken mainToken, @Nullable Token secondaryToken, @Nonnull List<String> parameters, boolean endsWithColon) {
         this.indentation = indentation;
         this.mainToken = mainToken;
         this.secondaryToken = secondaryToken;
-        this.tokens = tokens;
+        this.parameters = parameters;
         this.endsWithColon = endsWithColon;
     }
 
@@ -32,8 +33,9 @@ public class TokenizedLine {
         return secondaryToken;
     }
 
-    public String[] getTokens() {
-        return tokens;
+    @Nonnull
+    public List<String> getParameters() {
+        return parameters;
     }
 
     public boolean isEndsWithColon() {
@@ -42,9 +44,19 @@ public class TokenizedLine {
 
     public void dump() {
         if (mainToken.isHasSecondaryToken()) {
-            System.out.println("I:" + indentation + "    " + mainToken + " " + secondaryToken + (endsWithColon ? "     [:]" : ""));
+            System.out.print("I:" + indentation + "    " + mainToken + " " + secondaryToken);
         } else {
-            System.out.println("I:" + indentation + "    " + mainToken + (endsWithColon ? "     [:]" : ""));
+            System.out.print("I:" + indentation + "    " + mainToken);
         }
+
+        if (!parameters.isEmpty()) {
+            System.out.print(": ");
+            for (String parameter : parameters) {
+                System.out.print(parameter + " ");
+            }
+
+        }
+
+        System.out.println(endsWithColon ? "     [:]" : "");
     }
 }
