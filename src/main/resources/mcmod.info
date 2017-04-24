@@ -1,0 +1,15 @@
+[
+{
+  "modid": "enigma",
+  "name": "Enigma",
+  "description": "Enigma",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["McJty"],
+  "credits": "McJty",
+  "logoFile": "",
+  "screenshots": []
+}
+]
