@@ -28,7 +28,7 @@ public class RuleParser {
         }
     }
 
-    private static List<TokenizedLine> parse(BufferedReader reader) throws IOException, ParserException {
+    public static List<TokenizedLine> parse(BufferedReader reader) throws IOException, ParserException {
         List<TokenizedLine> lines = new ArrayList<>();
         String line = reader.readLine();
         int i = 0;

@@ -1,5 +1,7 @@
 package mcjty.enigma.code;
 
+import net.minecraft.entity.player.EntityPlayer;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +15,12 @@ public class ActionBlock {
     public void dump(int indent) {
         for (Action action : actions) {
             action.dump(indent+4);
+        }
+    }
+
+    public void execute(EntityPlayer player) {
+        for (Action action : actions) {
+            action.execute(player);
         }
     }
 }

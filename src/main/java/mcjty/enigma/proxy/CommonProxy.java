@@ -1,17 +1,24 @@
 package mcjty.enigma.proxy;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import mcjty.enigma.Enigma;
+import mcjty.enigma.ForgeEventHandlers;
+import mcjty.enigma.parser.ParserException;
+import mcjty.enigma.parser.ProgramParser;
+import mcjty.enigma.parser.RuleParser;
+import mcjty.enigma.parser.TokenizedLine;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 import org.apache.logging.log4j.Level;
 
-import java.io.File;
+import java.io.*;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 public abstract class CommonProxy {
@@ -24,6 +31,7 @@ public abstract class CommonProxy {
         mainConfig = new Configuration(new File(modConfigDir.getPath(), "enigma.cfg"));
 
         readMainConfig();
+        readRules();
 
 //        SimpleNetworkWrapper network = PacketHandler.registerMessages(XNet.MODID, "xnet");
 //        XNetMessages.registerNetworkMessages(network);
@@ -48,9 +56,22 @@ public abstract class CommonProxy {
         }
     }
 
+    private void readRules() {
+        InputStream inputstream = Enigma.class.getResourceAsStream("/assets/enigma/rules/ruleexample");
+        try {
+            List<TokenizedLine> lines = RuleParser.parse(new BufferedReader(new InputStreamReader(inputstream)));
+            Enigma.root = ProgramParser.parse(lines);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (ParserException e) {
+            Enigma.logger.log(Level.ERROR, "ERROR: " + e.getMessage() + " at line " + e.getLinenumber(), e);
+            throw new RuntimeException(e);
+        }
+    }
+
     public void init(FMLInitializationEvent e) {
 //        NetworkRegistry.INSTANCE.registerGuiHandler(XNet.instance, new GuiProxy());
-//        MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
+        MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
 //        ModRecipes.init();
     }
 

@@ -7,6 +7,7 @@ public enum MainToken {
     STATE(false, 3),        // state <statename> = <name>
     VAR(false, 3),          // var <varname> = <value>
     ON(true, 0),
+    POSITION(false, 5),     // position <name>, <x>, <y>, <z>, <dim>
     WHILE(false, 3),        // while <statename> = <name>
     MESSAGE(false, 1),      // message <msg>
     TAG(false, 3);          // tag <object> = <tagname>

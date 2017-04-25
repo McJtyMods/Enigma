@@ -1,8 +1,6 @@
 package mcjty.enigma.parser;
 
-import mcjty.enigma.code.ActionBlock;
-import mcjty.enigma.code.MessageAction;
-import mcjty.enigma.code.Scope;
+import mcjty.enigma.code.*;
 
 import java.util.List;
 
@@ -75,10 +73,8 @@ public class ProgramParser {
         if (!line.isEndsWithColon()) {
             throw new ParserException("Expected ':' after 'ON' statement", line.getLineNumber());
         }
-
         ActionBlock actionBlock = new ActionBlock();
         parseActionBlock(context, actionBlock);
-
 
         switch (secondaryToken) {
             case OBTAINITEM:
@@ -86,6 +82,12 @@ public class ProgramParser {
             case OBTAINTAG:
                 break;
             case BREAKBLOCK:
+                break;
+            case RIGHTCLICKBLOCK:
+                scope.addOnRightClickBlock(actionBlock, line.getParameters().get(0));
+                break;
+            case LEFTCLICKBLOCK:
+                scope.addOnLeftClickBlock(actionBlock, line.getParameters().get(0));
                 break;
             case BLOCKAT:
                 break;
@@ -113,7 +115,7 @@ public class ProgramParser {
         while (context.hasLines()) {
             line = context.getLine();
             if (line.getIndentation() > context.getCurrentIndent()) {
-                throw new ParserException("Unexpected indentation in action block!", line.getLineNumber());
+                throw new ParserException("Unexpected indentation in action block", line.getLineNumber());
             }
             if (line.getIndentation() < context.getCurrentIndent()) {
                 break;
@@ -123,8 +125,20 @@ public class ProgramParser {
 
             switch (line.getMainToken()) {
                 case STATE:
+                    if (!"=".equals(line.getParameters().get(1))) {
+                        throw new ParserException("Expected <name> = <value>", line.getLineNumber());
+                    }
+                    actionBlock.addAction(new SetStateAction(line.getParameters().get(0), line.getParameters().get(2)));
                     break;
                 case VAR:
+                    break;
+                case POSITION:
+                    actionBlock.addAction(new PositionAction(
+                            line.getParameters().get(0),
+                            line.getParameters().get(1),
+                            line.getParameters().get(2),
+                            line.getParameters().get(3),
+                            line.getParameters().get(4)));
                     break;
                 case MESSAGE:
                     actionBlock.addAction(new MessageAction(line.getParameters().get(0)));

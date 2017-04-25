@@ -2,16 +2,23 @@
 
 on start:
     var score = 0
+    position rubble 10 60 20 0
     state main = beginroom
 
 on obtainitem minecraft:netherstar:
     var score = score+1
 
 while main = beginroom:
+    on start:
+        message "And the adventure starts!"
+
     on obtaintag firstroomkey:
         message "With this key you can open the door to the second room!"
         state main = secondroom
         tag firstroomdoor = open
+
+    on rightclickblock rubble:
+        message "You right click the rubble!"
 
 while main = secondroom:
     on blockat rubble = minecraft:air:

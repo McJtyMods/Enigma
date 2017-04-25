@@ -1,5 +1,6 @@
 package mcjty.enigma.code;
 
+import net.minecraft.entity.player.EntityPlayer;
 import org.apache.commons.lang3.StringUtils;
 
 public class MessageAction extends Action {
@@ -12,6 +13,11 @@ public class MessageAction extends Action {
     @Override
     public void dump(int indent) {
         System.out.println(StringUtils.repeat(' ', indent) + "Message: " + message);
+
+    }
+
+    @Override
+    public void execute(EntityPlayer player) {
 
     }
 }

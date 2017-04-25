@@ -1,7 +1,10 @@
 package mcjty.enigma.code;
 
-public class Action {
+import net.minecraft.entity.player.EntityPlayer;
+
+public abstract class Action {
     public void dump(int indent) {
     }
 
+    public abstract void execute(EntityPlayer player);
 }

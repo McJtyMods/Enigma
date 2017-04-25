@@ -1,7 +1,10 @@
 package mcjty.enigma;
 
 
+import mcjty.enigma.code.Scope;
+import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.proxy.CommonProxy;
+import mcjty.enigma.varia.StringRegister;
 import mcjty.lib.compat.CompatCreativeTabs;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
@@ -44,6 +47,8 @@ public class Enigma {
         }
     };
 
+    public static Scope root;
+
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event){
         logger = event.getModLog();
@@ -62,7 +67,9 @@ public class Enigma {
 
     @Mod.EventHandler
     public void serverStopped(FMLServerStoppedEvent event) {
+        ProgressHolder.clearInstance();
     }
+
 
     @Mod.EventHandler
     public void serverLoad(FMLServerStartingEvent event) {
