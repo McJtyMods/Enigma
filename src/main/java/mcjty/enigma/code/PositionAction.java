@@ -5,6 +5,7 @@ import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.varia.BlockPosDim;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import org.apache.commons.lang3.StringUtils;
 
 public class PositionAction extends Action {
@@ -24,9 +25,9 @@ public class PositionAction extends Action {
     }
 
     @Override
-    public void execute(EntityPlayer player) {
-        Progress progress = ProgressHolder.getProgress(player.getEntityWorld());
+    public void execute(World world, EntityPlayer player) {
+        Progress progress = ProgressHolder.getProgress(world);
         progress.addNamedPosition(name, new BlockPosDim(pos, dimension));
-        ProgressHolder.save(player.getEntityWorld());
+        ProgressHolder.save(world);
     }
 }

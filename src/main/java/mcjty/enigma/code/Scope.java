@@ -3,6 +3,7 @@ package mcjty.enigma.code;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -25,33 +26,47 @@ public class Scope {
     private Integer stateName;
     private Integer stateValue;
 
-    public void forActiveScopes(EntityPlayer player, Consumer<Scope> consumer) {
-        Progress progress = ProgressHolder.getProgress(player.getEntityWorld());
+    public void forActiveScopes(World world, Consumer<Scope> consumer) {
+        Progress progress = ProgressHolder.getProgress(world);
         for (Scope scope : nestedScopes) {
             Integer state = progress.getState(scope.getStateName());
             if (scope.getStateValue().equals(state)) {
                 consumer.accept(scope);
+                scope.forActiveScopes(world, consumer);
             }
         }
     }
 
+    public boolean isActive(World world) {
+        Progress progress = ProgressHolder.getProgress(world);
+        return stateValue == null || stateValue.equals(progress.getState(stateName));
+    }
+
+    public List<Scope> getNestedScopes() {
+        return nestedScopes;
+    }
+
     public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event, @Nonnull Integer position) {
         EntityPlayer player = event.getEntityPlayer();
-        Progress progress = ProgressHolder.getProgress(player.getEntityWorld());
         for (Pair<ActionBlock, Integer> pair : onRightClickBlock) {
             if (position.equals(pair.getValue())) {
-                pair.getKey().execute(player);
+                pair.getKey().execute(player.getEntityWorld(), player);
             }
         }
     }
 
     public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event, @Nonnull Integer position) {
         EntityPlayer player = event.getEntityPlayer();
-        Progress progress = ProgressHolder.getProgress(player.getEntityWorld());
         for (Pair<ActionBlock, Integer> pair : onLeftClickBlock) {
             if (position.equals(pair.getValue())) {
-                pair.getKey().execute(player);
+                pair.getKey().execute(player.getEntityWorld(), player);
             }
+        }
+    }
+
+    public void start(World world) {
+        for (ActionBlock actionBlock : onStart) {
+            actionBlock.execute(world, null);
         }
     }
 

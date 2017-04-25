@@ -4,6 +4,7 @@ import mcjty.enigma.network.EnigmaMessages;
 import mcjty.enigma.network.PacketAddMessage;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.world.World;
 import org.apache.commons.lang3.StringUtils;
 
 public class MessageAction extends Action {
@@ -26,7 +27,7 @@ public class MessageAction extends Action {
     }
 
     @Override
-    public void execute(EntityPlayer player) {
+    public void execute(World world, EntityPlayer player) {
         EnigmaMessages.INSTANCE.sendTo(new PacketAddMessage(message, timeout), (EntityPlayerMP) player);
     }
 }

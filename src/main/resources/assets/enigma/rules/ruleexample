@@ -2,7 +2,7 @@
 
 on start:
     var score = 0
-    position rubble 10 60 20 0
+    position diamondblock 607 4 317 0
     state main = beginroom
 
 on obtainitem minecraft:netherstar:
@@ -17,8 +17,9 @@ while main = beginroom:
         state main = secondroom
         tag firstroomdoor = open
 
-    on rightclickblock rubble:
-        message "You right click the rubble!"
+    on rightclickblock diamondblock:
+        message "You try to pick up the diamond block"
+        message "but it is too heavy. You need a tool"
 
 while main = secondroom:
     on blockat rubble = minecraft:air:

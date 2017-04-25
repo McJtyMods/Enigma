@@ -15,7 +15,7 @@ public class PacketAddMessage implements IMessage {
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        String message = NetworkTools.readStringUTF8(buf);
+        message = NetworkTools.readStringUTF8(buf);
         timeout = buf.readInt();
     }
 

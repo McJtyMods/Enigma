@@ -1,6 +1,7 @@
 package mcjty.enigma.code;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,9 +19,9 @@ public class ActionBlock {
         }
     }
 
-    public void execute(EntityPlayer player) {
+    public void execute(World world, EntityPlayer player) {
         for (Action action : actions) {
-            action.execute(player);
+            action.execute(world, player);
         }
     }
 }
