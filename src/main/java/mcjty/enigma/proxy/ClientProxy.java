@@ -1,14 +1,18 @@
 package mcjty.enigma.proxy;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import mcjty.enigma.overlays.OverlayRenderer;
 import mcjty.lib.tools.MinecraftTools;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.concurrent.Callable;
 
@@ -33,10 +37,10 @@ public class ClientProxy extends CommonProxy {
 //        ModBlocks.initItemModels();
     }
 
-//    @SubscribeEvent
-//    public void renderWorldLastEvent(RenderWorldLastEvent evt) {
-//        RenderWorldLastEventHandler.tick(evt);
-//    }
+    @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
+    public void renderGameOverlayEvent(RenderGameOverlayEvent.Pre event) {
+        OverlayRenderer.renderOverlays();
+    }
 
     @Override
     public World getClientWorld() {

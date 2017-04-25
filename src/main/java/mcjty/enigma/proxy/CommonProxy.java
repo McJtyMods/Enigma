@@ -3,6 +3,7 @@ package mcjty.enigma.proxy;
 import com.google.common.util.concurrent.ListenableFuture;
 import mcjty.enigma.Enigma;
 import mcjty.enigma.ForgeEventHandlers;
+import mcjty.enigma.network.EnigmaMessages;
 import mcjty.enigma.parser.ParserException;
 import mcjty.enigma.parser.ProgramParser;
 import mcjty.enigma.parser.RuleParser;
@@ -33,8 +34,7 @@ public abstract class CommonProxy {
         readMainConfig();
         readRules();
 
-//        SimpleNetworkWrapper network = PacketHandler.registerMessages(XNet.MODID, "xnet");
-//        XNetMessages.registerNetworkMessages(network);
+        EnigmaMessages.registerMessages("enigma");
 
 //        ModItems.init();
 //        ModBlocks.init();

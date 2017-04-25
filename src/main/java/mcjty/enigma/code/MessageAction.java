@@ -1,13 +1,22 @@
 package mcjty.enigma.code;
 
+import mcjty.enigma.network.EnigmaMessages;
+import mcjty.enigma.network.PacketAddMessage;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import org.apache.commons.lang3.StringUtils;
 
 public class MessageAction extends Action {
     private final String message;
+    private final int timeout;
 
     public MessageAction(String message) {
+        this(message, 100);
+    }
+
+    public MessageAction(String message, int timeout) {
         this.message = message;
+        this.timeout = timeout;
     }
 
     @Override
@@ -18,6 +27,6 @@ public class MessageAction extends Action {
 
     @Override
     public void execute(EntityPlayer player) {
-
+        EnigmaMessages.INSTANCE.sendTo(new PacketAddMessage(message, timeout), (EntityPlayerMP) player);
     }
 }
