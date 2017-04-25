@@ -143,6 +143,9 @@ public class ProgramParser {
                 case MESSAGE:
                     actionBlock.addAction(new MessageAction(line.getParameters().get(0)));
                     break;
+                case GIVE:
+                    actionBlock.addAction(new GiveAction(line.getParameters().get(0), line.getParameters().get(1)));
+                    break;
                 case TAG:
                     break;
                 default:

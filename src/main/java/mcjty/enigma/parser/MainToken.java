@@ -10,6 +10,7 @@ public enum MainToken {
     POSITION(false, 5),     // position <name>, <x>, <y>, <z>, <dim>
     WHILE(false, 3),        // while <statename> = <name>
     MESSAGE(false, 1),      // message <msg>
+    GIVE(false, 2),         // give <item> <tag>
     TAG(false, 3);          // tag <object> = <tagname>
 
     private final boolean hasSecondaryToken;
