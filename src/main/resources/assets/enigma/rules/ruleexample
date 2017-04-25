@@ -1,8 +1,7 @@
 # In game it is possible to tag items and objects using the 'tagger'
 
-var score = 0
-
 on start:
+    var score = 0
     state main = beginroom
 
 on obtainitem minecraft:netherstar:
@@ -27,7 +26,7 @@ while main = finalroom:
         message "There it is!"
         state main = theend
 
-while state = theend:
+while main = theend:
     on start:
         message "You win the game!"
 

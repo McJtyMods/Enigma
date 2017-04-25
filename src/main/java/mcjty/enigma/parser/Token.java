@@ -6,6 +6,7 @@ import java.util.Map;
 public enum Token {
     OBTAINITEM(1),      // on obtainitem <item>
     OBTAINTAG(1),       // on obtaintag <tagname>
+    BREAKBLOCK(1),      // on breakblock <blockname>
     BLOCKAT(3),         // on blockat <blockname> = <blocktype>
     DELAY(1),           // on delay <time>
     OPEN(1),            // on open <name>

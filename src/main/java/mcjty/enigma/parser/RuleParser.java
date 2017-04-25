@@ -1,7 +1,7 @@
 package mcjty.enigma.parser;
 
 import mcjty.enigma.Enigma;
-import org.apache.commons.lang3.StringUtils;
+import mcjty.enigma.code.Scope;
 import org.apache.commons.lang3.text.StrTokenizer;
 import org.apache.logging.log4j.Level;
 
@@ -11,14 +11,14 @@ import java.util.List;
 
 public class RuleParser {
 
-    public static void parse(File file) {
+    public static List<TokenizedLine> parse(File file) throws ParserException {
         if (!file.exists()) {
             Enigma.logger.log(Level.ERROR, "Error reading file " + file.getName());
             throw new RuntimeException("Error reading file: " + file.getName());
         }
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
-            parse(reader);
+            return parse(reader);
         } catch (FileNotFoundException e) {
             Enigma.logger.log(Level.ERROR, "Error reading file " + file.getName());
             throw new RuntimeException("Error reading file: " + file.getName());
@@ -28,18 +28,23 @@ public class RuleParser {
         }
     }
 
-    private static void parse(BufferedReader reader) throws IOException {
+    private static List<TokenizedLine> parse(BufferedReader reader) throws IOException, ParserException {
+        List<TokenizedLine> lines = new ArrayList<>();
         String line = reader.readLine();
+        int i = 0;
         while (line != null) {
-            TokenizedLine tokenizedLine = getTokenizedLine(line);
+            TokenizedLine tokenizedLine = getTokenizedLine(line, i);
             if (tokenizedLine != null) {
                 tokenizedLine.dump();
+                lines.add(tokenizedLine);
             }
             line = reader.readLine();
+            i++;
         }
+        return lines;
     }
 
-    private static TokenizedLine getTokenizedLine(String line) {
+    private static TokenizedLine getTokenizedLine(String line, int linenumber) throws ParserException {
         int indentation = 0;
         int i = 0;
         while (i < line.length() && (line.charAt(i) == ' ' || line.charAt(i) == '\t')) {
@@ -62,8 +67,7 @@ public class RuleParser {
 
         StrTokenizer tokenizer = new StrTokenizer(line, ' ', '"');
         if (!tokenizer.hasNext()) {
-            System.out.println("ERROR: Truncated line!");
-            return null;
+            throw new ParserException("Truncated line!", linenumber);
         }
 
         int parameters = 0;
@@ -71,22 +75,19 @@ public class RuleParser {
         String token = tokenizer.next();
         MainToken mainToken = MainToken.getTokenByName(token);
         if (mainToken == null) {
-            System.out.println("ERROR: Unknown token '" + token + "'!");
-            return null;
+            throw new ParserException("ERROR: Unknown token '" + token + "'!", linenumber);
         }
         parameters = mainToken.getParameters();
 
         Token secondaryToken = null;
         if (mainToken.isHasSecondaryToken()) {
             if (!tokenizer.hasNext()) {
-                System.out.println("ERROR: Truncated line!");
-                return null;
+                throw new ParserException("Truncated line!", linenumber);
             }
             token = tokenizer.next();
             secondaryToken = Token.getTokenByName(token);
             if (secondaryToken == null) {
-                System.out.println("ERROR: Unknown token '" + token + "'!");
-                return null;
+                throw new ParserException("ERROR: Unknown token '" + token + "'!", linenumber);
             }
             parameters = secondaryToken.getParameters();
         }
@@ -94,14 +95,13 @@ public class RuleParser {
         List<String> params = new ArrayList<>(parameters);
         for (int t = 0 ; t < parameters ; t++) {
             if (!tokenizer.hasNext()) {
-                System.out.println("ERROR: Truncated line!");
-                return null;
+                throw new ParserException("Truncated line!", linenumber);
             }
             token = tokenizer.next();
             params.add(token);
         }
 
-        return new TokenizedLine(indentation, mainToken, secondaryToken, params, endsWithColon);
+        return new TokenizedLine(indentation, linenumber, mainToken, secondaryToken, params, endsWithColon);
     }
 
     public static void main(String[] args) {
@@ -109,7 +109,12 @@ public class RuleParser {
         System.out.println("dir = " + dir);
         File f = new File("out/production/enigma/assets/enigma/rules/ruleexample");
 
-        parse(f);
-
+        try {
+            List<TokenizedLine> lines = parse(f);
+            Scope root = ProgramParser.parse(lines);
+            root.dump(0);
+        } catch (ParserException e) {
+            System.out.println("e.getMessage() = " + e.getMessage() + " at line " + e.getLinenumber());
+        }
     }
 }

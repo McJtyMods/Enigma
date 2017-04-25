@@ -6,13 +6,15 @@ import java.util.List;
 
 public class TokenizedLine {
     private final int indentation;
+    private final int lineNumber;
     @Nonnull private final MainToken mainToken;
     @Nullable private final Token secondaryToken;
     @Nonnull private final List<String> parameters;
     private final boolean endsWithColon;
 
-    public TokenizedLine(int indentation, @Nonnull MainToken mainToken, @Nullable Token secondaryToken, @Nonnull List<String> parameters, boolean endsWithColon) {
+    public TokenizedLine(int indentation, int lineNumber, @Nonnull MainToken mainToken, @Nullable Token secondaryToken, @Nonnull List<String> parameters, boolean endsWithColon) {
         this.indentation = indentation;
+        this.lineNumber = lineNumber;
         this.mainToken = mainToken;
         this.secondaryToken = secondaryToken;
         this.parameters = parameters;
@@ -21,6 +23,10 @@ public class TokenizedLine {
 
     public int getIndentation() {
         return indentation;
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
     }
 
     @Nonnull
