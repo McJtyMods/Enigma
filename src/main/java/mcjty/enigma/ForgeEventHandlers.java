@@ -5,6 +5,7 @@ import mcjty.enigma.progress.ProgressHolder;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -26,7 +27,7 @@ public class ForgeEventHandlers {
             EntityPlayer player = event.getEntityPlayer();
             World world = player.getEntityWorld();
             Progress progress = ProgressHolder.getProgress(world);
-            Integer position = progress.getNamedPosition(event.getPos(), world.provider.getDimension());
+            String position = progress.getNamedPosition(event.getPos(), world.provider.getDimension());
             if (position != null) {
                 Enigma.root.forActiveScopes(world, scope -> {
                     scope.onRightClickBlock(event, position);
@@ -41,7 +42,7 @@ public class ForgeEventHandlers {
             EntityPlayer player = event.getEntityPlayer();
             World world = player.getEntityWorld();
             Progress progress = ProgressHolder.getProgress(world);
-            Integer position = progress.getNamedPosition(event.getPos(), world.provider.getDimension());
+            String position = progress.getNamedPosition(event.getPos(), world.provider.getDimension());
             if (position != null) {
                 Enigma.root.forActiveScopes(world, scope -> {
                     scope.onLeftClickBlock(event, position);
@@ -52,6 +53,14 @@ public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onServerTickEvent(TickEvent.ServerTickEvent event) {
-        Enigma.root.checkActivity(DimensionManager.getWorld(0));
+        WorldServer world = DimensionManager.getWorld(0);
+        Progress progress = ProgressHolder.getProgress(world);
+        if (!progress.isRootActivated()) {
+            Enigma.root.setInactiveForRoot();
+            progress.setRootActivated(true);
+            ProgressHolder.save(world);
+        }
+
+        Enigma.root.checkActivity(world);
     }
 }

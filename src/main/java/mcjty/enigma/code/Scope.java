@@ -37,6 +37,11 @@ public class Scope {
         }
     }
 
+    // ONLY for root!
+    public void setInactiveForRoot() {
+        active = false;
+    }
+
     // Make sure this scope is active. This does not check the condition:
     // It is assumed the condition is valid
     private void activate(World world) {
@@ -106,7 +111,7 @@ public class Scope {
         return nestedScopes;
     }
 
-    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event, @Nonnull Integer position) {
+    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event, @Nonnull String position) {
         EntityPlayer player = event.getEntityPlayer();
         for (Pair<ActionBlock, Expression> pair : onRightClickBlock) {
             World world = player.getEntityWorld();
@@ -116,7 +121,7 @@ public class Scope {
         }
     }
 
-    public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event, @Nonnull Integer position) {
+    public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event, @Nonnull String position) {
         EntityPlayer player = event.getEntityPlayer();
         for (Pair<ActionBlock, Expression> pair : onLeftClickBlock) {
             World world = player.getEntityWorld();

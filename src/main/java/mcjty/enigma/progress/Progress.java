@@ -15,8 +15,10 @@ import static mcjty.enigma.varia.StringRegister.STRINGS;
 public class Progress {
 
     private final Map<Integer, Integer> states = new HashMap<>();
-    private final Map<Integer, BlockPosDim> namedPositions = new HashMap<>();
-    private final Map<BlockPosDim, Integer> positionsToName = new HashMap<>();
+    private final Map<String, BlockPosDim> namedPositions = new HashMap<>();
+    private final Map<BlockPosDim, String> positionsToName = new HashMap<>();
+
+    private boolean rootActivated = false;
 
     public void setState(String state, String value) {
         states.put(STRINGS.get(state), STRINGS.get(value));
@@ -30,26 +32,37 @@ public class Progress {
         return states.get(state);
     }
 
+    public boolean isRootActivated() {
+        return rootActivated;
+    }
+
+    public void setRootActivated(boolean rootActivated) {
+        this.rootActivated = rootActivated;
+    }
+
     public void addNamedPosition(String name, @Nonnull BlockPosDim pos) {
-        namedPositions.put(STRINGS.get(name), pos);
-        positionsToName.put(pos, STRINGS.get(name));
+//        namedPositions.put(STRINGS.get(name), pos);
+        namedPositions.put(name, pos);
+        positionsToName.put(pos, name);//STRINGS.get(name));
     }
 
     public BlockPosDim getNamedPosition(String name) {
-        return namedPositions.get(STRINGS.get(name));
-    }
-
-    public BlockPosDim getNamedPosition(Integer name) {
+//        return namedPositions.get(STRINGS.get(name));
         return namedPositions.get(name);
     }
 
-    public Integer getNamedPosition(BlockPos pos, Integer dim) {
+//    public BlockPosDim getNamedPosition(Integer name) {
+//        return namedPositions.get(name);
+//    }
+
+    public String getNamedPosition(BlockPos pos, Integer dim) {
         return positionsToName.get(new BlockPosDim(pos, dim));
     }
 
     public void readFromNBT(NBTTagCompound nbt) {
         readStates(nbt);
         readNamedPositions(nbt);
+        rootActivated = nbt.getBoolean("rootActivated");
     }
 
     private void readStates(NBTTagCompound nbt) {
@@ -64,7 +77,8 @@ public class Progress {
         NBTTagList statesList = nbt.getTagList("positions", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < statesList.tagCount() ; i++) {
             NBTTagCompound tc = (NBTTagCompound) statesList.get(i);
-            int name = STRINGS.get(tc.getString("s"));
+//            int name = STRINGS.get(tc.getString("s"));
+            String name = tc.getString("s");
             BlockPos p = new BlockPos(tc.getInteger("x"), tc.getInteger("y"), tc.getInteger("z"));
             BlockPosDim pd = new BlockPosDim(p, tc.getInteger("dim"));
             namedPositions.put(name, pd);
@@ -75,6 +89,7 @@ public class Progress {
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         writeStates(compound);
         writeNamedPositions(compound);
+        compound.setBoolean("rootActivated", rootActivated);
         return compound;
     }
 
@@ -91,9 +106,10 @@ public class Progress {
 
     private void writeNamedPositions(NBTTagCompound compound) {
         NBTTagList list = new NBTTagList();
-        for (Map.Entry<Integer, BlockPosDim> entry : namedPositions.entrySet()) {
+        for (Map.Entry<String, BlockPosDim> entry : namedPositions.entrySet()) {
             NBTTagCompound tc = new NBTTagCompound();
-            tc.setString("s", STRINGS.get(entry.getKey()));
+//            tc.setString("s", STRINGS.get(entry.getKey()));
+            tc.setString("s", entry.getKey());
             BlockPos pos = entry.getValue().getPos();
             tc.setInteger("x", pos.getX());
             tc.setInteger("y", pos.getY());
