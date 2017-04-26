@@ -5,14 +5,13 @@ import mcjty.enigma.parser.ObjectTools;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
 import org.apache.commons.lang3.StringUtils;
 
 public class SetStateAction extends Action {
-    private final Expression name;
-    private final Expression value;
+    private final Expression<EnigmaFunctionContext> name;
+    private final Expression<EnigmaFunctionContext>  value;
 
-    public SetStateAction(Expression name, Expression value) {
+    public SetStateAction(Expression<EnigmaFunctionContext>  name, Expression<EnigmaFunctionContext>  value) {
         this.name = name;
         this.value = value;
     }
@@ -23,8 +22,8 @@ public class SetStateAction extends Action {
     }
 
     @Override
-    public void execute(World world, EntityPlayer player) {
-        Progress progress = ProgressHolder.getProgress(world);
+    public void execute(EnigmaFunctionContext context, EntityPlayer player) {
+        Progress progress = ProgressHolder.getProgress(context.getWorld());
         System.out.println("Setting state " + name + " to " + value);
 
 //        int nameI = STRINGS.get(name);
@@ -44,11 +43,11 @@ public class SetStateAction extends Action {
 //            }
 //        });
 
-        progress.setState(ObjectTools.asStringSafe(name.eval(world)), ObjectTools.asStringSafe(value.eval(world)));
+        progress.setState(ObjectTools.asStringSafe(name.eval(context)), ObjectTools.asStringSafe(value.eval(context)));
 //        for (Scope scope : toactivate) {
 //            scope.start(world);
 //        }
 
-        ProgressHolder.save(world);
+        ProgressHolder.save(context.getWorld());
     }
 }

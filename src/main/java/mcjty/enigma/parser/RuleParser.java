@@ -10,9 +10,9 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RuleParser {
+public class RuleParser<T> {
 
-    public static List<TokenizedLine> parse(File file, @Nonnull ExpressionContext expressionContext) throws ParserException {
+    public static <T> List<TokenizedLine> parse(File file, @Nonnull ExpressionContext<T> expressionContext) throws ParserException {
         if (!file.exists()) {
             Enigma.logger.log(Level.ERROR, "Error reading file " + file.getName());
             throw new RuntimeException("Error reading file: " + file.getName());
@@ -29,7 +29,7 @@ public class RuleParser {
         }
     }
 
-    public static List<TokenizedLine> parse(BufferedReader reader, ExpressionContext expressionContext) throws IOException, ParserException {
+    public static <T> List<TokenizedLine> parse(BufferedReader reader, ExpressionContext<T> expressionContext) throws IOException, ParserException {
         List<TokenizedLine> lines = new ArrayList<>();
         String line = reader.readLine();
         int i = 0;
@@ -45,7 +45,7 @@ public class RuleParser {
         return lines;
     }
 
-    private static TokenizedLine getTokenizedLine(String line, int linenumber, ExpressionContext expressionContext) throws ParserException {
+    private static <T> TokenizedLine getTokenizedLine(String line, int linenumber, ExpressionContext<T> expressionContext) throws ParserException {
         int indentation = 0;
         int i = 0;
         while (i < line.length() && (line.charAt(i) == ' ' || line.charAt(i) == '\t')) {

@@ -5,7 +5,6 @@ import mcjty.enigma.parser.ObjectTools;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -18,21 +17,21 @@ import java.util.function.Consumer;
 public class Scope {
 
     private final List<ActionBlock> onStart = new ArrayList<>();
-    private final List<Pair<ActionBlock, Expression>> onDelay = new ArrayList<>();
-    private final List<Pair<ActionBlock, Expression>> onRightClickBlock = new ArrayList<>();
-    private final List<Pair<ActionBlock, Expression>> onLeftClickBlock = new ArrayList<>();
+    private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onDelay = new ArrayList<>();
+    private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onRightClickBlock = new ArrayList<>();
+    private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onLeftClickBlock = new ArrayList<>();
     private final List<Scope> nestedScopes = new ArrayList<>();
 
     private Boolean active = null;      // If null then active state is not known
 
-    private Expression condition;
+    private Expression<EnigmaFunctionContext> condition;
 
-    public void forActiveScopes(World world, Consumer<Scope> consumer) {
-        Progress progress = ProgressHolder.getProgress(world);
+    public void forActiveScopes(EnigmaFunctionContext context, Consumer<Scope> consumer) {
+        Progress progress = ProgressHolder.getProgress(context.getWorld());
         for (Scope scope : nestedScopes) {
-            if (scope.isActive(world)) {
+            if (scope.isActive(context)) {
                 consumer.accept(scope);
-                scope.forActiveScopes(world, consumer);
+                scope.forActiveScopes(context, consumer);
             }
         }
     }
@@ -44,7 +43,7 @@ public class Scope {
 
     // Make sure this scope is active. This does not check the condition:
     // It is assumed the condition is valid
-    private void activate(World world) {
+    private void activate(EnigmaFunctionContext context) {
         if (active != null && active) {
             return;
         }
@@ -55,55 +54,55 @@ public class Scope {
         if (active != null) {
             // If we didn't know our state then we don't call 'start' because then we are just loading
             // from start
-            start(world);
+            start(context);
             System.out.println("Scope.activate");
         }
         active = true;
 
         // Possibly activate children
         for (Scope scope : nestedScopes) {
-            if (scope.isActive(world)) {
-                scope.activate(world);
+            if (scope.isActive(context)) {
+                scope.activate(context);
             }
         }
     }
 
     // Deactivate this scope. This does not check the condition
-    private void deactivate(World world) {
+    private void deactivate(EnigmaFunctionContext context) {
         if (active != null && !active) {
             return;
         }
 
         // Possibly deactivate children
         for (Scope scope : nestedScopes) {
-            scope.deactivate(world);
+            scope.deactivate(context);
         }
 
         if (active != null) {
             // If we didn't know our state then we don't call 'stop' because then we are just loading
             // from start
-            stop(world);
+            stop(context);
             System.out.println("Scope.deactivate");
         }
         active = false;
     }
 
-    public void checkActivity(World world) {
-        if (isActive(world)) {
-            activate(world);
+    public void checkActivity(EnigmaFunctionContext context) {
+        if (isActive(context)) {
+            activate(context);
             for (Scope scope : nestedScopes) {
-                scope.checkActivity(world);
+                scope.checkActivity(context);
             }
         } else {
-            deactivate(world);
+            deactivate(context);
         }
     }
 
-    public boolean isActive(World world) {
-        return condition == null || ObjectTools.asBoolSafe(condition.eval(world));
+    public boolean isActive(EnigmaFunctionContext context) {
+        return condition == null || ObjectTools.asBoolSafe(condition.eval(context));
     }
 
-    public void setCondition(Expression condition) {
+    public void setCondition(Expression<EnigmaFunctionContext> condition) {
         this.condition = condition;
     }
 
@@ -111,33 +110,31 @@ public class Scope {
         return nestedScopes;
     }
 
-    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event, @Nonnull String position) {
+    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event, EnigmaFunctionContext context, @Nonnull String position) {
         EntityPlayer player = event.getEntityPlayer();
-        for (Pair<ActionBlock, Expression> pair : onRightClickBlock) {
-            World world = player.getEntityWorld();
-            if (position.equals(pair.getValue().eval(world))) {
-                pair.getKey().execute(world, player);
+        for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onRightClickBlock) {
+            if (position.equals(pair.getValue().eval(context))) {
+                pair.getKey().execute(context, player);
             }
         }
     }
 
-    public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event, @Nonnull String position) {
+    public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event, EnigmaFunctionContext context, @Nonnull String position) {
         EntityPlayer player = event.getEntityPlayer();
-        for (Pair<ActionBlock, Expression> pair : onLeftClickBlock) {
-            World world = player.getEntityWorld();
-            if (position.equals(pair.getValue().eval(world))) {
-                pair.getKey().execute(world, player);
+        for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onLeftClickBlock) {
+            if (position.equals(pair.getValue().eval(context))) {
+                pair.getKey().execute(context, player);
             }
         }
     }
 
-    private void start(World world) {
+    private void start(EnigmaFunctionContext context) {
         for (ActionBlock actionBlock : onStart) {
-            actionBlock.execute(world, null);
+            actionBlock.execute(context, null);
         }
     }
 
-    private void stop(World world) {
+    private void stop(EnigmaFunctionContext context) {
 //        for (ActionBlock actionBlock : onStart) {
 //            actionBlock.execute(world, null);
 //        }
@@ -147,15 +144,15 @@ public class Scope {
         onStart.add(actionBlock);
     }
 
-    public void addOnDelay(ActionBlock actionBlock, Expression delayPar) {
+    public void addOnDelay(ActionBlock actionBlock, Expression<EnigmaFunctionContext> delayPar) {
         onDelay.add(Pair.of(actionBlock, delayPar));
     }
 
-    public void addOnRightClickBlock(ActionBlock actionBlock, Expression position) {
+    public void addOnRightClickBlock(ActionBlock actionBlock, Expression<EnigmaFunctionContext> position) {
         onRightClickBlock.add(Pair.of(actionBlock, position));
     }
 
-    public void addOnLeftClickBlock(ActionBlock actionBlock, Expression position) {
+    public void addOnLeftClickBlock(ActionBlock actionBlock, Expression<EnigmaFunctionContext> position) {
         onLeftClickBlock.add(Pair.of(actionBlock, position));
     }
 
@@ -169,15 +166,15 @@ public class Scope {
             System.out.println(StringUtils.repeat(' ', indent+4) + "On Start:");
             block.dump(indent+4);
         }
-        for (Pair<ActionBlock, Expression> pair : onDelay) {
+        for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onDelay) {
             System.out.println(StringUtils.repeat(' ', indent+4) + "On Delay (" + pair.getValue() + "):");
             pair.getKey().dump(indent+4);
         }
-        for (Pair<ActionBlock, Expression> pair : onRightClickBlock) {
+        for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onRightClickBlock) {
             System.out.println(StringUtils.repeat(' ', indent+4) + "On Right Click Block (" + pair.getValue() + "):");
             pair.getKey().dump(indent+4);
         }
-        for (Pair<ActionBlock, Expression> pair : onLeftClickBlock) {
+        for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onLeftClickBlock) {
             System.out.println(StringUtils.repeat(' ', indent+4) + "On Left Click Block (" + pair.getValue() + "):");
             pair.getKey().dump(indent+4);
         }

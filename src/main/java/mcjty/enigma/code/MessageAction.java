@@ -6,7 +6,6 @@ import mcjty.enigma.parser.Expression;
 import mcjty.enigma.parser.ObjectTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.world.World;
 import org.apache.commons.lang3.StringUtils;
 
 public class MessageAction extends Action {
@@ -29,7 +28,7 @@ public class MessageAction extends Action {
     }
 
     @Override
-    public void execute(World world, EntityPlayer player) {
-        EnigmaMessages.INSTANCE.sendTo(new PacketAddMessage(ObjectTools.asStringSafe(message.eval(world)), timeout), (EntityPlayerMP) player);
+    public void execute(EnigmaFunctionContext context, EntityPlayer player) {
+        EnigmaMessages.INSTANCE.sendTo(new PacketAddMessage(ObjectTools.asStringSafe(message.eval(context)), timeout), (EntityPlayerMP) player);
     }
 }

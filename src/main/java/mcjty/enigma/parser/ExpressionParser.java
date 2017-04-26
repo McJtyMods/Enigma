@@ -2,19 +2,19 @@ package mcjty.enigma.parser;
 
 import org.apache.commons.lang3.text.StrBuilder;
 
-public class ExpressionParser {
+public class ExpressionParser<T> {
 
     private final StringPointer str;
-    private final ExpressionContext context;
+    private final ExpressionContext<T> context;
     private int ch;
 
-    public ExpressionParser(StringPointer str, ExpressionContext context) {
+    public ExpressionParser(StringPointer str, ExpressionContext<T> context) {
         this.str = str;
         this.context = context;
     }
 
-    public static Expression eval(final StringPointer str, ExpressionContext context) {
-        return new ExpressionParser(str, context).parse();
+    public static <T> Expression<T> eval(final StringPointer str, ExpressionContext<T> context) {
+        return new ExpressionParser<T>(str, context).parse();
     }
 
     private void nextChar() {
@@ -50,9 +50,9 @@ public class ExpressionParser {
         return false;
     }
 
-    public Expression parse() {
+    public Expression<T> parse() {
         nextChar();
-        Expression x = parseExpression();
+        Expression<T> x = parseExpression();
         if (str.hasMore() && str.current() != ',' && str.current() != ':') {
             str.dec();
         }
@@ -66,16 +66,16 @@ public class ExpressionParser {
     // factor = `+` factor | `-` factor | `(` expression `)`
     //        | number | functionName factor | factor `^` factor
 
-    private Expression parseExpression() {
-        Expression x = parseTermEquals();
+    private Expression<T> parseExpression() {
+        Expression<T> x = parseTermEquals();
         while (true) {
             if (eat2('=', '=')) {
-                Expression a = x;
-                Expression b = parseTermEquals();
+                Expression<T> a = x;
+                Expression<T> b = parseTermEquals();
                 x = w -> ObjectTools.equals(a.eval(w), b.eval(w));
             } else if (eat2('!', '=')) {
-                Expression a = x;
-                Expression b = parseTermEquals();
+                Expression<T> a = x;
+                Expression<T> b = parseTermEquals();
                 x = w -> !ObjectTools.equals(a.eval(w), b.eval(w));
             } else {
                 return x;
@@ -83,16 +83,16 @@ public class ExpressionParser {
         }
     }
 
-    private Expression parseTermEquals() {
-        Expression x = parseTerm();
+    private Expression<T> parseTermEquals() {
+        Expression<T> x = parseTerm();
         while (true) {
             if (eat('+')) {
-                Expression a = x;
-                Expression b = parseTerm();
+                Expression<T> a = x;
+                Expression<T> b = parseTerm();
                 x = w -> ObjectTools.add(a.eval(w), b.eval(w));
             } else if (eat('-')) {
-                Expression a = x;
-                Expression b = parseTerm();
+                Expression<T> a = x;
+                Expression<T> b = parseTerm();
                 x = w -> ObjectTools.sub(a.eval(w), b.eval(w));
             } else {
                 return x;
@@ -100,16 +100,16 @@ public class ExpressionParser {
         }
     }
 
-    private Expression parseTerm() {
-        Expression x = parseFactor();
+    private Expression<T> parseTerm() {
+        Expression<T> x = parseFactor();
         while (true) {
             if (eat('*')) {
-                Expression a = x;
-                Expression b = parseFactor();
+                Expression<T> a = x;
+                Expression<T> b = parseFactor();
                 x = w -> ObjectTools.mul(a.eval(w), b.eval(w));
             } else if (eat('/')) {
-                Expression a = x;
-                Expression b = parseFactor();
+                Expression<T> a = x;
+                Expression<T> b = parseFactor();
                 x = w -> ObjectTools.div(a.eval(w), b.eval(w));
             } else {
                 return x;
@@ -117,16 +117,16 @@ public class ExpressionParser {
         }
     }
 
-    private Expression parseFactor() {
+    private Expression<T> parseFactor() {
         if (eat('+')) {
             return parseFactor(); // unary plus
         }
         if (eat('-')) {
-            Expression a = parseFactor();
+            Expression<T> a = parseFactor();
             return w -> ObjectTools.sub(0, a.eval(w));
         }
 
-        Expression x;
+        Expression<T> x;
         int startPos = str.index();
         if (eat('(')) { // parentheses
             x = parseExpression();
@@ -158,14 +158,14 @@ public class ExpressionParser {
             String func = str.substring(startPos, str.index());
             if ("sqrt".equals(func)) {
                 x = parseFactor();
-                Expression finalX = x;
+                Expression<T> finalX = x;
                 x = w -> Math.sqrt(ObjectTools.asIntSafe(finalX.eval(w)));
             } else if (context.isVariable(func)) {
                 x = context.getVariable(func);
             } else if (context.isFunction(func)) {
                 x = parseFactor();
-                Expression finalX = x;
-                ExpressionFunction function = context.getFunction(func);
+                Expression<T> finalX = x;
+                ExpressionFunction<T> function = context.getFunction(func);
                 x = w -> function.eval(w, finalX.eval(w));
             } else {
                 x = w -> func;
@@ -175,8 +175,8 @@ public class ExpressionParser {
         }
 
         if (eat('^')) {
-            Expression a = x;
-            Expression b = parseFactor();
+            Expression<T> a = x;
+            Expression<T> b = parseFactor();
             x = w -> Math.pow(ObjectTools.asIntSafe(a.eval(w)), ObjectTools.asIntSafe(b.eval(w))); // exponentiation
         }
 

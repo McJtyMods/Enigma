@@ -1,9 +1,7 @@
 package mcjty.enigma.parser;
 
-import net.minecraft.world.World;
+public interface Expression<T> {
 
-public interface Expression {
-
-    Object eval(World world);
+    Object eval(T world);
 
 }

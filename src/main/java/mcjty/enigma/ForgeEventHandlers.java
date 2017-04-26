@@ -1,5 +1,6 @@
 package mcjty.enigma;
 
+import mcjty.enigma.code.EnigmaFunctionContext;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,8 +30,9 @@ public class ForgeEventHandlers {
             Progress progress = ProgressHolder.getProgress(world);
             String position = progress.getNamedPosition(event.getPos(), world.provider.getDimension());
             if (position != null) {
-                Enigma.root.forActiveScopes(world, scope -> {
-                    scope.onRightClickBlock(event, position);
+                EnigmaFunctionContext context = new EnigmaFunctionContext(world);
+                Enigma.root.forActiveScopes(context, scope -> {
+                    scope.onRightClickBlock(event, context, position);
                 });
             }
         }
@@ -44,8 +46,9 @@ public class ForgeEventHandlers {
             Progress progress = ProgressHolder.getProgress(world);
             String position = progress.getNamedPosition(event.getPos(), world.provider.getDimension());
             if (position != null) {
-                Enigma.root.forActiveScopes(world, scope -> {
-                    scope.onLeftClickBlock(event, position);
+                EnigmaFunctionContext context = new EnigmaFunctionContext(world);
+                Enigma.root.forActiveScopes(context, scope -> {
+                    scope.onLeftClickBlock(event, context, position);
                 });
             }
         }
@@ -61,6 +64,7 @@ public class ForgeEventHandlers {
             ProgressHolder.save(world);
         }
 
-        Enigma.root.checkActivity(world);
+        EnigmaFunctionContext context = new EnigmaFunctionContext(world);
+        Enigma.root.checkActivity(context);
     }
 }

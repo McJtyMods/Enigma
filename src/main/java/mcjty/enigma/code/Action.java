@@ -7,5 +7,5 @@ public abstract class Action {
     public void dump(int indent) {
     }
 
-    public abstract void execute(World world, EntityPlayer player);
+    public abstract void execute(EnigmaFunctionContext context, EntityPlayer player);
 }

@@ -19,9 +19,9 @@ public class ActionBlock {
         }
     }
 
-    public void execute(World world, EntityPlayer player) {
+    public void execute(EnigmaFunctionContext context, EntityPlayer player) {
         for (Action action : actions) {
-            action.execute(world, player);
+            action.execute(context, player);
         }
     }
 }

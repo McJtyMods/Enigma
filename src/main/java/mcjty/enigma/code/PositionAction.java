@@ -7,17 +7,16 @@ import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.varia.BlockPosDim;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import org.apache.commons.lang3.StringUtils;
 
 public class PositionAction extends Action {
-    private final Expression name;
-    private final Expression x;
-    private final Expression y;
-    private final Expression z;
-    private final Expression dimension;
+    private final Expression<EnigmaFunctionContext> name;
+    private final Expression<EnigmaFunctionContext> x;
+    private final Expression<EnigmaFunctionContext> y;
+    private final Expression<EnigmaFunctionContext> z;
+    private final Expression<EnigmaFunctionContext> dimension;
 
-    public PositionAction(Expression name, Expression x, Expression y, Expression z, Expression dimension) {
+    public PositionAction(Expression<EnigmaFunctionContext> name, Expression<EnigmaFunctionContext> x, Expression<EnigmaFunctionContext> y, Expression<EnigmaFunctionContext> z, Expression<EnigmaFunctionContext> dimension) {
         this.name = name;
         this.x = x;
         this.y = y;
@@ -31,13 +30,13 @@ public class PositionAction extends Action {
     }
 
     @Override
-    public void execute(World world, EntityPlayer player) {
-        Progress progress = ProgressHolder.getProgress(world);
-        BlockPos p = new BlockPos(ObjectTools.asIntSafe(x.eval(world)), ObjectTools.asIntSafe(y.eval(world)), ObjectTools.asIntSafe(z.eval(world)));
-        String name = ObjectTools.asStringSafe(this.name.eval(world));
+    public void execute(EnigmaFunctionContext context, EntityPlayer player) {
+        Progress progress = ProgressHolder.getProgress(context.getWorld());
+        BlockPos p = new BlockPos(ObjectTools.asIntSafe(x.eval(context)), ObjectTools.asIntSafe(y.eval(context)), ObjectTools.asIntSafe(z.eval(context)));
+        String name = ObjectTools.asStringSafe(this.name.eval(context));
         System.out.println("Set Position: " + name);
-        int dim = ObjectTools.asIntSafe(dimension.eval(world));
+        int dim = ObjectTools.asIntSafe(dimension.eval(context));
         progress.addNamedPosition(name, new BlockPosDim(p, dim));
-        ProgressHolder.save(world);
+        ProgressHolder.save(context.getWorld());
     }
 }

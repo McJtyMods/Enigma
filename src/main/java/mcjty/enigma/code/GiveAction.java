@@ -6,7 +6,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,8 +25,8 @@ public class GiveAction extends Action {
     }
 
     @Override
-    public void execute(World world, EntityPlayer player) {
-        Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(ObjectTools.asStringSafe(this.item.eval(world))));
+    public void execute(EnigmaFunctionContext context, EntityPlayer player) {
+        Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(ObjectTools.asStringSafe(this.item.eval(context))));
         if (item != null) {
             player.inventory.addItemStackToInventory(new ItemStack(item));
             player.openContainer.detectAndSendChanges();

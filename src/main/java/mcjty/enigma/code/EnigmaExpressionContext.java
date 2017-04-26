@@ -13,13 +13,13 @@ import java.util.Map;
 
 import static mcjty.enigma.varia.StringRegister.STRINGS;
 
-public class EnigmaExpressionContext implements ExpressionContext {
+public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunctionContext> {
 
-    private static final Map<String, ExpressionFunction> FUNCTIONS = new HashMap<>();
+    private static final Map<String, ExpressionFunction<EnigmaFunctionContext>> FUNCTIONS = new HashMap<>();
 
     static {
-        FUNCTIONS.put("state", (world, o) -> {
-            Progress progress = ProgressHolder.getProgress(world);
+        FUNCTIONS.put("state", (context, o) -> {
+            Progress progress = ProgressHolder.getProgress(context.getWorld());
             Integer valueI = progress.getState(ObjectTools.asStringSafe(o));
             return STRINGS.get(valueI);
         });
@@ -38,7 +38,7 @@ public class EnigmaExpressionContext implements ExpressionContext {
 
     @Nullable
     @Override
-    public ExpressionFunction getFunction(String name) {
+    public ExpressionFunction<EnigmaFunctionContext> getFunction(String name) {
         return FUNCTIONS.get(name);
     }
 
