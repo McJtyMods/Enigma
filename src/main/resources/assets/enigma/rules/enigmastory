@@ -4,10 +4,10 @@ on start:
     var score = 0
     position beginroom_wood 25 62 77 0
     position cracked_bricks 24 62 73 0
-    state main = beginroom
+    state main beginroom
 
 on obtainitem minecraft:netherstar:
-    var score = score+1
+    var score score+1
 
 while main = beginroom:
     on start:
@@ -15,8 +15,8 @@ while main = beginroom:
 
     on obtaintag firstroomkey:
         message "With this key you can open the door to the second room!"
-        state main = secondroom
-        tag firstroomdoor = open
+        state main secondroom
+        tag firstroomdoor open
 
     on rightclickblock beginroom_wood:
         message "You begin searching in the rubble"
@@ -26,7 +26,7 @@ while main = beginroom:
         give minecraft:diamond beginroom_key
 
 while main = secondroom:
-    on blockat rubble = minecraft:air:
+    on blockat rubble == minecraft:air:
         message "You destroy the rubble blocking the door!"
         state main = finalroom
 
@@ -36,7 +36,7 @@ while main = finalroom:
 
     on open treasurechest:
         message "There it is!"
-        state main = theend
+        state main theend
 
 while main = theend:
     on start:
