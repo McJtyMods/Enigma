@@ -40,7 +40,7 @@ public class Enigma {
     public static Enigma instance;
     public static Logger logger;
 
-    public static CreativeTabs tabXNet = new CompatCreativeTabs("Enigma") {
+    public static CreativeTabs tabEnigma = new CompatCreativeTabs("Enigma") {
         @Override
         protected Item getItem() {
             return Items.ENCHANTED_BOOK;

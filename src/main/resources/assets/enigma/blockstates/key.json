@@ -1,0 +1,23 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "enigma:key",
+    "textures": { "txt": "enigma:items/key0" },
+    "transform": {
+      "firstperson": {
+        "rotation": [{"z": 180},{"y": 80}]
+      },
+      "thirdperson": {
+        "scale": 0.6,
+        "rotation": [{"x": 90},{"y": 90}]
+      }
+    }
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory0": [{ "textures": { "txt": "enigma:items/key0" } }],
+    "inventory1": [{ "textures": { "txt": "enigma:items/key1" } }],
+    "inventory2": [{ "textures": { "txt": "enigma:items/key2" } }],
+    "inventory3": [{ "textures": { "txt": "enigma:items/key3" } }]
+  }
+}
