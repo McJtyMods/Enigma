@@ -9,7 +9,7 @@ public enum Token {
     BREAKBLOCK(1),      // on breakblock <position>
     RIGHTCLICKBLOCK(1), // on rightclickblock <position>
     LEFTCLICKBLOCK(1),  // on leftclickblock <position>
-    BLOCKAT(3),         // on blockat <position> = <blocktype>
+    BLOCKAT(2),         // on blockat <position> <blocktype>
     DELAY(1),           // on delay <time>
     OPEN(1),            // on open <name>
     START(0);           // on start

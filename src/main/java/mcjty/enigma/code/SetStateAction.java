@@ -1,22 +1,18 @@
 package mcjty.enigma.code;
 
-import mcjty.enigma.Enigma;
+import mcjty.enigma.parser.Expression;
+import mcjty.enigma.parser.ObjectTools;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static mcjty.enigma.varia.StringRegister.STRINGS;
-
 public class SetStateAction extends Action {
-    private final String name;
-    private final String value;
+    private final Expression name;
+    private final Expression value;
 
-    public SetStateAction(String name, String value) {
+    public SetStateAction(Expression name, Expression value) {
         this.name = name;
         this.value = value;
     }
@@ -31,26 +27,27 @@ public class SetStateAction extends Action {
         Progress progress = ProgressHolder.getProgress(world);
         System.out.println("Setting state " + name + " to " + value);
 
-        int nameI = STRINGS.get(name);
-        int valueI = STRINGS.get(value);
+//        int nameI = STRINGS.get(name);
+//        int valueI = STRINGS.get(value);
 
-        List<Scope> toactivate = new ArrayList<>();
-        Enigma.root.forActiveScopes(world, scope -> {
-            for (Scope child : scope.getNestedScopes()) {
-                if (!child.isActive(world)) {
-                    if (child.getStateName().equals(nameI)) {
-                        if (child.getStateValue().equals(valueI)) {
-                            toactivate.add(child);
-                        }
-                    }
-                }
-            }
-        });
+        //@todo
+//        List<Scope> toactivate = new ArrayList<>();
+//        Enigma.root.forActiveScopes(world, scope -> {
+//            for (Scope child : scope.getNestedScopes()) {
+//                if (!child.isActive(world)) {
+//                    if (child.getStateName().equals(nameI)) {
+//                        if (child.getStateValue().equals(valueI)) {
+//                            toactivate.add(child);
+//                        }
+//                    }
+//                }
+//            }
+//        });
 
-        progress.setState(name, value);
-        for (Scope scope : toactivate) {
-            scope.start(world);
-        }
+        progress.setState(ObjectTools.asStringSafe(name.eval(world)), ObjectTools.asStringSafe(value.eval(world)));
+//        for (Scope scope : toactivate) {
+//            scope.start(world);
+//        }
 
         ProgressHolder.save(world);
     }

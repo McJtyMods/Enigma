@@ -4,14 +4,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum MainToken {
-    STATE(false, 3),        // state <statename> = <name>
-    VAR(false, 3),          // var <varname> = <value>
+    STATE(false, 2),        // state <statename> <name>
+    VAR(false, 2),          // var <varname> <value>
     ON(true, 0),
     POSITION(false, 5),     // position <name>, <x>, <y>, <z>, <dim>
-    WHILE(false, 3),        // while <statename> = <name>
+    WHILE(false, 1),        // while <expression>
     MESSAGE(false, 1),      // message <msg>
     GIVE(false, 2),         // give <item> <tag>
-    TAG(false, 3);          // tag <object> = <tagname>
+    TAG(false, 2);          // tag <object> <tagname>
 
     private final boolean hasSecondaryToken;
     private final int parameters;

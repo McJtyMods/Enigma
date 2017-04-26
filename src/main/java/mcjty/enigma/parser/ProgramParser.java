@@ -2,11 +2,12 @@ package mcjty.enigma.parser;
 
 import mcjty.enigma.code.*;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class ProgramParser {
 
-    public static Scope parse(List<TokenizedLine> lines) throws ParserException {
+    public static Scope parse(@Nonnull List<TokenizedLine> lines) throws ParserException {
         Scope root = new Scope();
         ParsingContext context = new ParsingContext(lines);
         parseScope(context, root);
@@ -44,13 +45,7 @@ public class ProgramParser {
         }
 
         Scope newscope = new Scope();
-
-        if (!"=".equals(line.getParameters().get(1))) {
-            throw new ParserException("Expected <state> '=' <name> after 'WHILE' statement", line.getLineNumber());
-        }
-        newscope.setStateName(line.getParameters().get(0));
-        newscope.setStateValue(line.getParameters().get(2));
-
+        newscope.setCondition(line.getParameters().get(0));
 
         line = context.getLine();
         if (line.getIndentation() <= context.getCurrentIndent()) {
@@ -125,10 +120,7 @@ public class ProgramParser {
 
             switch (line.getMainToken()) {
                 case STATE:
-                    if (!"=".equals(line.getParameters().get(1))) {
-                        throw new ParserException("Expected <name> = <value>", line.getLineNumber());
-                    }
-                    actionBlock.addAction(new SetStateAction(line.getParameters().get(0), line.getParameters().get(2)));
+                    actionBlock.addAction(new SetStateAction(line.getParameters().get(0), line.getParameters().get(1)));
                     break;
                 case VAR:
                     break;

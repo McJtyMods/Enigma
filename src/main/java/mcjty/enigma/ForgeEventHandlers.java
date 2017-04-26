@@ -3,23 +3,26 @@ package mcjty.enigma;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onWorldLoad(WorldEvent.Load event) {
-        if (!event.getWorld().isRemote) {
-            Enigma.root.start(event.getWorld());
-        }
+//        if (!event.getWorld().isRemote) {
+//            Enigma.root.start(event.getWorld());
+//        }
     }
 
     @SubscribeEvent
     public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
-        if (!event.getWorld().isRemote) {
+        if (!event.getWorld().isRemote && event.getHand() == EnumHand.MAIN_HAND) {
             EntityPlayer player = event.getEntityPlayer();
             World world = player.getEntityWorld();
             Progress progress = ProgressHolder.getProgress(world);
@@ -34,7 +37,7 @@ public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
-        if (!event.getWorld().isRemote) {
+        if (!event.getWorld().isRemote && event.getHand() == EnumHand.MAIN_HAND) {
             EntityPlayer player = event.getEntityPlayer();
             World world = player.getEntityWorld();
             Progress progress = ProgressHolder.getProgress(world);
@@ -45,5 +48,10 @@ public class ForgeEventHandlers {
                 });
             }
         }
+    }
+
+    @SubscribeEvent
+    public void onServerTickEvent(TickEvent.ServerTickEvent event) {
+        Enigma.root.checkActivity(DimensionManager.getWorld(0));
     }
 }

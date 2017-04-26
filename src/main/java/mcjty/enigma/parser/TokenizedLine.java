@@ -9,10 +9,10 @@ public class TokenizedLine {
     private final int lineNumber;
     @Nonnull private final MainToken mainToken;
     @Nullable private final Token secondaryToken;
-    @Nonnull private final List<String> parameters;
+    @Nonnull private final List<Expression> parameters;
     private final boolean endsWithColon;
 
-    public TokenizedLine(int indentation, int lineNumber, @Nonnull MainToken mainToken, @Nullable Token secondaryToken, @Nonnull List<String> parameters, boolean endsWithColon) {
+    public TokenizedLine(int indentation, int lineNumber, @Nonnull MainToken mainToken, @Nullable Token secondaryToken, @Nonnull List<Expression> parameters, boolean endsWithColon) {
         this.indentation = indentation;
         this.lineNumber = lineNumber;
         this.mainToken = mainToken;
@@ -40,7 +40,7 @@ public class TokenizedLine {
     }
 
     @Nonnull
-    public List<String> getParameters() {
+    public List<Expression> getParameters() {
         return parameters;
     }
 
@@ -57,8 +57,8 @@ public class TokenizedLine {
 
         if (!parameters.isEmpty()) {
             System.out.print(": ");
-            for (String parameter : parameters) {
-                System.out.print(parameter + " ");
+            for (Expression parameter : parameters) {
+                System.out.print("{" + parameter + "}" + " ");
             }
 
         }

@@ -1,13 +1,14 @@
 package mcjty.enigma.parser;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 public class ParsingContext {
-    private final List<TokenizedLine> lines;
+    @Nonnull private final List<TokenizedLine> lines;
     private int currentline;
     private int currentindent;
 
-    public ParsingContext(List<TokenizedLine> lines) {
+    public ParsingContext(@Nonnull List<TokenizedLine> lines) {
         this.lines = lines;
         currentline = 0;
         currentindent = 0;
