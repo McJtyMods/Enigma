@@ -3,6 +3,7 @@
 on start:
     var score = 0
     position beginroom_wood 25 62 77 0
+    position cracked_bricks 24 62 73 0
     state main = beginroom
 
 on obtainitem minecraft:netherstar:
