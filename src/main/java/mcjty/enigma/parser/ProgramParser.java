@@ -31,15 +31,16 @@ public class ProgramParser {
             if (line.getMainToken() == MainToken.ON) {
                 parseOn(context, line, scope);
             } else if (line.getMainToken() == MainToken.WHILE) {
-                parseWhile(context, line, scope);
+                scope.addScope(parseScope(context, line));
+            } else if (line.getMainToken() == MainToken.PWHILE) {
+                scope.addPlayerScope(parseScope(context, line));
             } else {
                 throw new ParserException("Unexpected command '" + line.getMainToken().name() + "' for a scope", linenumber);
             }
         }
     }
 
-
-    private static void parseWhile(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line, Scope scope) throws ParserException {
+    private static Scope parseScope(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line) throws ParserException {
         if (!line.isEndsWithColon()) {
             throw new ParserException("Expected ':' after 'WHILE' statement", line.getLineNumber());
         }
@@ -56,9 +57,9 @@ public class ProgramParser {
         context.setCurrentIndent(line.getIndentation());
 
         parseScope(context, newscope);
-        scope.addScope(newscope);
 
         context.setCurrentIndent(origIndent);
+        return newscope;
     }
 
     private static void parseOn(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line, Scope scope) throws ParserException {

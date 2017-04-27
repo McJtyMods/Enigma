@@ -10,6 +10,7 @@ public enum MainToken {
     ON(true, 0),
     POSITION(false, 5),     // position <name>, <x>, <y>, <z>, <dim>
     WHILE(false, 1),        // while <expression>
+    PWHILE(false, 1),       // pwhile <expression>
     IF(false, 1),           // if <expression>
     ELSE(false, 0),         // if <expression>
     MESSAGE(false, 1),      // message <msg>

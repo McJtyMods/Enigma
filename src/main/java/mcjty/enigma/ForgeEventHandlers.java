@@ -31,7 +31,7 @@ public class ForgeEventHandlers {
             Integer position = progress.getNamedPosition(event.getPos(), world.provider.getDimension());
             if (position != null) {
                 EnigmaFunctionContext context = new EnigmaFunctionContext(world, player);
-                Enigma.root.forActiveScopes(context, scope -> scope.onRightClickBlock(event, context, position));
+                Enigma.root.forActiveScopes(context, (ctxt, scope) -> scope.onRightClickBlock(event, ctxt, position));
             }
         }
     }
@@ -45,7 +45,7 @@ public class ForgeEventHandlers {
             Integer position = progress.getNamedPosition(event.getPos(), world.provider.getDimension());
             if (position != null) {
                 EnigmaFunctionContext context = new EnigmaFunctionContext(world, player);
-                Enigma.root.forActiveScopes(context, scope -> scope.onLeftClickBlock(event, context, position));
+                Enigma.root.forActiveScopes(context, (ctxt, scope) -> scope.onLeftClickBlock(event, ctxt, position));
             }
         }
     }

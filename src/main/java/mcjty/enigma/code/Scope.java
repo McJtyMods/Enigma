@@ -2,13 +2,18 @@ package mcjty.enigma.code;
 
 import mcjty.enigma.parser.Expression;
 import mcjty.enigma.parser.ObjectTools;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import scala.tools.nsc.Global;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class Scope {
@@ -19,17 +24,32 @@ public class Scope {
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onRightClickBlock = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onLeftClickBlock = new ArrayList<>();
     private final List<Scope> nestedScopes = new ArrayList<>();
+    private final List<Scope> nestedPlayerScopes = new ArrayList<>();
+    private final List<Pair<UUID, Scope>> activePlayerScopes = new ArrayList<>();
 
     private boolean init = false;
     private Boolean active = null;      // If null then active state is not known
 
     private Expression<EnigmaFunctionContext> condition;
 
-    public void forActiveScopes(EnigmaFunctionContext context, Consumer<Scope> consumer) {
+    public void forActiveScopes(EnigmaFunctionContext context, BiConsumer<EnigmaFunctionContext, Scope> consumer) {
         for (Scope scope : nestedScopes) {
             if (scope.isActive(context)) {
-                consumer.accept(scope);
+                consumer.accept(context, scope);
                 scope.forActiveScopes(context, consumer);
+            }
+        }
+        for (Pair<UUID, Scope> pair : activePlayerScopes) {
+            UUID uuid = pair.getKey();
+            Scope scope = pair.getValue();
+            EntityPlayerMP player = context.getWorld().getMinecraftServer().getPlayerList().getPlayerByUUID(uuid);
+            if (player == null) {
+                throw new RuntimeException("What? Player is missing!");
+            }
+            EnigmaFunctionContext newctxt = new EnigmaFunctionContext(context.getWorld(), player);
+            if (scope.isActive(newctxt)) {
+                consumer.accept(newctxt, scope);
+                scope.forActiveScopes(newctxt, consumer);
             }
         }
     }
@@ -49,6 +69,8 @@ public class Scope {
         for (Scope nestedScope : nestedScopes) {
             nestedScope.active = false;             // Set known state to not active so that on activation we call 'onStart'
         }
+        activePlayerScopes.clear();
+
         if (active != null) {
             // If we didn't know our state then we don't call 'start' because then we are just loading
             // from start
@@ -63,6 +85,7 @@ public class Scope {
                 scope.activate(context);
             }
         }
+        //@todo player scopes!
     }
 
     // Deactivate this scope. This does not check the condition
@@ -169,6 +192,10 @@ public class Scope {
 
     public void addScope(Scope scope) {
         nestedScopes.add(scope);
+    }
+
+    public void addPlayerScope(Scope scope) {
+        nestedPlayerScopes.add(scope);
     }
 
     public void dump(int indent) {
