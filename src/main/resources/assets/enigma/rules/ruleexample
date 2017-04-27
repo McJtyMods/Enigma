@@ -7,14 +7,14 @@ on init:
     itemstack mysteriouskey:
         item enigma:key
         meta 1
-        description "This is a mysterious key"
+        description "Mysterious key"
 
 on start:
     state main beginroom
 
 while state(main) == beginroom:
     on rightclickblock testpos:
-        message "Test message"
+        message "You receive a mysterious key"
         give mysteriouskey
 
     on rightclickblock lockeddoor:

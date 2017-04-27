@@ -51,6 +51,11 @@ public class CreateItemStackAction extends Action {
             throw new RuntimeException("Cannot find item '" + itemName + "'!");
         }
         ItemStack stack = new ItemStack(item, amount, meta);
+
+        if (description != null && !description.isEmpty()) {
+            stack.setStackDisplayName(description);
+        }
+
         progress.addNamedItemStack(name, stack);
 
         ProgressHolder.save(context.getWorld());
