@@ -4,15 +4,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.List;
 
-public class TokenizedLine {
+public class TokenizedLine<T> {
     private final int indentation;
     private final int lineNumber;
     @Nonnull private final MainToken mainToken;
     @Nullable private final Token secondaryToken;
-    @Nonnull private final List<Expression> parameters;
+    @Nonnull private final List<Expression<T>> parameters;
     private final boolean endsWithColon;
 
-    public TokenizedLine(int indentation, int lineNumber, @Nonnull MainToken mainToken, @Nullable Token secondaryToken, @Nonnull List<Expression> parameters, boolean endsWithColon) {
+    public TokenizedLine(int indentation, int lineNumber, @Nonnull MainToken mainToken, @Nullable Token secondaryToken, @Nonnull List<Expression<T>> parameters, boolean endsWithColon) {
         this.indentation = indentation;
         this.lineNumber = lineNumber;
         this.mainToken = mainToken;
@@ -40,7 +40,7 @@ public class TokenizedLine {
     }
 
     @Nonnull
-    public List<Expression> getParameters() {
+    public List<Expression<T>> getParameters() {
         return parameters;
     }
 

@@ -5,6 +5,7 @@ import java.util.Map;
 
 public enum MainToken {
     STATE(false, 2),        // state <statename> <name>
+    PSTATE(false, 2),       // pstate <statename> <name>
     VAR(false, 2),          // var <varname> <value>
     ON(true, 0),
     POSITION(false, 5),     // position <name>, <x>, <y>, <z>, <dim>

@@ -39,7 +39,7 @@ public class ProgramParser {
     }
 
 
-    private static void parseWhile(ParsingContext context, TokenizedLine line, Scope scope) throws ParserException {
+    private static void parseWhile(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line, Scope scope) throws ParserException {
         if (!line.isEndsWithColon()) {
             throw new ParserException("Expected ':' after 'WHILE' statement", line.getLineNumber());
         }
@@ -61,7 +61,7 @@ public class ProgramParser {
         context.setCurrentIndent(origIndent);
     }
 
-    private static void parseOn(ParsingContext context, TokenizedLine line, Scope scope) throws ParserException {
+    private static void parseOn(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line, Scope scope) throws ParserException {
         Token secondaryToken = line.getSecondaryToken();
         assert secondaryToken != null;
 
@@ -102,8 +102,8 @@ public class ProgramParser {
         }
     }
 
-    private static void parseActionBlock(ParsingContext context, ActionBlock actionBlock) throws ParserException {
-        TokenizedLine line = context.getLine();
+    private static void parseActionBlock(ParsingContext<EnigmaFunctionContext> context, ActionBlock actionBlock) throws ParserException {
+        TokenizedLine<EnigmaFunctionContext> line = context.getLine();
         if (line.getIndentation() <= context.getCurrentIndent()) {
             throw new ParserException("Actions in an action block must be indented to the right!", line.getLineNumber());
         }
@@ -124,6 +124,9 @@ public class ProgramParser {
             switch (line.getMainToken()) {
                 case STATE:
                     actionBlock.addAction(new SetStateAction(line.getParameters().get(0), line.getParameters().get(1)));
+                    break;
+                case PSTATE:
+                    actionBlock.addAction(new SetPlayerStateAction(line.getParameters().get(0), line.getParameters().get(1)));
                     break;
                 case VAR:
                     break;

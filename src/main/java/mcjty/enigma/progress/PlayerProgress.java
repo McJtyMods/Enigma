@@ -1,5 +1,9 @@
 package mcjty.enigma.progress;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.common.util.Constants;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +23,34 @@ public class PlayerProgress {
 
     public Integer getState(Integer state) {
         return states.get(state);
+    }
+
+    public void readFromNBT(NBTTagCompound nbt) {
+        readStates(nbt);
+    }
+
+    private void readStates(NBTTagCompound nbt) {
+        NBTTagList statesList = nbt.getTagList("states", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < statesList.tagCount() ; i++) {
+            NBTTagCompound tc = (NBTTagCompound) statesList.get(i);
+            states.put(STRINGS.get(tc.getString("s")), STRINGS.get(tc.getString("v")));
+        }
+    }
+
+    public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        writeStates(compound);
+        return compound;
+    }
+
+    private void writeStates(NBTTagCompound compound) {
+        NBTTagList list = new NBTTagList();
+        for (Map.Entry<Integer, Integer> entry : states.entrySet()) {
+            NBTTagCompound tc = new NBTTagCompound();
+            tc.setString("s", STRINGS.get(entry.getKey()));
+            tc.setString("v", STRINGS.get(entry.getValue()));
+            list.appendTag(tc);
+        }
+        compound.setTag("states", list);
     }
 
 

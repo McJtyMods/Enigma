@@ -4,6 +4,7 @@ import mcjty.enigma.parser.Expression;
 import mcjty.enigma.parser.ExpressionContext;
 import mcjty.enigma.parser.ExpressionFunction;
 import mcjty.enigma.parser.ObjectTools;
+import mcjty.enigma.progress.PlayerProgress;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 
@@ -26,6 +27,16 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
                 return progress.getState(ObjectTools.asStringSafe(o));
             }
         });
+        FUNCTIONS.put("pstate", (context, o) -> {
+            Progress progress = ProgressHolder.getProgress(context.getWorld());
+            PlayerProgress playerProgress = progress.getPlayerProgress(context.getPlayer());
+            if (o instanceof Integer) {
+                return playerProgress.getState((Integer) o);
+            } else {
+                return playerProgress.getState(ObjectTools.asStringSafe(o));
+            }
+        });
+
     }
 
     @Nullable

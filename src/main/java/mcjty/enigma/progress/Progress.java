@@ -1,6 +1,7 @@
 package mcjty.enigma.progress;
 
 import mcjty.enigma.varia.BlockPosDim;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
@@ -9,6 +10,7 @@ import net.minecraftforge.common.util.Constants;
 import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static mcjty.enigma.varia.StringRegister.STRINGS;
 
@@ -17,6 +19,7 @@ public class Progress {
     private final Map<Integer, Integer> states = new HashMap<>();
     private final Map<Integer, BlockPosDim> namedPositions = new HashMap<>();
     private final Map<BlockPosDim, Integer> positionsToName = new HashMap<>();
+    private final Map<UUID, PlayerProgress> playerProgress = new HashMap<>();
 
     private boolean rootActivated = false;
 
@@ -57,10 +60,30 @@ public class Progress {
         return positionsToName.get(new BlockPosDim(pos, dim));
     }
 
+    public PlayerProgress getPlayerProgress(EntityPlayer player) {
+        if (!playerProgress.containsKey(player.getPersistentID())) {
+            PlayerProgress p = new PlayerProgress();
+            playerProgress.put(player.getPersistentID(), p);
+        }
+        return playerProgress.get(player.getPersistentID());
+    }
+
     public void readFromNBT(NBTTagCompound nbt) {
         readStates(nbt);
         readNamedPositions(nbt);
+        readPlayerProgress(nbt);
         rootActivated = nbt.getBoolean("rootActivated");
+    }
+
+    private void readPlayerProgress(NBTTagCompound nbt) {
+        NBTTagList playerList = nbt.getTagList("players", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < playerList.tagCount() ; i++) {
+            NBTTagCompound tc = (NBTTagCompound) playerList.get(i);
+            UUID uuid = tc.getUniqueId("uuid");
+            PlayerProgress p = new PlayerProgress();
+            p.readFromNBT(tc);
+            playerProgress.put(uuid, p);
+        }
     }
 
     private void readStates(NBTTagCompound nbt) {
@@ -72,9 +95,9 @@ public class Progress {
     }
 
     private void readNamedPositions(NBTTagCompound nbt) {
-        NBTTagList statesList = nbt.getTagList("positions", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < statesList.tagCount() ; i++) {
-            NBTTagCompound tc = (NBTTagCompound) statesList.get(i);
+        NBTTagList positionList = nbt.getTagList("positions", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < positionList.tagCount() ; i++) {
+            NBTTagCompound tc = (NBTTagCompound) positionList.get(i);
             int name = STRINGS.get(tc.getString("s"));
             BlockPos p = new BlockPos(tc.getInteger("x"), tc.getInteger("y"), tc.getInteger("z"));
             BlockPosDim pd = new BlockPosDim(p, tc.getInteger("dim"));
@@ -84,10 +107,22 @@ public class Progress {
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
+        compound.setBoolean("rootActivated", rootActivated);
         writeStates(compound);
         writeNamedPositions(compound);
-        compound.setBoolean("rootActivated", rootActivated);
+        writePlayerProgress(compound);
         return compound;
+    }
+
+    private void writePlayerProgress(NBTTagCompound compound) {
+        NBTTagList list = new NBTTagList();
+        for (Map.Entry<UUID, PlayerProgress> entry : playerProgress.entrySet()) {
+            NBTTagCompound tc = new NBTTagCompound();
+            tc.setUniqueId("uuid", entry.getKey());
+            entry.getValue().writeToNBT(tc);
+            list.appendTag(tc);
+        }
+        compound.setTag("players", list);
     }
 
     private void writeStates(NBTTagCompound compound) {
