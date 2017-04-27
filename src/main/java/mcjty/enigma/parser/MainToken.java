@@ -10,6 +10,8 @@ public enum MainToken {
     ON(true, 0),
     POSITION(false, 5),     // position <name>, <x>, <y>, <z>, <dim>
     WHILE(false, 1),        // while <expression>
+    IF(false, 1),           // if <expression>
+    ELSE(false, 0),         // if <expression>
     MESSAGE(false, 1),      // message <msg>
     GIVE(false, 1),         // give <item>
     ITEMSTACK(false, 1),    // itemstack <name>

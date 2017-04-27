@@ -113,6 +113,8 @@ public class RuleParser<T> {
                     return (w,o) -> ObjectTools.asIntSafe(o) * 2;
                 } else if ("state".equals(name)) {
                     return (w,o) -> o;
+                } else if ("hasitem".equals(name)) {
+                    return (w,o) -> false;
                 } else {
                     return null;
                 }
@@ -120,7 +122,7 @@ public class RuleParser<T> {
 
             @Override
             public boolean isFunction(String name) {
-                return "double".equals(name) || "state".equals(name);
+                return "double".equals(name) || "state".equals(name) || "hasitem".equals(name);
             }
         };
 

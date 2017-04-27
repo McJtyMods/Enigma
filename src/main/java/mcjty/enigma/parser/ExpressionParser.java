@@ -14,12 +14,7 @@ public class ExpressionParser<T> {
     }
 
     public static <T> ParsedExpression<T> eval(final StringPointer str, ExpressionContext<T> context) {
-        ParsedExpression<T> parsedExpression = new ExpressionParser<T>(str, context).parse();
-        if (parsedExpression.isConstant()) {
-            System.out.print("CONSTANT  ");
-        }
-        System.out.println("parsedExpression.getDebug() = " + parsedExpression.getDebug());
-        return parsedExpression;
+        return new ExpressionParser<T>(str, context).parse();
     }
 
     private void nextChar() {

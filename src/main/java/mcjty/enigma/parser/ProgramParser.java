@@ -102,6 +102,26 @@ public class ProgramParser {
         }
     }
 
+    private static IfAction parseIf(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line) throws ParserException {
+        if (!line.isEndsWithColon()) {
+            throw new ParserException("Expected ':' after 'IF' statement", line.getLineNumber());
+        }
+
+        Expression<EnigmaFunctionContext> condition = line.getParameters().get(0);
+
+        ActionBlock posBlock = new ActionBlock();
+        ActionBlock negBlock = null;
+        parseActionBlock(context, posBlock);
+
+        if (context.hasLines() && context.getLine().getMainToken() == MainToken.ELSE && context.getCurrentIndent() == context.getLine().getIndentation()) {
+            context.nextLine();
+            negBlock = new ActionBlock();
+            // @todo check ":" after else
+            parseActionBlock(context, negBlock);
+        }
+        return new IfAction(condition, posBlock, negBlock);
+    }
+
     private static CreateItemStackAction parseItemStack(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line) throws ParserException {
         if (!line.isEndsWithColon()) {
             throw new ParserException("Expected ':' after 'ITEMSTACK' statement", line.getLineNumber());
@@ -186,6 +206,9 @@ public class ProgramParser {
                     actionBlock.addAction(new SetPlayerStateAction(line.getParameters().get(0), line.getParameters().get(1)));
                     break;
                 case VAR:
+                    break;
+                case IF:
+                    actionBlock.addAction(parseIf(context, line));
                     break;
                 case ITEMSTACK:
                     actionBlock.addAction(parseItemStack(context, line));
