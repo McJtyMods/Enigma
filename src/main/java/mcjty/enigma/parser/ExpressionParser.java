@@ -13,10 +13,13 @@ public class ExpressionParser<T> {
         this.context = context;
     }
 
-    public static <T> Expression<T> eval(final StringPointer str, ExpressionContext<T> context) {
+    public static <T> ParsedExpression<T> eval(final StringPointer str, ExpressionContext<T> context) {
         ParsedExpression<T> parsedExpression = new ExpressionParser<T>(str, context).parse();
-        System.out.println("parsedExpression.isConstant() = " + parsedExpression.isConstant());
-        return parsedExpression.getExpression();
+        if (parsedExpression.isConstant()) {
+            System.out.print("CONSTANT  ");
+        }
+        System.out.println("parsedExpression.getDebug() = " + parsedExpression.getDebug());
+        return parsedExpression;
     }
 
     private void nextChar() {
@@ -75,12 +78,12 @@ public class ExpressionParser<T> {
                 Expression<T> a = x.getExpression();
                 ParsedExpression<T> bexp = parseTermEquals();
                 Expression<T> b = bexp.getExpression();
-                x = optimizeBinaryOperator(w -> ObjectTools.equals(a.eval(w), b.eval(w)), x, bexp);
+                x = optimizeBinaryOperator(w -> ObjectTools.equals(a.eval(w), b.eval(w)), x, bexp, "==");
             } else if (eat2('!', '=')) {
                 Expression<T> a = x.getExpression();
                 ParsedExpression<T> bexp = parseTermEquals();
                 Expression<T> b = bexp.getExpression();
-                x = optimizeBinaryOperator(w -> !ObjectTools.equals(a.eval(w), b.eval(w)), x, bexp);
+                x = optimizeBinaryOperator(w -> !ObjectTools.equals(a.eval(w), b.eval(w)), x, bexp, "!=");
             } else {
                 return x;
             }
@@ -94,12 +97,12 @@ public class ExpressionParser<T> {
                 Expression<T> a = x.getExpression();
                 ParsedExpression<T> bexp = parseTerm();
                 Expression<T> b = bexp.getExpression();
-                x = optimizeBinaryOperator(w -> ObjectTools.add(a.eval(w), b.eval(w)), x, bexp);
+                x = optimizeBinaryOperator(w -> ObjectTools.add(a.eval(w), b.eval(w)), x, bexp, "+");
             } else if (eat('-')) {
                 Expression<T> a = x.getExpression();
                 ParsedExpression<T> bexp = parseTerm();
                 Expression<T> b = bexp.getExpression();
-                x = optimizeBinaryOperator(w -> ObjectTools.sub(a.eval(w), b.eval(w)), x, bexp);
+                x = optimizeBinaryOperator(w -> ObjectTools.sub(a.eval(w), b.eval(w)), x, bexp, "-");
             } else {
                 return x;
             }
@@ -113,12 +116,12 @@ public class ExpressionParser<T> {
                 Expression<T> a = x.getExpression();
                 ParsedExpression<T> bexp = parseFactor();
                 Expression<T> b = bexp.getExpression();
-                x = optimizeBinaryOperator(w -> ObjectTools.mul(a.eval(w), b.eval(w)), x, bexp);
+                x = optimizeBinaryOperator(w -> ObjectTools.mul(a.eval(w), b.eval(w)), x, bexp, "*");
             } else if (eat('/')) {
                 Expression<T> a = x.getExpression();
                 ParsedExpression<T> bexp = parseFactor();
                 Expression<T> b = bexp.getExpression();
-                x = optimizeBinaryOperator(w -> ObjectTools.div(a.eval(w), b.eval(w)), x, bexp);
+                x = optimizeBinaryOperator(w -> ObjectTools.div(a.eval(w), b.eval(w)), x, bexp, "/");
             } else {
                 return x;
             }
@@ -134,23 +137,24 @@ public class ExpressionParser<T> {
             Expression<T> a = aexp.getExpression();
             if (aexp.isConstant()) {
                 Object eval = ObjectTools.sub(0, a.eval(null));
-                return new ParsedExpression<T>(w -> eval, true);
+                return new ParsedExpression<T>(w -> eval, true, eval.toString());
             } else {
-                return new ParsedExpression<T>(w -> ObjectTools.sub(0, a.eval(w)), false);
+                return new ParsedExpression<T>(w -> ObjectTools.sub(0, a.eval(w)), false, "-" + aexp.getDebug());
             }
         }
 
         ParsedExpression<T> x;
         int startPos = str.index();
         if (eat('(')) { // parentheses
-            x = parseExpression();
+            ParsedExpression<T> exp = parseExpression();
+            x = new ParsedExpression<T>(exp.getExpression(), exp.isConstant(), "(" + exp.getDebug() + ")");
             eat(')');
         } else if ((ch >= '0' && ch <= '9') || ch == '.') { // numbers
             while ((ch >= '0' && ch <= '9') || ch == '.') {
                 nextChar();
             }
             int d = Integer.parseInt(str.substring(startPos, str.index()));
-            x = new ParsedExpression<T>(w -> d, true);
+            x = new ParsedExpression<T>(w -> d, true, Integer.toString(d));
         } else if (ch == '"' || ch == '\'') {
             int toquote = ch;
             StrBuilder builder = new StrBuilder();
@@ -164,7 +168,7 @@ public class ExpressionParser<T> {
             }
             nextChar();
             String s = builder.toString();
-            x = new ParsedExpression<T>(w -> s, true);
+            x = new ParsedExpression<T>(w -> s, true, "\"" + s + "\"");
         } else if (ch >= 'a' && ch <= 'z') { // functions
             while (ch >= 'a' && ch <= 'z') {
                 nextChar();
@@ -175,19 +179,20 @@ public class ExpressionParser<T> {
                 Expression<T> finalX = x.getExpression();
                 if (x.isConstant()) {
                     double result = Math.sqrt(ObjectTools.asIntSafe(finalX.eval(null)));
-                    x = new ParsedExpression<T>(w -> result, true);
+                    x = new ParsedExpression<T>(w -> result, true, Double.toString(result));
                 } else {
-                    x = new ParsedExpression<T>(w -> Math.sqrt(ObjectTools.asIntSafe(finalX.eval(w))), false);
+                    x = new ParsedExpression<T>(w -> Math.sqrt(ObjectTools.asIntSafe(finalX.eval(w))), false,
+                            "sqrt(" + x.getDebug() + ")");
                 }
             } else if (context.isVariable(func)) {
-                x = new ParsedExpression<T>(context.getVariable(func), false);
+                x = new ParsedExpression<T>(context.getVariable(func), false, func);
             } else if (context.isFunction(func)) {
                 x = parseFactor();
                 Expression<T> finalX = x.getExpression();
                 ExpressionFunction<T> function = context.getFunction(func);
-                x = new ParsedExpression<T>(w -> function.eval(w, finalX.eval(w)), false);
+                x = new ParsedExpression<T>(w -> function.eval(w, finalX.eval(w)), false, func + " " + x.getDebug());
             } else {
-                x = new ParsedExpression<>(w -> func, true);
+                x = new ParsedExpression<>(w -> func, true, func);
             }
         } else {
             throw new RuntimeException("Unexpected: " + (char) ch);
@@ -197,18 +202,18 @@ public class ExpressionParser<T> {
             Expression<T> a = x.getExpression();
             ParsedExpression<T> bexp = parseFactor();
             Expression<T> b = bexp.getExpression();
-            return optimizeBinaryOperator(w -> Math.pow(ObjectTools.asIntSafe(a.eval(w)), ObjectTools.asIntSafe(b.eval(w))), x, bexp);
+            return optimizeBinaryOperator(w -> Math.pow(ObjectTools.asIntSafe(a.eval(w)), ObjectTools.asIntSafe(b.eval(w))), x, bexp, "^");
         }
 
         return x;
     }
 
-    private ParsedExpression<T> optimizeBinaryOperator(Expression<T> operation, ParsedExpression<T> p1, ParsedExpression<T> p2) {
+    private ParsedExpression<T> optimizeBinaryOperator(Expression<T> operation, ParsedExpression<T> p1, ParsedExpression<T> p2, String op) {
         if (p1.isConstant() && p2.isConstant()) {
             Object rc = operation.eval(null);
-            return new ParsedExpression<T>(w -> rc, true);
+            return new ParsedExpression<T>(w -> rc, true, rc.toString());
         } else {
-            return new ParsedExpression<T>(operation, false);
+            return new ParsedExpression<T>(operation, false, p1.getDebug() + op + p2.getDebug());
         }
     }
 

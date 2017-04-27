@@ -2,10 +2,10 @@ package mcjty.enigma.parser;
 
 import javax.annotation.Nullable;
 
-public class EmptyExpressionContext implements ExpressionContext {
+public class EmptyExpressionContext implements ExpressionContext<Void> {
     @Nullable
     @Override
-    public Expression getVariable(String var) {
+    public Expression<Void> getVariable(String var) {
         return null;
     }
 
@@ -16,7 +16,7 @@ public class EmptyExpressionContext implements ExpressionContext {
 
     @Nullable
     @Override
-    public ExpressionFunction getFunction(String name) {
+    public ExpressionFunction<Void> getFunction(String name) {
         return null;
     }
 

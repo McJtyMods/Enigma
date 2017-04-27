@@ -1,6 +1,7 @@
 package mcjty.enigma.parser;
 
 import mcjty.enigma.Enigma;
+import mcjty.enigma.code.EnigmaExpressionContext;
 import mcjty.enigma.code.Scope;
 import org.apache.logging.log4j.Level;
 
@@ -62,7 +63,7 @@ public class RuleParser<T> {
         }
 
         StringPointer str = new StringPointer(line);
-        String token = ObjectTools.asStringSafe(ExpressionParser.eval(str, new EmptyExpressionContext()).eval(null));
+        String token = ObjectTools.asStringSafe(ExpressionParser.eval(str, new EmptyExpressionContext()).getExpression().eval(null));
 
         int parameters = 0;
 
@@ -74,7 +75,7 @@ public class RuleParser<T> {
 
         Token secondaryToken = null;
         if (mainToken.isHasSecondaryToken()) {
-            token = ObjectTools.asStringSafe(ExpressionParser.eval(str, new EmptyExpressionContext()).eval(null));
+            token = ObjectTools.asStringSafe(ExpressionParser.eval(str, new EmptyExpressionContext()).getExpression().eval(null));
             secondaryToken = Token.getTokenByName(token);
             if (secondaryToken == null) {
                 throw new ParserException("ERROR: Unknown token '" + token + "'!", linenumber);
@@ -82,14 +83,14 @@ public class RuleParser<T> {
             parameters = secondaryToken.getParameters();
         }
 
-        List<Expression> params = new ArrayList<>(parameters);
+        List<Expression<T>> params = new ArrayList<>(parameters);
         for (int t = 0 ; t < parameters ; t++) {
-            Expression expression = ExpressionParser.eval(str, expressionContext);
-            params.add(expression);
+            ParsedExpression<T> expression = ExpressionParser.eval(str, expressionContext);
+            params.add(expression.getExpression());
         }
         boolean endsWithColon = str.hasMore() && str.current() == ':';
 
-        return new TokenizedLine(indentation, linenumber, mainToken, secondaryToken, params, endsWithColon);
+        return new TokenizedLine<T>(indentation, linenumber, mainToken, secondaryToken, params, endsWithColon);
     }
 
     public static void main(String[] args) {
@@ -106,10 +107,10 @@ public class RuleParser<T> {
         }
 
         StringPointer str = new StringPointer("double(1)*var   8/2!=2+2 sqrt 16 \"Dit is \\\"een\\\" test\"+' (echt)' 'nog eentje' blub");
-        ExpressionContext context = new ExpressionContext() {
+        ExpressionContext<Void> context = new ExpressionContext<Void>() {
             @Nullable
             @Override
-            public Expression getVariable(String var) {
+            public Expression<Void> getVariable(String var) {
                 return "var".equals(var) ? w -> 666 : null;
             }
 
@@ -120,7 +121,7 @@ public class RuleParser<T> {
 
             @Nullable
             @Override
-            public ExpressionFunction getFunction(String name) {
+            public ExpressionFunction<Void> getFunction(String name) {
                 return "double".equals(name) ? (w,o) -> ObjectTools.asIntSafe(o) * 2 : null;
             }
 
@@ -129,11 +130,11 @@ public class RuleParser<T> {
                 return "double".equals(name);
             }
         };
-        System.out.println("result = " + ExpressionParser.eval(str, context).eval(null));
-        System.out.println("result = " + ExpressionParser.eval(str, context).eval(null));
-        System.out.println("result = " + ExpressionParser.eval(str, context).eval(null));
-        System.out.println("result = " + ExpressionParser.eval(str, context).eval(null));
-        System.out.println("result = " + ExpressionParser.eval(str, context).eval(null));
-        System.out.println("result = " + ExpressionParser.eval(str, context).eval(null));
+        System.out.println("result = " + ExpressionParser.eval(str, context).getExpression().eval(null));
+        System.out.println("result = " + ExpressionParser.eval(str, context).getExpression().eval(null));
+        System.out.println("result = " + ExpressionParser.eval(str, context).getExpression().eval(null));
+        System.out.println("result = " + ExpressionParser.eval(str, context).getExpression().eval(null));
+        System.out.println("result = " + ExpressionParser.eval(str, context).getExpression().eval(null));
+        System.out.println("result = " + ExpressionParser.eval(str, context).getExpression().eval(null));
     }
 }
