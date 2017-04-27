@@ -1,8 +1,5 @@
 package mcjty.enigma.code;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
-
 import java.util.ArrayList;
 import java.util.List;
 

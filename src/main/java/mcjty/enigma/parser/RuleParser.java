@@ -94,19 +94,6 @@ public class RuleParser<T> {
     }
 
     public static void main(String[] args) {
-        String dir = System.getProperty("user.dir");
-        System.out.println("dir = " + dir);
-        File f = new File("out/production/enigma/assets/enigma/rules/ruleexample");
-
-        try {
-            List<TokenizedLine> lines = parse(f, new EmptyExpressionContext());
-            Scope root = ProgramParser.parse(lines);
-            root.dump(0);
-        } catch (ParserException e) {
-            System.out.println("e.getMessage() = " + e.getMessage() + " at line " + e.getLinenumber());
-        }
-
-        StringPointer str = new StringPointer("double(1)*var   8/2!=2+2 sqrt 16 \"Dit is \\\"een\\\" test\"+' (echt)' 'nog eentje' blub");
         ExpressionContext<Void> context = new ExpressionContext<Void>() {
             @Nullable
             @Override
@@ -122,14 +109,34 @@ public class RuleParser<T> {
             @Nullable
             @Override
             public ExpressionFunction<Void> getFunction(String name) {
-                return "double".equals(name) ? (w,o) -> ObjectTools.asIntSafe(o) * 2 : null;
+                if ("double".equals(name)) {
+                    return (w,o) -> ObjectTools.asIntSafe(o) * 2;
+                } else if ("state".equals(name)) {
+                    return (w,o) -> o;
+                } else {
+                    return null;
+                }
             }
 
             @Override
             public boolean isFunction(String name) {
-                return "double".equals(name);
+                return "double".equals(name) || "state".equals(name);
             }
         };
+
+        String dir = System.getProperty("user.dir");
+        System.out.println("dir = " + dir);
+        File f = new File("out/production/enigma/assets/enigma/rules/ruleexample");
+
+        try {
+            List<TokenizedLine> lines = parse(f, context);
+            Scope root = ProgramParser.parse(lines);
+            root.dump(0);
+        } catch (ParserException e) {
+            System.out.println("e.getMessage() = " + e.getMessage() + " at line " + e.getLinenumber());
+        }
+
+        StringPointer str = new StringPointer("double(1)*var   8/2!=2+2 sqrt 16 \"Dit is \\\"een\\\" test\"+' (echt)' 'nog eentje' blub");
         System.out.println("result = " + ExpressionParser.eval(str, context).getExpression().eval(null));
         System.out.println("result = " + ExpressionParser.eval(str, context).getExpression().eval(null));
         System.out.println("result = " + ExpressionParser.eval(str, context).getExpression().eval(null));

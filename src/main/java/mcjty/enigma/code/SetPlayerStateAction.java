@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class SetPlayerStateAction extends Action {
     private final Expression<EnigmaFunctionContext> name;
-    private final Expression<EnigmaFunctionContext>  value;
+    private final Expression<EnigmaFunctionContext> value;
 
     public SetPlayerStateAction(Expression<EnigmaFunctionContext>  name, Expression<EnigmaFunctionContext>  value) {
         this.name = name;

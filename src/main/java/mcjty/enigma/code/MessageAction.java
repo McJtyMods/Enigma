@@ -8,14 +8,14 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import org.apache.commons.lang3.StringUtils;
 
 public class MessageAction extends Action {
-    private final Expression message;
+    private final Expression<EnigmaFunctionContext> message;
     private final int timeout;
 
-    public MessageAction(Expression message) {
+    public MessageAction(Expression<EnigmaFunctionContext> message) {
         this(message, 100);
     }
 
-    public MessageAction(Expression message, int timeout) {
+    public MessageAction(Expression<EnigmaFunctionContext> message, int timeout) {
         this.message = message;
         this.timeout = timeout;
     }

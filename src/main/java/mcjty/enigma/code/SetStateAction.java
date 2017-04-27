@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class SetStateAction extends Action {
     private final Expression<EnigmaFunctionContext> name;
-    private final Expression<EnigmaFunctionContext>  value;
+    private final Expression<EnigmaFunctionContext> value;
 
     public SetStateAction(Expression<EnigmaFunctionContext>  name, Expression<EnigmaFunctionContext>  value) {
         this.name = name;
