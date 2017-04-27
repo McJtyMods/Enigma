@@ -2,6 +2,10 @@
 
 on init:
     position testpos 808 4 1903 0
+    itemstack mysteriouskey:
+        item enigma:key
+        meta 1
+        description "This is a mysterious key"
 
 on start:
     state main beginroom

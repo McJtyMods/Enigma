@@ -1,7 +1,9 @@
 package mcjty.enigma.progress;
 
 import mcjty.enigma.varia.BlockPosDim;
+import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.BlockPos;
@@ -20,6 +22,7 @@ public class Progress {
     private final Map<Integer, BlockPosDim> namedPositions = new HashMap<>();
     private final Map<BlockPosDim, Integer> positionsToName = new HashMap<>();
     private final Map<UUID, PlayerProgress> playerProgress = new HashMap<>();
+    private final Map<Integer, ItemStack> namedItemStacks = new HashMap<>();
 
     private boolean rootActivated = false;
 
@@ -60,6 +63,18 @@ public class Progress {
         return positionsToName.get(new BlockPosDim(pos, dim));
     }
 
+    public void addNamedItemStack(String name, ItemStack stack) {
+        namedItemStacks.put(STRINGS.get(name), stack);
+    }
+
+    public ItemStack getNamedItemStack(String name) {
+        return namedItemStacks.get(STRINGS.get(name));
+    }
+
+    public ItemStack getNamedItemStack(Integer name) {
+        return namedItemStacks.get(name);
+    }
+
     public PlayerProgress getPlayerProgress(EntityPlayer player) {
         if (!playerProgress.containsKey(player.getPersistentID())) {
             PlayerProgress p = new PlayerProgress();
@@ -71,14 +86,15 @@ public class Progress {
     public void readFromNBT(NBTTagCompound nbt) {
         readStates(nbt);
         readNamedPositions(nbt);
+        readNamedItemStacks(nbt);
         readPlayerProgress(nbt);
         rootActivated = nbt.getBoolean("rootActivated");
     }
 
     private void readPlayerProgress(NBTTagCompound nbt) {
-        NBTTagList playerList = nbt.getTagList("players", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < playerList.tagCount() ; i++) {
-            NBTTagCompound tc = (NBTTagCompound) playerList.get(i);
+        NBTTagList list = nbt.getTagList("players", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < list.tagCount() ; i++) {
+            NBTTagCompound tc = (NBTTagCompound) list.get(i);
             UUID uuid = tc.getUniqueId("uuid");
             PlayerProgress p = new PlayerProgress();
             p.readFromNBT(tc);
@@ -95,9 +111,9 @@ public class Progress {
     }
 
     private void readNamedPositions(NBTTagCompound nbt) {
-        NBTTagList positionList = nbt.getTagList("positions", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < positionList.tagCount() ; i++) {
-            NBTTagCompound tc = (NBTTagCompound) positionList.get(i);
+        NBTTagList list = nbt.getTagList("positions", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < list.tagCount() ; i++) {
+            NBTTagCompound tc = (NBTTagCompound) list.get(i);
             int name = STRINGS.get(tc.getString("s"));
             BlockPos p = new BlockPos(tc.getInteger("x"), tc.getInteger("y"), tc.getInteger("z"));
             BlockPosDim pd = new BlockPosDim(p, tc.getInteger("dim"));
@@ -106,10 +122,24 @@ public class Progress {
         }
     }
 
+    private void readNamedItemStacks(NBTTagCompound nbt) {
+        NBTTagList list = nbt.getTagList("itemstacks", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < list.tagCount() ; i++) {
+            NBTTagCompound tc = (NBTTagCompound) list.get(i);
+            int name = STRINGS.get(tc.getString("s"));
+            ItemStack stack = ItemStackTools.getEmptyStack();
+            if (tc.hasKey("item")) {
+                stack = ItemStackTools.loadFromNBT(tc.getCompoundTag("item"));
+            }
+            namedItemStacks.put(name, stack);
+        }
+    }
+
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setBoolean("rootActivated", rootActivated);
         writeStates(compound);
         writeNamedPositions(compound);
+        writeNamedItemStacks(compound);
         writePlayerProgress(compound);
         return compound;
     }
@@ -141,7 +171,6 @@ public class Progress {
         for (Map.Entry<Integer, BlockPosDim> entry : namedPositions.entrySet()) {
             NBTTagCompound tc = new NBTTagCompound();
             tc.setString("s", STRINGS.get(entry.getKey()));
-//            tc.setString("s", entry.getKey());
             BlockPos pos = entry.getValue().getPos();
             tc.setInteger("x", pos.getX());
             tc.setInteger("y", pos.getY());
@@ -150,5 +179,20 @@ public class Progress {
             list.appendTag(tc);
         }
         compound.setTag("positions", list);
+    }
+
+    private void writeNamedItemStacks(NBTTagCompound compound) {
+        NBTTagList list = new NBTTagList();
+        for (Map.Entry<Integer, ItemStack> entry : namedItemStacks.entrySet()) {
+            NBTTagCompound tc = new NBTTagCompound();
+            tc.setString("s", STRINGS.get(entry.getKey()));
+            if (ItemStackTools.isValid(entry.getValue())) {
+                NBTTagCompound itemtag = new NBTTagCompound();
+                entry.getValue().writeToNBT(itemtag);
+                tc.setTag("item", itemtag);
+            }
+            list.appendTag(tc);
+        }
+        compound.setTag("itemstacks", list);
     }
 }

@@ -177,6 +177,10 @@ public class Scope {
             System.out.println(StringUtils.repeat(' ', indent+4) + "On Start:");
             block.dump(indent+4);
         }
+        for (ActionBlock block : onInit) {
+            System.out.println(StringUtils.repeat(' ', indent+4) + "On Init:");
+            block.dump(indent+4);
+        }
         for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onDelay) {
             System.out.println(StringUtils.repeat(' ', indent+4) + "On Delay (" + pair.getValue() + "):");
             pair.getKey().dump(indent+4);

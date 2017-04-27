@@ -12,6 +12,10 @@ public enum MainToken {
     WHILE(false, 1),        // while <expression>
     MESSAGE(false, 1),      // message <msg>
     GIVE(false, 2),         // give <item> <tag>
+    ITEMSTACK(false, 1),    // itemstack <name>
+    ITEM(false,1),          // item <name>
+    META(false,1),          // meta <value>
+    DESCRIPTION(false,1),   // description <string>
     TAG(false, 2);          // tag <object> <tagname>
 
     private final boolean hasSecondaryToken;

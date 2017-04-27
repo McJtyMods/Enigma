@@ -102,10 +102,63 @@ public class ProgramParser {
         }
     }
 
+    private static CreateItemStackAction parseItemStack(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line) throws ParserException {
+        if (!line.isEndsWithColon()) {
+            throw new ParserException("Expected ':' after 'ITEMSTACK' statement", line.getLineNumber());
+        }
+
+        Expression<EnigmaFunctionContext> name = line.getParameters().get(0);
+
+        line = context.getLine();
+        if (line.getIndentation() <= context.getCurrentIndent()) {
+            throw new ParserException("Commands in an itemstack block must be indented to the right!", line.getLineNumber());
+        }
+
+        int origIndent = context.getCurrentIndent();
+        context.setCurrentIndent(line.getIndentation());
+
+        Expression<EnigmaFunctionContext> item = null;
+        Expression<EnigmaFunctionContext> meta = null;
+        Expression<EnigmaFunctionContext> description = null;
+
+        while (context.hasLines()) {
+            line = context.getLine();
+            if (line.getIndentation() > context.getCurrentIndent()) {
+                throw new ParserException("Unexpected indentation in itemstack block", line.getLineNumber());
+            }
+            if (line.getIndentation() < context.getCurrentIndent()) {
+                break;
+            }
+            int linenumber = line.getLineNumber();
+            context.nextLine();
+
+            switch (line.getMainToken()) {
+                case ITEM:
+                    item = line.getParameters().get(0);
+                    break;
+                case META:
+                    meta = line.getParameters().get(0);
+                    break;
+                case DESCRIPTION:
+                    description = line.getParameters().get(0);
+                    break;
+                default:
+                    throw new ParserException("Unexpected command '" + line.getMainToken().name() + "' for itemstack block", linenumber);
+            }
+        }
+
+        if (item == null) {
+            throw new ParserException("Missing 'item' for itemstack!", line.getLineNumber());
+        }
+
+        context.setCurrentIndent(origIndent);
+        return new CreateItemStackAction(name, item, meta, description);
+    }
+
     private static void parseActionBlock(ParsingContext<EnigmaFunctionContext> context, ActionBlock actionBlock) throws ParserException {
         TokenizedLine<EnigmaFunctionContext> line = context.getLine();
         if (line.getIndentation() <= context.getCurrentIndent()) {
-            throw new ParserException("Actions in an action block must be indented to the right!", line.getLineNumber());
+            throw new ParserException("Actions in an action block must be indented to the right", line.getLineNumber());
         }
         int oldindent = context.getCurrentIndent();
         context.setCurrentIndent(line.getIndentation());
@@ -130,6 +183,9 @@ public class ProgramParser {
                     break;
                 case VAR:
                     break;
+                case ITEMSTACK:
+                    actionBlock.addAction(parseItemStack(context, line));
+                    break;
                 case POSITION:
                     actionBlock.addAction(new PositionAction(
                             line.getParameters().get(0),
@@ -147,7 +203,7 @@ public class ProgramParser {
                 case TAG:
                     break;
                 default:
-                    throw new ParserException("Unexpected command '" + line.getMainToken().name() + "' for an action block!", linenumber);
+                    throw new ParserException("Unexpected command '" + line.getMainToken().name() + "' for action block!", linenumber);
             }
         }
 
