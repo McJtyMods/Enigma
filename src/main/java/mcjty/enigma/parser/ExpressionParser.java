@@ -14,7 +14,9 @@ public class ExpressionParser<T> {
     }
 
     public static <T> Expression<T> eval(final StringPointer str, ExpressionContext<T> context) {
-        return new ExpressionParser<T>(str, context).parse();
+        ParsedExpression<T> parsedExpression = new ExpressionParser<T>(str, context).parse();
+        System.out.println("parsedExpression.isConstant() = " + parsedExpression.isConstant());
+        return parsedExpression.getExpression();
     }
 
     private void nextChar() {
@@ -50,9 +52,9 @@ public class ExpressionParser<T> {
         return false;
     }
 
-    public Expression<T> parse() {
+    public ParsedExpression<T> parse() {
         nextChar();
-        Expression<T> x = parseExpression();
+        ParsedExpression<T> x = parseExpression();
         if (str.hasMore() && str.current() != ',' && str.current() != ':') {
             str.dec();
         }
@@ -66,67 +68,79 @@ public class ExpressionParser<T> {
     // factor = `+` factor | `-` factor | `(` expression `)`
     //        | number | functionName factor | factor `^` factor
 
-    private Expression<T> parseExpression() {
-        Expression<T> x = parseTermEquals();
+    private ParsedExpression<T> parseExpression() {
+        ParsedExpression<T> x = parseTermEquals();
         while (true) {
             if (eat2('=', '=')) {
-                Expression<T> a = x;
-                Expression<T> b = parseTermEquals();
-                x = w -> ObjectTools.equals(a.eval(w), b.eval(w));
+                Expression<T> a = x.getExpression();
+                ParsedExpression<T> bexp = parseTermEquals();
+                Expression<T> b = bexp.getExpression();
+                x = optimizeBinaryOperator(w -> ObjectTools.equals(a.eval(w), b.eval(w)), x, bexp);
             } else if (eat2('!', '=')) {
-                Expression<T> a = x;
-                Expression<T> b = parseTermEquals();
-                x = w -> !ObjectTools.equals(a.eval(w), b.eval(w));
+                Expression<T> a = x.getExpression();
+                ParsedExpression<T> bexp = parseTermEquals();
+                Expression<T> b = bexp.getExpression();
+                x = optimizeBinaryOperator(w -> !ObjectTools.equals(a.eval(w), b.eval(w)), x, bexp);
             } else {
                 return x;
             }
         }
     }
 
-    private Expression<T> parseTermEquals() {
-        Expression<T> x = parseTerm();
+    private ParsedExpression<T> parseTermEquals() {
+        ParsedExpression<T> x = parseTerm();
         while (true) {
             if (eat('+')) {
-                Expression<T> a = x;
-                Expression<T> b = parseTerm();
-                x = w -> ObjectTools.add(a.eval(w), b.eval(w));
+                Expression<T> a = x.getExpression();
+                ParsedExpression<T> bexp = parseTerm();
+                Expression<T> b = bexp.getExpression();
+                x = optimizeBinaryOperator(w -> ObjectTools.add(a.eval(w), b.eval(w)), x, bexp);
             } else if (eat('-')) {
-                Expression<T> a = x;
-                Expression<T> b = parseTerm();
-                x = w -> ObjectTools.sub(a.eval(w), b.eval(w));
+                Expression<T> a = x.getExpression();
+                ParsedExpression<T> bexp = parseTerm();
+                Expression<T> b = bexp.getExpression();
+                x = optimizeBinaryOperator(w -> ObjectTools.sub(a.eval(w), b.eval(w)), x, bexp);
             } else {
                 return x;
             }
         }
     }
 
-    private Expression<T> parseTerm() {
-        Expression<T> x = parseFactor();
+    private ParsedExpression<T> parseTerm() {
+        ParsedExpression<T> x = parseFactor();
         while (true) {
             if (eat('*')) {
-                Expression<T> a = x;
-                Expression<T> b = parseFactor();
-                x = w -> ObjectTools.mul(a.eval(w), b.eval(w));
+                Expression<T> a = x.getExpression();
+                ParsedExpression<T> bexp = parseFactor();
+                Expression<T> b = bexp.getExpression();
+                x = optimizeBinaryOperator(w -> ObjectTools.mul(a.eval(w), b.eval(w)), x, bexp);
             } else if (eat('/')) {
-                Expression<T> a = x;
-                Expression<T> b = parseFactor();
-                x = w -> ObjectTools.div(a.eval(w), b.eval(w));
+                Expression<T> a = x.getExpression();
+                ParsedExpression<T> bexp = parseFactor();
+                Expression<T> b = bexp.getExpression();
+                x = optimizeBinaryOperator(w -> ObjectTools.div(a.eval(w), b.eval(w)), x, bexp);
             } else {
                 return x;
             }
         }
     }
 
-    private Expression<T> parseFactor() {
+    private ParsedExpression<T> parseFactor() {
         if (eat('+')) {
             return parseFactor(); // unary plus
         }
         if (eat('-')) {
-            Expression<T> a = parseFactor();
-            return w -> ObjectTools.sub(0, a.eval(w));
+            ParsedExpression<T> aexp = parseFactor();
+            Expression<T> a = aexp.getExpression();
+            if (aexp.isConstant()) {
+                Object eval = ObjectTools.sub(0, a.eval(null));
+                return new ParsedExpression<T>(w -> eval, true);
+            } else {
+                return new ParsedExpression<T>(w -> ObjectTools.sub(0, a.eval(w)), false);
+            }
         }
 
-        Expression<T> x;
+        ParsedExpression<T> x;
         int startPos = str.index();
         if (eat('(')) { // parentheses
             x = parseExpression();
@@ -136,7 +150,7 @@ public class ExpressionParser<T> {
                 nextChar();
             }
             int d = Integer.parseInt(str.substring(startPos, str.index()));
-            x = w -> d;
+            x = new ParsedExpression<T>(w -> d, true);
         } else if (ch == '"' || ch == '\'') {
             int toquote = ch;
             StrBuilder builder = new StrBuilder();
@@ -150,7 +164,7 @@ public class ExpressionParser<T> {
             }
             nextChar();
             String s = builder.toString();
-            x = w -> s;
+            x = new ParsedExpression<T>(w -> s, true);
         } else if (ch >= 'a' && ch <= 'z') { // functions
             while (ch >= 'a' && ch <= 'z') {
                 nextChar();
@@ -158,28 +172,45 @@ public class ExpressionParser<T> {
             String func = str.substring(startPos, str.index());
             if ("sqrt".equals(func)) {
                 x = parseFactor();
-                Expression<T> finalX = x;
-                x = w -> Math.sqrt(ObjectTools.asIntSafe(finalX.eval(w)));
+                Expression<T> finalX = x.getExpression();
+                if (x.isConstant()) {
+                    double result = Math.sqrt(ObjectTools.asIntSafe(finalX.eval(null)));
+                    x = new ParsedExpression<T>(w -> result, true);
+                } else {
+                    x = new ParsedExpression<T>(w -> Math.sqrt(ObjectTools.asIntSafe(finalX.eval(w))), false);
+                }
             } else if (context.isVariable(func)) {
-                x = context.getVariable(func);
+                x = new ParsedExpression<T>(context.getVariable(func), false);
             } else if (context.isFunction(func)) {
                 x = parseFactor();
-                Expression<T> finalX = x;
+                Expression<T> finalX = x.getExpression();
                 ExpressionFunction<T> function = context.getFunction(func);
-                x = w -> function.eval(w, finalX.eval(w));
+                x = new ParsedExpression<T>(w -> function.eval(w, finalX.eval(w)), false);
             } else {
-                x = w -> func;
+                x = new ParsedExpression<>(w -> func, true);
             }
         } else {
             throw new RuntimeException("Unexpected: " + (char) ch);
         }
 
         if (eat('^')) {
-            Expression<T> a = x;
-            Expression<T> b = parseFactor();
-            x = w -> Math.pow(ObjectTools.asIntSafe(a.eval(w)), ObjectTools.asIntSafe(b.eval(w))); // exponentiation
+            Expression<T> a = x.getExpression();
+            ParsedExpression<T> bexp = parseFactor();
+            Expression<T> b = bexp.getExpression();
+            return optimizeBinaryOperator(w -> Math.pow(ObjectTools.asIntSafe(a.eval(w)), ObjectTools.asIntSafe(b.eval(w))), x, bexp);
         }
 
         return x;
     }
+
+    private ParsedExpression<T> optimizeBinaryOperator(Expression<T> operation, ParsedExpression<T> p1, ParsedExpression<T> p2) {
+        if (p1.isConstant() && p2.isConstant()) {
+            Object rc = operation.eval(null);
+            return new ParsedExpression<T>(w -> rc, true);
+        } else {
+            return new ParsedExpression<T>(operation, false);
+        }
+    }
+
+
 }
