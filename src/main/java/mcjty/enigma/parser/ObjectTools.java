@@ -1,5 +1,7 @@
 package mcjty.enigma.parser;
 
+import static mcjty.enigma.varia.StringRegister.STRINGS;
+
 public class ObjectTools {
 
     public static boolean asBoolSafe(Object o) {
@@ -75,6 +77,11 @@ public class ObjectTools {
     public static boolean equals(Object o1, Object o2) {
         if (o1 == null) {
             return o2 == null;
+        }
+        if (o1 instanceof Integer && o2 instanceof String) {
+            return o1.equals(STRINGS.get((String) o2));
+        } else if (o1 instanceof String && o2 instanceof Integer) {
+            return o2.equals(STRINGS.get((String) o1));
         }
         return o1.equals(o2);
     }
