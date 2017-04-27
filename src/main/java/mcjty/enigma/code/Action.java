@@ -1,11 +1,14 @@
 package mcjty.enigma.code;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
-
 public abstract class Action {
     public void dump(int indent) {
     }
 
-    public abstract void execute(EnigmaFunctionContext context, EntityPlayer player);
+    public abstract void execute(EnigmaFunctionContext context);
+
+    protected void checkPlayer(EnigmaFunctionContext context) {
+        if (!context.hasPlayer()) {
+            throw new RuntimeException("message used without valid player!");
+        }
+    }
 }

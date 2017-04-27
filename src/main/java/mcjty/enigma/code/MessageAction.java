@@ -4,7 +4,6 @@ import mcjty.enigma.network.EnigmaMessages;
 import mcjty.enigma.network.PacketAddMessage;
 import mcjty.enigma.parser.Expression;
 import mcjty.enigma.parser.ObjectTools;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,7 +27,8 @@ public class MessageAction extends Action {
     }
 
     @Override
-    public void execute(EnigmaFunctionContext context, EntityPlayer player) {
-        EnigmaMessages.INSTANCE.sendTo(new PacketAddMessage(ObjectTools.asStringSafe(message.eval(context)), timeout), (EntityPlayerMP) player);
+    public void execute(EnigmaFunctionContext context) {
+        checkPlayer(context);
+        EnigmaMessages.INSTANCE.sendTo(new PacketAddMessage(ObjectTools.asStringSafe(message.eval(context)), timeout), (EntityPlayerMP) context.getPlayer());
     }
 }

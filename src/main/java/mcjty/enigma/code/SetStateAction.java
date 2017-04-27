@@ -4,7 +4,6 @@ import mcjty.enigma.parser.Expression;
 import mcjty.enigma.parser.ObjectTools;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
-import net.minecraft.entity.player.EntityPlayer;
 import org.apache.commons.lang3.StringUtils;
 
 public class SetStateAction extends Action {
@@ -22,7 +21,7 @@ public class SetStateAction extends Action {
     }
 
     @Override
-    public void execute(EnigmaFunctionContext context, EntityPlayer player) {
+    public void execute(EnigmaFunctionContext context) {
         Progress progress = ProgressHolder.getProgress(context.getWorld());
         System.out.println("Setting state " + name + " to " + value);
 

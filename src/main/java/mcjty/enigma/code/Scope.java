@@ -111,26 +111,24 @@ public class Scope {
     }
 
     public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event, EnigmaFunctionContext context, @Nonnull String position) {
-        EntityPlayer player = event.getEntityPlayer();
         for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onRightClickBlock) {
             if (position.equals(pair.getValue().eval(context))) {
-                pair.getKey().execute(context, player);
+                pair.getKey().execute(context);
             }
         }
     }
 
     public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event, EnigmaFunctionContext context, @Nonnull String position) {
-        EntityPlayer player = event.getEntityPlayer();
         for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onLeftClickBlock) {
             if (position.equals(pair.getValue().eval(context))) {
-                pair.getKey().execute(context, player);
+                pair.getKey().execute(context);
             }
         }
     }
 
     private void start(EnigmaFunctionContext context) {
         for (ActionBlock actionBlock : onStart) {
-            actionBlock.execute(context, null);
+            actionBlock.execute(context);
         }
     }
 

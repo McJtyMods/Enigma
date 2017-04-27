@@ -5,7 +5,6 @@ import mcjty.enigma.parser.ObjectTools;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.varia.BlockPosDim;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.BlockPos;
 import org.apache.commons.lang3.StringUtils;
 
@@ -30,7 +29,7 @@ public class PositionAction extends Action {
     }
 
     @Override
-    public void execute(EnigmaFunctionContext context, EntityPlayer player) {
+    public void execute(EnigmaFunctionContext context) {
         Progress progress = ProgressHolder.getProgress(context.getWorld());
         BlockPos p = new BlockPos(ObjectTools.asIntSafe(x.eval(context)), ObjectTools.asIntSafe(y.eval(context)), ObjectTools.asIntSafe(z.eval(context)));
         String name = ObjectTools.asStringSafe(this.name.eval(context));
