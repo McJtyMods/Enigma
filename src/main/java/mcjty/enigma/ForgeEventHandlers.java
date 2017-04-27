@@ -28,7 +28,7 @@ public class ForgeEventHandlers {
             EntityPlayer player = event.getEntityPlayer();
             World world = player.getEntityWorld();
             Progress progress = ProgressHolder.getProgress(world);
-            String position = progress.getNamedPosition(event.getPos(), world.provider.getDimension());
+            Integer position = progress.getNamedPosition(event.getPos(), world.provider.getDimension());
             if (position != null) {
                 EnigmaFunctionContext context = new EnigmaFunctionContext(world, player);
                 Enigma.root.forActiveScopes(context, scope -> scope.onRightClickBlock(event, context, position));
@@ -42,7 +42,7 @@ public class ForgeEventHandlers {
             EntityPlayer player = event.getEntityPlayer();
             World world = player.getEntityWorld();
             Progress progress = ProgressHolder.getProgress(world);
-            String position = progress.getNamedPosition(event.getPos(), world.provider.getDimension());
+            Integer position = progress.getNamedPosition(event.getPos(), world.provider.getDimension());
             if (position != null) {
                 EnigmaFunctionContext context = new EnigmaFunctionContext(world, player);
                 Enigma.root.forActiveScopes(context, scope -> scope.onLeftClickBlock(event, context, position));

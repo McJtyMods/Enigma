@@ -2,9 +2,6 @@ package mcjty.enigma.code;
 
 import mcjty.enigma.parser.Expression;
 import mcjty.enigma.parser.ObjectTools;
-import mcjty.enigma.progress.Progress;
-import mcjty.enigma.progress.ProgressHolder;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -27,7 +24,6 @@ public class Scope {
     private Expression<EnigmaFunctionContext> condition;
 
     public void forActiveScopes(EnigmaFunctionContext context, Consumer<Scope> consumer) {
-        Progress progress = ProgressHolder.getProgress(context.getWorld());
         for (Scope scope : nestedScopes) {
             if (scope.isActive(context)) {
                 consumer.accept(scope);
@@ -110,17 +106,17 @@ public class Scope {
         return nestedScopes;
     }
 
-    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event, EnigmaFunctionContext context, @Nonnull String position) {
+    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event, EnigmaFunctionContext context, @Nonnull Integer position) {
         for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onRightClickBlock) {
-            if (position.equals(pair.getValue().eval(context))) {
+            if (ObjectTools.equals(position, pair.getValue().eval(context))) {
                 pair.getKey().execute(context);
             }
         }
     }
 
-    public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event, EnigmaFunctionContext context, @Nonnull String position) {
+    public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event, EnigmaFunctionContext context, @Nonnull Integer position) {
         for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onLeftClickBlock) {
-            if (position.equals(pair.getValue().eval(context))) {
+            if (ObjectTools.equals(position, pair.getValue().eval(context))) {
                 pair.getKey().execute(context);
             }
         }

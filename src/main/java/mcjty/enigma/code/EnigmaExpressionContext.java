@@ -20,7 +20,11 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
     static {
         FUNCTIONS.put("state", (context, o) -> {
             Progress progress = ProgressHolder.getProgress(context.getWorld());
-            return progress.getState(ObjectTools.asStringSafe(o));
+            if (o instanceof Integer) {
+                return progress.getState((Integer) o);
+            } else {
+                return progress.getState(ObjectTools.asStringSafe(o));
+            }
         });
     }
 
