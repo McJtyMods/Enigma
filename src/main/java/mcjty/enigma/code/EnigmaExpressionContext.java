@@ -7,9 +7,15 @@ import mcjty.enigma.parser.ObjectTools;
 import mcjty.enigma.progress.PlayerProgress;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
+import mcjty.lib.compat.CompatInventory;
+import mcjty.lib.tools.InventoryTools;
+import mcjty.lib.tools.ItemStackTools;
+import net.minecraft.inventory.ItemStackHelper;
+import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static mcjty.enigma.varia.StringRegister.STRINGS;
@@ -35,6 +41,26 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
             } else {
                 return playerProgress.getState(ObjectTools.asStringSafe(o));
             }
+        });
+        FUNCTIONS.put("hasitem", (context, o) -> {
+            Progress progress = ProgressHolder.getProgress(context.getWorld());
+            ItemStack stack = ItemStackTools.getEmptyStack();
+            if (o instanceof Integer) {
+                stack = progress.getNamedItemStack((Integer) o);
+            } else {
+                stack = progress.getNamedItemStack(ObjectTools.asStringSafe(o));
+            }
+            if (ItemStackTools.isValid(stack)) {
+                List<ItemStack> items = InventoryTools.getMainInventory(context.getPlayer());
+                for (ItemStack item : items) {
+                    if (ItemStackTools.isValid(item)) {
+                        if (ItemStack.areItemStackTagsEqual(item, stack)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         });
 
     }

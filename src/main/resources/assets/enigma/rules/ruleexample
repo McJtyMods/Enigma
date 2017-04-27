@@ -2,6 +2,8 @@
 
 on init:
     position testpos 808 4 1903 0
+    position lockeddoor 800 4 1903 0
+
     itemstack mysteriouskey:
         item enigma:key
         meta 1
@@ -14,3 +16,10 @@ while state(main) == beginroom:
     on rightclickblock testpos:
         message "Test message"
         give mysteriouskey
+
+    on rightclickblock lockeddoor:
+        if hasitem(mysteriouskey):
+            message "The door opens!"
+        else:
+            message "You need a key!"
+
