@@ -13,3 +13,4 @@ on start:
 while state(main) == beginroom:
     on rightclickblock testpos:
         message "Test message"
+        give mysteriouskey

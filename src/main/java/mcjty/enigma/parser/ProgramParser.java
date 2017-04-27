@@ -119,6 +119,7 @@ public class ProgramParser {
 
         Expression<EnigmaFunctionContext> item = null;
         Expression<EnigmaFunctionContext> meta = null;
+        Expression<EnigmaFunctionContext> amount = null;
         Expression<EnigmaFunctionContext> description = null;
 
         while (context.hasLines()) {
@@ -136,6 +137,9 @@ public class ProgramParser {
                 case ITEM:
                     item = line.getParameters().get(0);
                     break;
+                case AMOUNT:
+                    amount = line.getParameters().get(0);
+                    break;
                 case META:
                     meta = line.getParameters().get(0);
                     break;
@@ -152,7 +156,7 @@ public class ProgramParser {
         }
 
         context.setCurrentIndent(origIndent);
-        return new CreateItemStackAction(name, item, meta, description);
+        return new CreateItemStackAction(name, item, amount, meta, description);
     }
 
     private static void parseActionBlock(ParsingContext<EnigmaFunctionContext> context, ActionBlock actionBlock) throws ParserException {
@@ -198,7 +202,7 @@ public class ProgramParser {
                     actionBlock.addAction(new MessageAction(line.getParameters().get(0)));
                     break;
                 case GIVE:
-                    actionBlock.addAction(new GiveAction(line.getParameters().get(0), line.getParameters().get(1)));
+                    actionBlock.addAction(new GiveAction(line.getParameters().get(0)));
                     break;
                 case TAG:
                     break;

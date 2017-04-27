@@ -11,9 +11,10 @@ public enum MainToken {
     POSITION(false, 5),     // position <name>, <x>, <y>, <z>, <dim>
     WHILE(false, 1),        // while <expression>
     MESSAGE(false, 1),      // message <msg>
-    GIVE(false, 2),         // give <item> <tag>
+    GIVE(false, 1),         // give <item>
     ITEMSTACK(false, 1),    // itemstack <name>
     ITEM(false,1),          // item <name>
+    AMOUNT(false,1),        // amount <number>
     META(false,1),          // meta <value>
     DESCRIPTION(false,1),   // description <string>
     TAG(false, 2);          // tag <object> <tagname>
