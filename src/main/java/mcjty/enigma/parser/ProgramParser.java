@@ -94,6 +94,9 @@ public class ProgramParser {
             case START:
                 scope.addOnStart(actionBlock);
                 break;
+            case INIT:
+                scope.addOnInit(actionBlock);
+                break;
             default:
                 throw new ParserException("Unexpected token '" + secondaryToken.name() + "' for 'ON' command!", line.getLineNumber());
         }

@@ -12,6 +12,7 @@ public enum Token {
     BLOCKAT(2),         // on blockat <position> <blocktype>
     DELAY(1),           // on delay <time>
     OPEN(1),            // on open <name>
+    INIT(0),            // on init
     START(0);           // on start
 
     private static final Map<String, Token> MAP = new HashMap<>();

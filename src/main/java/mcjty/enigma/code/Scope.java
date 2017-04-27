@@ -14,11 +14,13 @@ import java.util.function.Consumer;
 public class Scope {
 
     private final List<ActionBlock> onStart = new ArrayList<>();
+    private final List<ActionBlock> onInit = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onDelay = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onRightClickBlock = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onLeftClickBlock = new ArrayList<>();
     private final List<Scope> nestedScopes = new ArrayList<>();
 
+    private boolean init = false;
     private Boolean active = null;      // If null then active state is not known
 
     private Expression<EnigmaFunctionContext> condition;
@@ -123,9 +125,20 @@ public class Scope {
     }
 
     private void start(EnigmaFunctionContext context) {
+        init(context);
         for (ActionBlock actionBlock : onStart) {
             actionBlock.execute(context);
         }
+    }
+
+    public void init(EnigmaFunctionContext context) {
+        if (init) {
+            return;
+        }
+        for (ActionBlock actionBlock : onInit) {
+            actionBlock.execute(context);
+        }
+        init = true;
     }
 
     private void stop(EnigmaFunctionContext context) {
@@ -136,6 +149,10 @@ public class Scope {
 
     public void addOnStart(ActionBlock actionBlock) {
         onStart.add(actionBlock);
+    }
+
+    public void addOnInit(ActionBlock actionBlock) {
+        onInit.add(actionBlock);
     }
 
     public void addOnDelay(ActionBlock actionBlock, Expression<EnigmaFunctionContext> delayPar) {

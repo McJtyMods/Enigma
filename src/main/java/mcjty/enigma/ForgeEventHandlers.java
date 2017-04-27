@@ -17,9 +17,9 @@ public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onWorldLoad(WorldEvent.Load event) {
-//        if (!event.getWorld().isRemote) {
-//            Enigma.root.start(event.getWorld());
-//        }
+        if (!event.getWorld().isRemote) {
+            Enigma.root.init(new EnigmaFunctionContext(event.getWorld(), null));
+        }
     }
 
     @SubscribeEvent
@@ -53,6 +53,7 @@ public class ForgeEventHandlers {
     @SubscribeEvent
     public void onServerTickEvent(TickEvent.ServerTickEvent event) {
         WorldServer world = DimensionManager.getWorld(0);
+        Enigma.root.init(new EnigmaFunctionContext(world, null));
         Progress progress = ProgressHolder.getProgress(world);
         if (!progress.isRootActivated()) {
             Enigma.root.setInactiveForRoot();

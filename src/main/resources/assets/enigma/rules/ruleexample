@@ -1,7 +1,9 @@
 # In game it is possible to tag items and objects using the 'tagger'
 
-on start:
+on init:
     position testpos 808 4 1903 0
+
+on start:
     state main beginroom
 
 while state(main) == beginroom:
