@@ -3,18 +3,15 @@ package mcjty.enigma.code;
 import mcjty.enigma.parser.Expression;
 import mcjty.enigma.parser.ObjectTools;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import scala.tools.nsc.Global;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class Scope {
 
@@ -25,7 +22,7 @@ public class Scope {
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onLeftClickBlock = new ArrayList<>();
     private final List<Scope> nestedScopes = new ArrayList<>();
     private final List<Scope> nestedPlayerScopes = new ArrayList<>();
-    private final List<Pair<UUID, Scope>> activePlayerScopes = new ArrayList<>();
+    private List<Pair<UUID, Scope>> activePlayerScopes = new ArrayList<>();
 
     private boolean init = false;
     private Boolean active = null;      // If null then active state is not known
@@ -85,7 +82,28 @@ public class Scope {
                 scope.activate(context);
             }
         }
-        //@todo player scopes!
+        if (!activePlayerScopes.isEmpty()) {
+            for (EntityPlayerMP player : context.getWorld().getMinecraftServer().getPlayerList().getPlayers()) {
+                EnigmaFunctionContext newctxt = new EnigmaFunctionContext(context.getWorld(), player);
+                for (Scope scope : nestedPlayerScopes) {
+                    if (scope.isActive(newctxt)) {
+                        if (!isPlayerScopeAlreadyActive(player, scope)) {
+                            scope.activate(newctxt);
+                            activePlayerScopes.add(Pair.of(player.getPersistentID(), scope));
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean isPlayerScopeAlreadyActive(EntityPlayerMP player, Scope scope) {
+        for (Pair<UUID, Scope> pair : activePlayerScopes) {
+            if (pair.getKey() == player.getPersistentID() && pair.getRight() == scope) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // Deactivate this scope. This does not check the condition
@@ -98,6 +116,10 @@ public class Scope {
         for (Scope scope : nestedScopes) {
             scope.deactivate(context);
         }
+        for (Pair<UUID, Scope> pair : activePlayerScopes) {
+            pair.getRight().deactivate(context);
+        }
+        activePlayerScopes.clear();
 
         if (active != null) {
             // If we didn't know our state then we don't call 'stop' because then we are just loading
@@ -114,6 +136,22 @@ public class Scope {
             for (Scope scope : nestedScopes) {
                 scope.checkActivity(context);
             }
+            List<Pair<UUID, Scope>> newactive = new ArrayList<>();
+            for (Pair<UUID, Scope> pair : activePlayerScopes) {
+                UUID uuid = pair.getKey();
+                Scope scope = pair.getValue();
+                EntityPlayerMP player = context.getWorld().getMinecraftServer().getPlayerList().getPlayerByUUID(uuid);
+                if (player == null) {
+                    scope.deactivate(context);
+                } else {
+                    EnigmaFunctionContext newctxt = new EnigmaFunctionContext(context.getWorld(), player);
+                    scope.checkActivity(newctxt);
+                    if (scope.isActive(newctxt)) {
+                        newactive.add(Pair.of(uuid, scope));
+                    }
+                }
+            }
+            activePlayerScopes = newactive;
         } else {
             deactivate(context);
         }
@@ -221,6 +259,9 @@ public class Scope {
             pair.getKey().dump(indent+4);
         }
         for (Scope scope : nestedScopes) {
+            scope.dump(indent+4);
+        }
+        for (Scope scope : nestedPlayerScopes) {
             scope.dump(indent+4);
         }
     }
