@@ -3,7 +3,6 @@ package mcjty.enigma.progress;
 import mcjty.enigma.code.ScopeID;
 import mcjty.enigma.varia.BlockPosDim;
 import mcjty.lib.tools.ItemStackTools;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;

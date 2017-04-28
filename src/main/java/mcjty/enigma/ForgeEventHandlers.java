@@ -4,7 +4,9 @@ import mcjty.enigma.code.EnigmaFunctionContext;
 import mcjty.enigma.code.RootScope;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
+import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -27,6 +29,23 @@ public class ForgeEventHandlers {
         World world = player.getEntityWorld();
         EnigmaFunctionContext context = new EnigmaFunctionContext(world, player);
         RootScope.getRootInstance(world).forActiveScopes(context, (ctxt, scope) -> scope.onLogin(ctxt));
+    }
+
+    @SubscribeEvent
+    public void onRightClickItem(PlayerInteractEvent.RightClickItem event) {
+        if (!event.getWorld().isRemote && event.getHand() == EnumHand.MAIN_HAND) {
+            EntityPlayer player = event.getEntityPlayer();
+            World world = player.getEntityWorld();
+            Progress progress = ProgressHolder.getProgress(world);
+            ItemStack stack = player.getHeldItemMainhand();
+            if (ItemStackTools.isValid(stack)) {
+                EnigmaFunctionContext context = new EnigmaFunctionContext(world, player);
+                RootScope.getRootInstance(world).forActiveScopes(context, (ctxt, scope) -> scope.onRightClickItem(event, ctxt, stack));
+                if (context.isCanceled()) {
+                    event.setCanceled(true);
+                }
+            }
+        }
     }
 
     @SubscribeEvent

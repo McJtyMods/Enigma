@@ -2,6 +2,9 @@ package mcjty.enigma.code;
 
 import mcjty.enigma.parser.Expression;
 import mcjty.enigma.parser.ObjectTools;
+import mcjty.enigma.progress.Progress;
+import mcjty.enigma.progress.ProgressHolder;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -22,6 +25,7 @@ public class Scope {
     private final List<ActionBlock> onSetup = new ArrayList<>();
     private final List<ActionBlock> onLogin = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onDelay = new ArrayList<>();
+    private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onRightClickItem = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onRightClickBlock = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onLeftClickBlock = new ArrayList<>();
     private final List<Scope> nestedScopes = new ArrayList<>();
@@ -51,6 +55,16 @@ public class Scope {
 
     public List<Scope> getNestedPlayerScopes() {
         return nestedPlayerScopes;
+    }
+
+    public void onRightClickItem(PlayerInteractEvent.RightClickItem event, EnigmaFunctionContext context, @Nonnull ItemStack stack) {
+        for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onRightClickItem) {
+            Object nameditem = pair.getValue().eval(context);
+            Progress progress = ProgressHolder.getProgress(context.getWorld());
+            ItemStack namedItemStack = progress.getNamedItemStack(nameditem);
+            if (ItemStack.areItemStackTagsEqual(stack, namedItemStack))
+                pair.getKey().execute(context);
+        }
     }
 
     public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event, EnigmaFunctionContext context, @Nonnull Integer position) {
@@ -121,6 +135,10 @@ public class Scope {
 
     public void addOnLogin(ActionBlock actionBlock) {
         onLogin.add(actionBlock);
+    }
+
+    public void addOnRightClickItem(ActionBlock actionBlock, Expression<EnigmaFunctionContext> item) {
+        onRightClickItem.add(Pair.of(actionBlock, item));
     }
 
     public void addOnRightClickBlock(ActionBlock actionBlock, Expression<EnigmaFunctionContext> position) {

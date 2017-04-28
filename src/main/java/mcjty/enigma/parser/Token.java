@@ -8,6 +8,7 @@ public enum Token {
     OBTAINTAG(1),       // on obtaintag <tagname>
     BREAKBLOCK(1),      // on breakblock <position>
     RIGHTCLICKBLOCK(1), // on rightclickblock <position>
+    RIGHTCLICKITEM(1),  // on rightclickitem <item>
     LEFTCLICKBLOCK(1),  // on leftclickblock <position>
     BLOCKAT(2),         // on blockat <position> <blocktype>
     DELAY(1),           // on delay <time>

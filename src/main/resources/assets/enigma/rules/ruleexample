@@ -28,6 +28,10 @@ pscope "playerhealth" pstate(health) == bad:
         message "Woot"
         log "Woot"
 
+on rightclickitem mysteriouskey:
+    message "This is a really mysterious key"
+    message "you wander what you can use it for"
+
 scope "begin" state(main) == beginroom:
     on setup:
         log "begin.setup"
