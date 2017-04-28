@@ -8,16 +8,16 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.StringUtils;
 
-public class GiveAction extends Action {
+public class TakeAction extends Action {
     private final Expression<EnigmaFunctionContext> item;
 
-    public GiveAction(Expression<EnigmaFunctionContext> item) {
+    public TakeAction(Expression<EnigmaFunctionContext> item) {
         this.item = item;
     }
 
     @Override
     public void dump(int indent) {
-        System.out.println(StringUtils.repeat(' ', indent) + "Give: " + item);
+        System.out.println(StringUtils.repeat(' ', indent) + "Take: " + item);
 
     }
 
@@ -32,8 +32,9 @@ public class GiveAction extends Action {
 
         if (ItemStackTools.isValid(stack)) {
             EntityPlayer player = context.getPlayer();
-            player.inventory.addItemStackToInventory(stack.copy());
-            player.openContainer.detectAndSendChanges();
+            // @todo implement this
+//            player.inventory.addItemStackToInventory(stack.copy());
+//            player.openContainer.detectAndSendChanges();
         }
         // @todo error reporting
     }

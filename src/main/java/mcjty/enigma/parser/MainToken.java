@@ -17,6 +17,7 @@ public enum MainToken {
     MESSAGE(false, 1),      // message <msg>
     LOG(false, 1),          // log <msg>
     GIVE(false, 1),         // give <item>
+    TAKE(false, 1),         // take <item>
     ITEMSTACK(false, 1),    // itemstack <name>
     ITEM(false,1),          // item <name>
     AMOUNT(false,1),        // amount <number>
