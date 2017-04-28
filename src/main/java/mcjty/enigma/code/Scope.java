@@ -4,6 +4,7 @@ import mcjty.enigma.parser.Expression;
 import mcjty.enigma.parser.ObjectTools;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
+import mcjty.enigma.varia.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.apache.commons.lang3.StringUtils;
@@ -62,7 +63,7 @@ public class Scope {
             Object nameditem = pair.getValue().eval(context);
             Progress progress = ProgressHolder.getProgress(context.getWorld());
             ItemStack namedItemStack = progress.getNamedItemStack(nameditem);
-            if (ItemStack.areItemStackTagsEqual(stack, namedItemStack))
+            if (InventoryHelper.stackEqualExact(stack, namedItemStack))
                 pair.getKey().execute(context);
         }
     }

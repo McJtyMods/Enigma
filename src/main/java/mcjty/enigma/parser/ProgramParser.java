@@ -247,6 +247,9 @@ public class ProgramParser {
                 case TAKE:
                     actionBlock.addAction(new TakeAction(line.getParameters().get(0)));
                     break;
+                case TAKEALL:
+                    actionBlock.addAction(new TakeAllAction(line.getParameters().get(0)));
+                    break;
                 case CANCEL:
                     actionBlock.addAction(new CancelAction());
                     break;

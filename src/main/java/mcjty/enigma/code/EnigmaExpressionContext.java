@@ -6,6 +6,7 @@ import mcjty.enigma.parser.ExpressionFunction;
 import mcjty.enigma.progress.PlayerProgress;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
+import mcjty.enigma.varia.InventoryHelper;
 import mcjty.lib.tools.InventoryTools;
 import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.item.ItemStack;
@@ -37,7 +38,7 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
                 List<ItemStack> items = InventoryTools.getMainInventory(context.getPlayer());
                 for (ItemStack item : items) {
                     if (ItemStackTools.isValid(item)) {
-                        if (ItemStack.areItemStackTagsEqual(item, stack)) {
+                        if (InventoryHelper.stackEqualExact(item, stack)) {
                             return true;
                         }
                     }
@@ -49,7 +50,7 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
             Progress progress = ProgressHolder.getProgress(context.getWorld());
             ItemStack stack = progress.getNamedItemStack(o);
             if (ItemStackTools.isValid(stack)) {
-                if (ItemStack.areItemStackTagsEqual(stack, context.getPlayer().getHeldItem(EnumHand.MAIN_HAND))) {
+                if (InventoryHelper.stackEqualExact(stack, context.getPlayer().getHeldItem(EnumHand.MAIN_HAND))) {
                     return true;
                 }
             }
@@ -59,7 +60,7 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
             Progress progress = ProgressHolder.getProgress(context.getWorld());
             ItemStack stack = progress.getNamedItemStack(o);
             if (ItemStackTools.isValid(stack)) {
-                if (ItemStack.areItemStackTagsEqual(stack, context.getPlayer().getHeldItem(EnumHand.OFF_HAND))) {
+                if (InventoryHelper.stackEqualExact(stack, context.getPlayer().getHeldItem(EnumHand.OFF_HAND))) {
                     return true;
                 }
             }

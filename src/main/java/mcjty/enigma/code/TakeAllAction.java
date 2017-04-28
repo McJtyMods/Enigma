@@ -12,16 +12,16 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
-public class TakeAction extends Action {
+public class TakeAllAction extends Action {
     private final Expression<EnigmaFunctionContext> item;
 
-    public TakeAction(Expression<EnigmaFunctionContext> item) {
+    public TakeAllAction(Expression<EnigmaFunctionContext> item) {
         this.item = item;
     }
 
     @Override
     public void dump(int indent) {
-        System.out.println(StringUtils.repeat(' ', indent) + "Take: " + item);
+        System.out.println(StringUtils.repeat(' ', indent) + "Take all: " + item);
 
     }
 
@@ -40,11 +40,10 @@ public class TakeAction extends Action {
             for (int i = 0 ; i < inventory.size() ; i++) {
                 ItemStack s = inventory.get(i);
                 if (InventoryHelper.stackEqualExact(stack, s)) {
-                    player.inventory.decrStackSize(i, 1);
-                    player.openContainer.detectAndSendChanges();
-                    return;
+                    player.inventory.setInventorySlotContents(i, ItemStackTools.getEmptyStack());
                 }
             }
+            player.openContainer.detectAndSendChanges();
         }
     }
 
