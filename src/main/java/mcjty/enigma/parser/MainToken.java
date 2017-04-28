@@ -22,6 +22,7 @@ public enum MainToken {
     ITEMSTACK(false, 1),    // itemstack <name>
     BLOCKSTATE(false,1),    // blockstate <name>
     BLOCK(false,1),         // block <name>
+    SETBLOCK(false,2),      // setblock <position> <block>
     ITEM(false,1),          // item <name>
     AMOUNT(false,1),        // amount <number>
     META(false,1),          // meta <value>

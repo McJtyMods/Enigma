@@ -276,6 +276,9 @@ public class ProgramParser {
                 case ITEMSTACK:
                     actionBlock.addAction(parseItemStack(context, line));
                     break;
+                case SETBLOCK:
+                    actionBlock.addAction(new SetBlockAction(line.getParameters().get(0), line.getParameters().get(1)));
+                    break;
                 case BLOCKSTATE:
                     actionBlock.addAction(parseBlockState(context, line));
                     break;

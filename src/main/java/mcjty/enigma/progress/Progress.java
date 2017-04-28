@@ -114,6 +114,16 @@ public class Progress {
         return namedPositions.get(name);
     }
 
+    public BlockPosDim getNamedPosition(Object o) {
+        if (o instanceof Integer) {
+            return getNamedPosition((Integer) o);
+        } else if (o instanceof String) {
+            return getNamedPosition((String) o);
+        } else {
+            return null;
+        }
+    }
+
     public Integer getNamedPosition(BlockPos pos, Integer dim) {
         return positionsToName.get(new BlockPosDim(pos, dim));
     }
