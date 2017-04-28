@@ -14,7 +14,8 @@ public enum Token {
     OPEN(1),            // on open <name>
     INIT(0),            // on init
     SETUP(0),           // on setup
-    ACTIVATE(0);        // on activate
+    ACTIVATE(0),        // on activate
+    DEACTIVATE(0);      // on deactivate
 
     private static final Map<String, Token> MAP = new HashMap<>();
     private final int parameters;

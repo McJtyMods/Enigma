@@ -117,7 +117,7 @@ public class ScopeInstance {
         if (active != null) {
             // If we didn't know our state then we don't call 'stop' because then we are just loading
             // from start
-            scope.onDeactivate(context); // @todo Rename to deactivate
+            scope.onDeactivate(context);
             System.out.println("Scope.deactivate");
         }
         active = false;

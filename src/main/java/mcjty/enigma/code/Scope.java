@@ -17,6 +17,7 @@ public class Scope {
     private final ScopeID id;
 
     private final List<ActionBlock> onActivate = new ArrayList<>();
+    private final List<ActionBlock> onDeactivate = new ArrayList<>();
     private final List<ActionBlock> onInit = new ArrayList<>();
     private final List<ActionBlock> onSetup = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onDelay = new ArrayList<>();
@@ -86,13 +87,17 @@ public class Scope {
     }
 
     public void onDeactivate(EnigmaFunctionContext context) {
-//        for (ActionBlock actionBlock : onStart) {
-//            actionBlock.execute(world, null);
-//        }
+        for (ActionBlock actionBlock : onDeactivate) {
+            actionBlock.execute(context);
+        }
     }
 
     public void addOnActivate(ActionBlock actionBlock) {
         onActivate.add(actionBlock);
+    }
+
+    public void addOnDeactivate(ActionBlock actionBlock) {
+        onDeactivate.add(actionBlock);
     }
 
     public void addOnInit(ActionBlock actionBlock) {
@@ -135,6 +140,10 @@ public class Scope {
         }
         for (ActionBlock block : onActivate) {
             System.out.println(StringUtils.repeat(' ', indent+4) + "On Activate:");
+            block.dump(indent+4);
+        }
+        for (ActionBlock block : onDeactivate) {
+            System.out.println(StringUtils.repeat(' ', indent+4) + "On Deactivate:");
             block.dump(indent+4);
         }
         for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onDelay) {

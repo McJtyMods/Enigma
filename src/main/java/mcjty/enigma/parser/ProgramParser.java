@@ -96,6 +96,9 @@ public class ProgramParser {
             case ACTIVATE:
                 scope.addOnActivate(actionBlock);
                 break;
+            case DEACTIVATE:
+                scope.addOnDeactivate(actionBlock);
+                break;
             case INIT:
                 scope.addOnInit(actionBlock);
                 break;

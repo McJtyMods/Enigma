@@ -29,6 +29,8 @@ scope "begin" state(main) == beginroom:
         log "begin.init"
     on activate:
         log "begin.activate"
+    on deactivate:
+        log "begin.deactivate"
 
     on rightclickblock testpos:
         message "You receive a mysterious key"
@@ -46,12 +48,12 @@ scope "begin" state(main) == beginroom:
 scope "end" state(main) == theend:
     on setup:
         log "end.setup"
-
     on init:
         log "end.init"
-
     on activate:
         log "end.activate"
+    on deactivate:
+        log "end.deactivate"
 
 
 
