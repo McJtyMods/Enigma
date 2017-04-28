@@ -11,6 +11,7 @@ public enum MainToken {
     POSITION(false, 5),     // position <name>, <x>, <y>, <z>, <dim>
     SCOPE(false, 2),        // scope <id>, <expression>
     PSCOPE(false, 2),       // pscope <id>, <expression>
+    CANCEL(false, 0),       // cancel
     IF(false, 1),           // if <expression>
     ELSE(false, 0),         // if <expression>
     MESSAGE(false, 1),      // message <msg>

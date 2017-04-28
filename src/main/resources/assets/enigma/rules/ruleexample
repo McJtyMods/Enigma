@@ -26,6 +26,7 @@ on login:
 pscope "playerhealth" pstate(health) == bad:
     on activate:
         message "Woot"
+        log "Woot"
 
 scope "begin" state(main) == beginroom:
     on setup:
@@ -40,15 +41,18 @@ scope "begin" state(main) == beginroom:
     on rightclickblock testpos:
         message "You receive a mysterious key"
         give mysteriouskey
+        cancel
 
     on rightclickblock lockeddoor:
         if hasitem(mysteriouskey):
             message "The door opens!"
         else:
             message "You need a key!"
+        cancel
 
     on rightclickblock exitposition:
         state main theend
+        cancel
 
 scope "end" state(main) == theend:
     on setup:

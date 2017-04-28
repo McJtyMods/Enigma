@@ -44,6 +44,9 @@ public class ScopeInstance {
                 EnigmaFunctionContext newctxt = new EnigmaFunctionContext(context.getWorld(), player);
                 if (scopeInstance.getScope().isActive(newctxt)) {
                     scopeInstance.forActiveScopes(newctxt, consumer);
+                    if (newctxt.isCanceled()) {
+                        context.setCanceled(true);
+                    }
                 }
             }
         }

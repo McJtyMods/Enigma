@@ -39,6 +39,9 @@ public class ForgeEventHandlers {
             if (position != null) {
                 EnigmaFunctionContext context = new EnigmaFunctionContext(world, player);
                 RootScope.getRootInstance(world).forActiveScopes(context, (ctxt, scope) -> scope.onRightClickBlock(event, ctxt, position));
+                if (context.isCanceled()) {
+                    event.setCanceled(true);
+                }
             }
         }
     }
@@ -53,6 +56,9 @@ public class ForgeEventHandlers {
             if (position != null) {
                 EnigmaFunctionContext context = new EnigmaFunctionContext(world, player);
                 RootScope.getRootInstance(world).forActiveScopes(context, (ctxt, scope) -> scope.onLeftClickBlock(event, ctxt, position));
+                if (context.isCanceled()) {
+                    event.setCanceled(true);
+                }
             }
         }
     }
