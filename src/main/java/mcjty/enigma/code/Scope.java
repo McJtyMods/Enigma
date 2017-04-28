@@ -20,6 +20,7 @@ public class Scope {
     private final List<ActionBlock> onDeactivate = new ArrayList<>();
     private final List<ActionBlock> onInit = new ArrayList<>();
     private final List<ActionBlock> onSetup = new ArrayList<>();
+    private final List<ActionBlock> onLogin = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onDelay = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onRightClickBlock = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onLeftClickBlock = new ArrayList<>();
@@ -68,6 +69,12 @@ public class Scope {
         }
     }
 
+    public void onLogin(EnigmaFunctionContext context) {
+        for (ActionBlock actionBlock : onLogin) {
+            actionBlock.execute(context);
+        }
+    }
+
     public void onActivate(EnigmaFunctionContext context) {
         for (ActionBlock actionBlock : onActivate) {
             actionBlock.execute(context);
@@ -110,6 +117,10 @@ public class Scope {
 
     public void addOnDelay(ActionBlock actionBlock, Expression<EnigmaFunctionContext> delayPar) {
         onDelay.add(Pair.of(actionBlock, delayPar));
+    }
+
+    public void addOnLogin(ActionBlock actionBlock) {
+        onLogin.add(actionBlock);
     }
 
     public void addOnRightClickBlock(ActionBlock actionBlock, Expression<EnigmaFunctionContext> position) {

@@ -25,10 +25,11 @@ public class ScopeInstance {
     }
 
     public void forActiveScopes(EnigmaFunctionContext context, BiConsumer<EnigmaFunctionContext, Scope> consumer) {
+        consumer.accept(context, scope);
+
         for (ScopeInstance scopeInstance : nestedScopeInstances.values()) {
             Scope child = scopeInstance.getScope();
             if (child.isActive(context)) {
-                consumer.accept(context, child);
                 scopeInstance.forActiveScopes(context, consumer);
             }
         }
@@ -42,7 +43,6 @@ public class ScopeInstance {
                 }
                 EnigmaFunctionContext newctxt = new EnigmaFunctionContext(context.getWorld(), player);
                 if (scopeInstance.getScope().isActive(newctxt)) {
-                    consumer.accept(newctxt, scopeInstance.getScope());
                     scopeInstance.forActiveScopes(newctxt, consumer);
                 }
             }

@@ -91,6 +91,9 @@ public class ProgramParser {
             case DELAY:
                 scope.addOnDelay(actionBlock, line.getParameters().get(0));
                 break;
+            case LOGIN:
+                scope.addOnLogin(actionBlock);
+                break;
             case OPEN:
                 break;
             case ACTIVATE:

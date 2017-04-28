@@ -12,6 +12,7 @@ public enum Token {
     BLOCKAT(2),         // on blockat <position> <blocktype>
     DELAY(1),           // on delay <time>
     OPEN(1),            // on open <name>
+    LOGIN(0),           // on login
     INIT(0),            // on init
     SETUP(0),           // on setup
     ACTIVATE(0),        // on activate

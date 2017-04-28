@@ -2,9 +2,6 @@
 
 on setup:
     log "root.setup"
-
-on init:
-    log "root.init"
     position testpos 808 4 1903 0
     position lockeddoor 800 4 1903 0
     position exitposition 800 4 1900 0
@@ -14,9 +11,17 @@ on init:
         meta 1
         description "Mysterious key"
 
+on init:
+    log "root.init"
+
 on activate:
     log "root.activate"
     state main beginroom
+
+on login:
+    log "Player logged in!"
+    message "Hoi player!"
+    pstate health bad
 
 pscope "playerhealth" pstate(health) == bad:
     on activate:

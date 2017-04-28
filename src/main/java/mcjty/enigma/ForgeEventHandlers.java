@@ -12,12 +12,21 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onWorldLoad(WorldEvent.Load event) {
+    }
+
+    @SubscribeEvent
+    public void onPlayerLogIn(PlayerEvent.PlayerLoggedInEvent event) {
+        EntityPlayer player = event.player;
+        World world = player.getEntityWorld();
+        EnigmaFunctionContext context = new EnigmaFunctionContext(world, player);
+        RootScope.getRootInstance(world).forActiveScopes(context, (ctxt, scope) -> scope.onLogin(ctxt));
     }
 
     @SubscribeEvent
