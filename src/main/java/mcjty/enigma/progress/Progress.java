@@ -1,5 +1,6 @@
 package mcjty.enigma.progress;
 
+import mcjty.enigma.parser.ObjectTools;
 import mcjty.enigma.varia.BlockPosDim;
 import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.entity.player.EntityPlayer;
@@ -38,6 +39,16 @@ public class Progress {
         return states.get(state);
     }
 
+    public Integer getState(Object o) {
+        if (o instanceof Integer) {
+            return states.get(o);
+        } else if (o instanceof String) {
+            return states.get(STRINGS.get((String)o));
+        } else {
+            return null;
+        }
+    }
+
     public boolean isRootActivated() {
         return rootActivated;
     }
@@ -73,6 +84,16 @@ public class Progress {
 
     public ItemStack getNamedItemStack(Integer name) {
         return namedItemStacks.get(name);
+    }
+
+    public ItemStack getNamedItemStack(Object name) {
+        if (name instanceof Integer) {
+            return namedItemStacks.get(name);
+        } else if (name instanceof String) {
+            return namedItemStacks.get(STRINGS.get((String) name));
+        } else {
+            return ItemStackTools.getEmptyStack();
+        }
     }
 
     public PlayerProgress getPlayerProgress(EntityPlayer player) {

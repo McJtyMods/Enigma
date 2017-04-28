@@ -25,6 +25,16 @@ public class PlayerProgress {
         return states.get(state);
     }
 
+    public Integer getState(Object o) {
+        if (o instanceof Integer) {
+            return states.get(o);
+        } else if (o instanceof String) {
+            return states.get(STRINGS.get((String)o));
+        } else {
+            return null;
+        }
+    }
+
     public void readFromNBT(NBTTagCompound nbt) {
         readStates(nbt);
     }
