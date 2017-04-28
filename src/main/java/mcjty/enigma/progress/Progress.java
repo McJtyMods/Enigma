@@ -27,6 +27,20 @@ public class Progress {
 
     private boolean rootActivated = false;
 
+    public void reset() {
+        rootActivated = false;
+        states.clear();
+        namedPositions.clear();
+        positionsToName.clear();
+        playerProgress.clear();
+        namedItemStacks.clear();
+        initializedScopes.clear();
+    }
+
+    public Map<Integer, Integer> getStates() {
+        return states;
+    }
+
     public void setScopeInitialized(Integer scope) {
         initializedScopes.add(new ScopeID(scope));
     }
@@ -126,6 +140,10 @@ public class Progress {
             playerProgress.put(uuid, p);
         }
         return playerProgress.get(uuid);
+    }
+
+    public Map<UUID, PlayerProgress> getPlayerProgress() {
+        return playerProgress;
     }
 
     public void readFromNBT(NBTTagCompound nbt) {

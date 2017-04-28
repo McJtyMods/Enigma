@@ -42,6 +42,9 @@ public class PlayerProgress {
         }
     }
 
+    public Map<Integer, Integer> getStates() {
+        return states;
+    }
 
     public void setState(String state, String value) {
         states.put(STRINGS.get(state), STRINGS.get(value));
