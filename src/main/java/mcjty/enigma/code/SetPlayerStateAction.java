@@ -28,7 +28,7 @@ public class SetPlayerStateAction extends Action {
         Progress progress = ProgressHolder.getProgress(context.getWorld());
         System.out.println("Setting player state " + name + " to " + value);
 
-        PlayerProgress playerProgress = progress.getPlayerProgress(context.getPlayer());
+        PlayerProgress playerProgress = progress.getPlayerProgress(context.getPlayer().getPersistentID());
         playerProgress.setState(ObjectTools.asStringSafe(name.eval(context)), ObjectTools.asStringSafe(value.eval(context)));
 
         ProgressHolder.save(context.getWorld());

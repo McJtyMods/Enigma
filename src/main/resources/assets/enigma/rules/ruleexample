@@ -1,22 +1,35 @@
 # In game it is possible to tag items and objects using the 'tagger'
 
+on setup:
+    log "root.setup"
+
 on init:
+    log "root.init"
     position testpos 808 4 1903 0
     position lockeddoor 800 4 1903 0
+    position exitposition 800 4 1900 0
 
     itemstack mysteriouskey:
         item "enigma:key"
         meta 1
         description "Mysterious key"
 
-on start:
+on activate:
+    log "root.activate"
     state main beginroom
 
-pwhile pstate(health) == bad:
-    on start:
+pscope "playerhealth" pstate(health) == bad:
+    on activate:
         message "Woot"
 
-while state(main) == beginroom:
+scope "begin" state(main) == beginroom:
+    on setup:
+        log "begin.setup"
+    on init:
+        log "begin.init"
+    on activate:
+        log "begin.activate"
+
     on rightclickblock testpos:
         message "You receive a mysterious key"
         give mysteriouskey
@@ -26,4 +39,19 @@ while state(main) == beginroom:
             message "The door opens!"
         else:
             message "You need a key!"
+
+    on rightclickblock exitposition:
+        state main theend
+
+scope "end" state(main) == theend:
+    on setup:
+        log "end.setup"
+
+    on init:
+        log "end.init"
+
+    on activate:
+        log "end.activate"
+
+
 

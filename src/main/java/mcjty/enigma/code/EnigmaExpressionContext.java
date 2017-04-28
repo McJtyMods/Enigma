@@ -27,7 +27,7 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
         });
         FUNCTIONS.put("pstate", (context, o) -> {
             Progress progress = ProgressHolder.getProgress(context.getWorld());
-            PlayerProgress playerProgress = progress.getPlayerProgress(context.getPlayer());
+            PlayerProgress playerProgress = progress.getPlayerProgress(context.getPlayer().getPersistentID());
             return playerProgress.getState(o);
         });
         FUNCTIONS.put("hasitem", (context, o) -> {

@@ -8,7 +8,7 @@ import java.util.List;
 public class ProgramParser {
 
     public static Scope parse(@Nonnull List<TokenizedLine> lines) throws ParserException {
-        Scope root = new Scope();
+        Scope root = new Scope(new ScopeID("root"));
         ParsingContext context = new ParsingContext(lines);
         parseScope(context, root);
         return root;
@@ -30,9 +30,9 @@ public class ProgramParser {
 
             if (line.getMainToken() == MainToken.ON) {
                 parseOn(context, line, scope);
-            } else if (line.getMainToken() == MainToken.WHILE) {
+            } else if (line.getMainToken() == MainToken.SCOPE) {
                 scope.addScope(parseScope(context, line));
-            } else if (line.getMainToken() == MainToken.PWHILE) {
+            } else if (line.getMainToken() == MainToken.PSCOPE) {
                 scope.addPlayerScope(parseScope(context, line));
             } else {
                 throw new ParserException("Unexpected command '" + line.getMainToken().name() + "' for a scope", linenumber);
@@ -42,11 +42,12 @@ public class ProgramParser {
 
     private static Scope parseScope(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line) throws ParserException {
         if (!line.isEndsWithColon()) {
-            throw new ParserException("Expected ':' after 'WHILE' statement", line.getLineNumber());
+            throw new ParserException("Expected ':' after 'SCOPE' statement", line.getLineNumber());
         }
 
-        Scope newscope = new Scope();
-        newscope.setCondition(line.getParameters().get(0));
+        ScopeID id = new ScopeID((String) line.getParameters().get(0).eval(EnigmaFunctionContext.EMPTY));
+        Scope newscope = new Scope(id);
+        newscope.setCondition(line.getParameters().get(1));
 
         line = context.getLine();
         if (line.getIndentation() <= context.getCurrentIndent()) {
@@ -92,11 +93,14 @@ public class ProgramParser {
                 break;
             case OPEN:
                 break;
-            case START:
-                scope.addOnStart(actionBlock);
+            case ACTIVATE:
+                scope.addOnActivate(actionBlock);
                 break;
             case INIT:
                 scope.addOnInit(actionBlock);
+                break;
+            case SETUP:
+                scope.addOnSetup(actionBlock);
                 break;
             default:
                 throw new ParserException("Unexpected token '" + secondaryToken.name() + "' for 'ON' command!", line.getLineNumber());
@@ -224,6 +228,9 @@ public class ProgramParser {
                     break;
                 case MESSAGE:
                     actionBlock.addAction(new MessageAction(line.getParameters().get(0)));
+                    break;
+                case LOG:
+                    actionBlock.addAction(new LogAction(line.getParameters().get(0)));
                     break;
                 case GIVE:
                     actionBlock.addAction(new GiveAction(line.getParameters().get(0)));

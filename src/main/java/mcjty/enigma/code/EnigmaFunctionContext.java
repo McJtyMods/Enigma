@@ -7,15 +7,17 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class EnigmaFunctionContext {
-    @Nonnull private final World world;
+    @Nullable private final World world;
     @Nullable private final EntityPlayer player;
 
-    public EnigmaFunctionContext(@Nonnull World world, @Nullable EntityPlayer player) {
+    public static final EnigmaFunctionContext EMPTY = new EnigmaFunctionContext(null, null);
+
+    public EnigmaFunctionContext(@Nullable World world, @Nullable EntityPlayer player) {
         this.world = world;
         this.player = player;
     }
 
-    @Nonnull
+    @Nullable
     public World getWorld() {
         return world;
     }

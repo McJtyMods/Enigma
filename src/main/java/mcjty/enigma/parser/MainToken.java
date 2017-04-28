@@ -9,11 +9,12 @@ public enum MainToken {
     VAR(false, 2),          // var <varname> <value>
     ON(true, 0),
     POSITION(false, 5),     // position <name>, <x>, <y>, <z>, <dim>
-    WHILE(false, 1),        // while <expression>
-    PWHILE(false, 1),       // pwhile <expression>
+    SCOPE(false, 2),        // scope <id>, <expression>
+    PSCOPE(false, 2),       // pscope <id>, <expression>
     IF(false, 1),           // if <expression>
     ELSE(false, 0),         // if <expression>
     MESSAGE(false, 1),      // message <msg>
+    LOG(false, 1),          // log <msg>
     GIVE(false, 1),         // give <item>
     ITEMSTACK(false, 1),    // itemstack <name>
     ITEM(false,1),          // item <name>

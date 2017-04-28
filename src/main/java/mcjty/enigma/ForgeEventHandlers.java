@@ -1,6 +1,7 @@
 package mcjty.enigma;
 
 import mcjty.enigma.code.EnigmaFunctionContext;
+import mcjty.enigma.code.RootScope;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,9 +18,6 @@ public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onWorldLoad(WorldEvent.Load event) {
-        if (!event.getWorld().isRemote) {
-            Enigma.root.init(new EnigmaFunctionContext(event.getWorld(), null));
-        }
     }
 
     @SubscribeEvent
@@ -31,7 +29,7 @@ public class ForgeEventHandlers {
             Integer position = progress.getNamedPosition(event.getPos(), world.provider.getDimension());
             if (position != null) {
                 EnigmaFunctionContext context = new EnigmaFunctionContext(world, player);
-                Enigma.root.forActiveScopes(context, (ctxt, scope) -> scope.onRightClickBlock(event, ctxt, position));
+                RootScope.getRootInstance(world).forActiveScopes(context, (ctxt, scope) -> scope.onRightClickBlock(event, ctxt, position));
             }
         }
     }
@@ -45,7 +43,7 @@ public class ForgeEventHandlers {
             Integer position = progress.getNamedPosition(event.getPos(), world.provider.getDimension());
             if (position != null) {
                 EnigmaFunctionContext context = new EnigmaFunctionContext(world, player);
-                Enigma.root.forActiveScopes(context, (ctxt, scope) -> scope.onLeftClickBlock(event, ctxt, position));
+                RootScope.getRootInstance(world).forActiveScopes(context, (ctxt, scope) -> scope.onLeftClickBlock(event, ctxt, position));
             }
         }
     }
@@ -53,15 +51,15 @@ public class ForgeEventHandlers {
     @SubscribeEvent
     public void onServerTickEvent(TickEvent.ServerTickEvent event) {
         WorldServer world = DimensionManager.getWorld(0);
-        Enigma.root.init(new EnigmaFunctionContext(world, null));
         Progress progress = ProgressHolder.getProgress(world);
         if (!progress.isRootActivated()) {
-            Enigma.root.setInactiveForRoot();
+            // We set scope activity to false because the root has not been activated yet
+            RootScope.getRootInstance(world).setActive(false);
             progress.setRootActivated(true);
             ProgressHolder.save(world);
         }
 
         EnigmaFunctionContext context = new EnigmaFunctionContext(world, null);
-        Enigma.root.checkActivity(context);
+        RootScope.getRootInstance(world).checkActivity(context);
     }
 }

@@ -13,7 +13,8 @@ public enum Token {
     DELAY(1),           // on delay <time>
     OPEN(1),            // on open <name>
     INIT(0),            // on init
-    START(0);           // on start
+    SETUP(0),           // on setup
+    ACTIVATE(0);        // on activate
 
     private static final Map<String, Token> MAP = new HashMap<>();
     private final int parameters;

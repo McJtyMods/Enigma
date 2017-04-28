@@ -1,7 +1,9 @@
 package mcjty.enigma;
 
 
+import mcjty.enigma.code.EnigmaFunctionContext;
 import mcjty.enigma.code.Scope;
+import mcjty.enigma.code.ScopeInstance;
 import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.proxy.CommonProxy;
 import mcjty.enigma.varia.StringRegister;
@@ -9,6 +11,7 @@ import mcjty.lib.compat.CompatCreativeTabs;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
@@ -46,8 +49,6 @@ public class Enigma {
             return Items.ENCHANTED_BOOK;
         }
     };
-
-    public static Scope root;
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event){

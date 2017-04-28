@@ -1,17 +1,47 @@
 package mcjty.enigma.progress;
 
+import mcjty.enigma.code.ScopeID;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import static mcjty.enigma.varia.StringRegister.STRINGS;
 
 public class PlayerProgress {
 
     private final Map<Integer, Integer> states = new HashMap<>();
+    private final Set<ScopeID> initializedScopes = new HashSet<>();
+
+    public void setScopeInitialized(Integer scope) {
+        initializedScopes.add(new ScopeID(scope));
+    }
+
+    public void setScopeInitialized(String scope) {
+        initializedScopes.add(new ScopeID(STRINGS.get(scope)));
+    }
+
+    public boolean isScopeInitialized(ScopeID scope) {
+        return initializedScopes.contains(scope);
+    }
+
+    public void setScopeInitialized(Object o) {
+        if (o instanceof Integer) {
+            initializedScopes.add(new ScopeID((Integer) o));
+        } else if (o instanceof ScopeID) {
+            initializedScopes.add((ScopeID) o);
+        } else if (o instanceof String) {
+            initializedScopes.add(new ScopeID(STRINGS.get((String)o)));
+        } else {
+            throw new RuntimeException("Bad type for scope!");
+        }
+    }
+
 
     public void setState(String state, String value) {
         states.put(STRINGS.get(state), STRINGS.get(value));
@@ -37,6 +67,7 @@ public class PlayerProgress {
 
     public void readFromNBT(NBTTagCompound nbt) {
         readStates(nbt);
+        readInitializedScopes(nbt);
     }
 
     private void readStates(NBTTagCompound nbt) {
@@ -47,8 +78,18 @@ public class PlayerProgress {
         }
     }
 
+    public void readInitializedScopes(NBTTagCompound nbt) {
+        NBTTagList list = nbt.getTagList("scopes", Constants.NBT.TAG_STRING);
+        for (int i = 0 ; i < list.tagCount() ; i++) {
+            NBTTagString tc = (NBTTagString) list.get(i);
+            int scope = STRINGS.get(tc.getString());
+            initializedScopes.add(new ScopeID(scope));
+        }
+    }
+
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         writeStates(compound);
+        writeInitializedScopes(compound);
         return compound;
     }
 
@@ -63,5 +104,11 @@ public class PlayerProgress {
         compound.setTag("states", list);
     }
 
-
+    private void writeInitializedScopes(NBTTagCompound compound) {
+        NBTTagList list = new NBTTagList();
+        for (ScopeID scope : initializedScopes) {
+            list.appendTag(new NBTTagString(STRINGS.get(scope.getId())));
+        }
+        compound.setTag("scopes", list);
+    }
 }

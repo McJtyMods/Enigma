@@ -4,6 +4,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import mcjty.enigma.Enigma;
 import mcjty.enigma.ForgeEventHandlers;
 import mcjty.enigma.code.EnigmaExpressionContext;
+import mcjty.enigma.code.RootScope;
 import mcjty.enigma.items.ModItems;
 import mcjty.enigma.network.EnigmaMessages;
 import mcjty.enigma.parser.ParserException;
@@ -62,7 +63,7 @@ public abstract class CommonProxy {
         InputStream inputstream = Enigma.class.getResourceAsStream("/assets/enigma/rules/ruleexample");
         try {
             List<TokenizedLine> lines = RuleParser.parse(new BufferedReader(new InputStreamReader(inputstream)), new EnigmaExpressionContext());
-            Enigma.root = ProgramParser.parse(lines);
+            RootScope.root = ProgramParser.parse(lines);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (ParserException e) {

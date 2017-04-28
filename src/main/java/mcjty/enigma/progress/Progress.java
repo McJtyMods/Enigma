@@ -1,19 +1,18 @@
 package mcjty.enigma.progress;
 
-import mcjty.enigma.parser.ObjectTools;
+import mcjty.enigma.code.ScopeID;
 import mcjty.enigma.varia.BlockPosDim;
 import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static mcjty.enigma.varia.StringRegister.STRINGS;
 
@@ -24,8 +23,33 @@ public class Progress {
     private final Map<BlockPosDim, Integer> positionsToName = new HashMap<>();
     private final Map<UUID, PlayerProgress> playerProgress = new HashMap<>();
     private final Map<Integer, ItemStack> namedItemStacks = new HashMap<>();
+    private final Set<ScopeID> initializedScopes = new HashSet<>();
 
     private boolean rootActivated = false;
+
+    public void setScopeInitialized(Integer scope) {
+        initializedScopes.add(new ScopeID(scope));
+    }
+
+    public void setScopeInitialized(String scope) {
+        initializedScopes.add(new ScopeID(STRINGS.get(scope)));
+    }
+
+    public boolean isScopeInitialized(ScopeID scope) {
+        return initializedScopes.contains(scope);
+    }
+
+    public void setScopeInitialized(Object o) {
+        if (o instanceof Integer) {
+            initializedScopes.add(new ScopeID((Integer) o));
+        } else if (o instanceof ScopeID) {
+            initializedScopes.add((ScopeID) o);
+        } else if (o instanceof String) {
+            initializedScopes.add(new ScopeID(STRINGS.get((String)o)));
+        } else {
+            throw new RuntimeException("Bad type for scope!");
+        }
+    }
 
     public void setState(String state, String value) {
         states.put(STRINGS.get(state), STRINGS.get(value));
@@ -96,12 +120,12 @@ public class Progress {
         }
     }
 
-    public PlayerProgress getPlayerProgress(EntityPlayer player) {
-        if (!playerProgress.containsKey(player.getPersistentID())) {
+    public PlayerProgress getPlayerProgress(UUID uuid) {
+        if (!playerProgress.containsKey(uuid)) {
             PlayerProgress p = new PlayerProgress();
-            playerProgress.put(player.getPersistentID(), p);
+            playerProgress.put(uuid, p);
         }
-        return playerProgress.get(player.getPersistentID());
+        return playerProgress.get(uuid);
     }
 
     public void readFromNBT(NBTTagCompound nbt) {
@@ -109,6 +133,7 @@ public class Progress {
         readNamedPositions(nbt);
         readNamedItemStacks(nbt);
         readPlayerProgress(nbt);
+        readInitializedScopes(nbt);
         rootActivated = nbt.getBoolean("rootActivated");
     }
 
@@ -156,12 +181,22 @@ public class Progress {
         }
     }
 
+    public void readInitializedScopes(NBTTagCompound nbt) {
+        NBTTagList list = nbt.getTagList("scopes", Constants.NBT.TAG_STRING);
+        for (int i = 0 ; i < list.tagCount() ; i++) {
+            NBTTagString tc = (NBTTagString) list.get(i);
+            int scope = STRINGS.get(tc.getString());
+            initializedScopes.add(new ScopeID(scope));
+        }
+    }
+
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setBoolean("rootActivated", rootActivated);
         writeStates(compound);
         writeNamedPositions(compound);
         writeNamedItemStacks(compound);
         writePlayerProgress(compound);
+        writeInitializedScopes(compound);
         return compound;
     }
 
@@ -215,5 +250,13 @@ public class Progress {
             list.appendTag(tc);
         }
         compound.setTag("itemstacks", list);
+    }
+
+    private void writeInitializedScopes(NBTTagCompound compound) {
+        NBTTagList list = new NBTTagList();
+        for (ScopeID scope : initializedScopes) {
+            list.appendTag(new NBTTagString(STRINGS.get(scope.getId())));
+        }
+        compound.setTag("scopes", list);
     }
 }
