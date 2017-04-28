@@ -34,7 +34,7 @@ public class GiveAction extends Action {
         }
 
         if (ItemStackTools.isValid(stack)) {
-            context.getPlayer().inventory.addItemStackToInventory(stack);
+            context.getPlayer().inventory.addItemStackToInventory(stack.copy());
             context.getPlayer().openContainer.detectAndSendChanges();
         }
         // @todo error reporting

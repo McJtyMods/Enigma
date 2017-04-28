@@ -139,8 +139,8 @@ public class ProgramParser {
         context.setCurrentIndent(line.getIndentation());
 
         Expression<EnigmaFunctionContext> item = null;
-        Expression<EnigmaFunctionContext> meta = null;
-        Expression<EnigmaFunctionContext> amount = null;
+        Expression<EnigmaFunctionContext> meta = c -> 0;
+        Expression<EnigmaFunctionContext> amount = c -> 1;
         Expression<EnigmaFunctionContext> description = null;
 
         while (context.hasLines()) {
