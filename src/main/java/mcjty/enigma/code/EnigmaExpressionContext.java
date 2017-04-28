@@ -12,6 +12,7 @@ import mcjty.lib.tools.InventoryTools;
 import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumHand;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -58,6 +59,36 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
                             return true;
                         }
                     }
+                }
+            }
+            return false;
+        });
+        FUNCTIONS.put("hasitemmain", (context, o) -> {
+            Progress progress = ProgressHolder.getProgress(context.getWorld());
+            ItemStack stack = ItemStackTools.getEmptyStack();
+            if (o instanceof Integer) {
+                stack = progress.getNamedItemStack((Integer) o);
+            } else {
+                stack = progress.getNamedItemStack(ObjectTools.asStringSafe(o));
+            }
+            if (ItemStackTools.isValid(stack)) {
+                if (ItemStack.areItemStackTagsEqual(stack, context.getPlayer().getHeldItem(EnumHand.MAIN_HAND))) {
+                    return true;
+                }
+            }
+            return false;
+        });
+        FUNCTIONS.put("hasitemoff", (context, o) -> {
+            Progress progress = ProgressHolder.getProgress(context.getWorld());
+            ItemStack stack = ItemStackTools.getEmptyStack();
+            if (o instanceof Integer) {
+                stack = progress.getNamedItemStack((Integer) o);
+            } else {
+                stack = progress.getNamedItemStack(ObjectTools.asStringSafe(o));
+            }
+            if (ItemStackTools.isValid(stack)) {
+                if (ItemStack.areItemStackTagsEqual(stack, context.getPlayer().getHeldItem(EnumHand.OFF_HAND))) {
+                    return true;
                 }
             }
             return false;

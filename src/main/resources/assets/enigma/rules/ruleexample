@@ -12,9 +12,9 @@ on init:
 on start:
     state main beginroom
 
-#pwhile pstate(health) == bad:
-#    on start:
-#        message "Woot"
+pwhile pstate(health) == bad:
+    on start:
+        message "Woot"
 
 while state(main) == beginroom:
     on rightclickblock testpos:
