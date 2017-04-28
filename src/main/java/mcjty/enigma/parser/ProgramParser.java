@@ -193,6 +193,55 @@ public class ProgramParser {
         return new CreateItemStackAction(name, item, amount, meta, description);
     }
 
+    private static CreateBlockStateAction parseBlockState(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line) throws ParserException {
+        if (!line.isEndsWithColon()) {
+            throw new ParserException("Expected ':' after 'BLOCKSTATE' statement", line.getLineNumber());
+        }
+
+        Expression<EnigmaFunctionContext> name = line.getParameters().get(0);
+
+        line = context.getLine();
+        if (line.getIndentation() <= context.getCurrentIndent()) {
+            throw new ParserException("Commands in an blockstate block must be indented to the right!", line.getLineNumber());
+        }
+
+        int origIndent = context.getCurrentIndent();
+        context.setCurrentIndent(line.getIndentation());
+
+        Expression<EnigmaFunctionContext> block = null;
+        Expression<EnigmaFunctionContext> meta = c -> 0;
+
+        while (context.hasLines()) {
+            line = context.getLine();
+            if (line.getIndentation() > context.getCurrentIndent()) {
+                throw new ParserException("Unexpected indentation in blockstate block", line.getLineNumber());
+            }
+            if (line.getIndentation() < context.getCurrentIndent()) {
+                break;
+            }
+            int linenumber = line.getLineNumber();
+            context.nextLine();
+
+            switch (line.getMainToken()) {
+                case BLOCK:
+                    block = line.getParameters().get(0);
+                    break;
+                case META:
+                    meta = line.getParameters().get(0);
+                    break;
+                default:
+                    throw new ParserException("Unexpected command '" + line.getMainToken().name() + "' for blockstate block", linenumber);
+            }
+        }
+
+        if (block == null) {
+            throw new ParserException("Missing 'item' for blockstate!", line.getLineNumber());
+        }
+
+        context.setCurrentIndent(origIndent);
+        return new CreateBlockStateAction(name, block, meta);
+    }
+
     private static void parseActionBlock(ParsingContext<EnigmaFunctionContext> context, ActionBlock actionBlock) throws ParserException {
         TokenizedLine<EnigmaFunctionContext> line = context.getLine();
         if (line.getIndentation() <= context.getCurrentIndent()) {
@@ -226,6 +275,9 @@ public class ProgramParser {
                     break;
                 case ITEMSTACK:
                     actionBlock.addAction(parseItemStack(context, line));
+                    break;
+                case BLOCKSTATE:
+                    actionBlock.addAction(parseBlockState(context, line));
                     break;
                 case POSITION:
                     actionBlock.addAction(new PositionAction(

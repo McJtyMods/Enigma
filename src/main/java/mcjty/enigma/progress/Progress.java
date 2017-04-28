@@ -1,14 +1,19 @@
 package mcjty.enigma.progress;
 
+import mcjty.enigma.Enigma;
 import mcjty.enigma.code.ScopeID;
 import mcjty.enigma.varia.BlockPosDim;
 import mcjty.lib.tools.ItemStackTools;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -22,6 +27,7 @@ public class Progress {
     private final Map<BlockPosDim, Integer> positionsToName = new HashMap<>();
     private final Map<UUID, PlayerProgress> playerProgress = new HashMap<>();
     private final Map<Integer, ItemStack> namedItemStacks = new HashMap<>();
+    private final Map<Integer, IBlockState> namedBlocks = new HashMap<>();
     private final Set<ScopeID> initializedScopes = new HashSet<>();
 
     private boolean rootActivated = false;
@@ -33,6 +39,7 @@ public class Progress {
         positionsToName.clear();
         playerProgress.clear();
         namedItemStacks.clear();
+        namedBlocks.clear();
         initializedScopes.clear();
     }
 
@@ -111,6 +118,28 @@ public class Progress {
         return positionsToName.get(new BlockPosDim(pos, dim));
     }
 
+    public void addNamedBlock(String name, IBlockState state) {
+        namedBlocks.put(STRINGS.get(name), state);
+    }
+
+    public IBlockState getNamedBlock(String name) {
+        return namedBlocks.get(STRINGS.get(name));
+    }
+
+    public IBlockState getNamedBlock(Integer name) {
+        return namedBlocks.get(name);
+    }
+
+    public IBlockState getNamedBlock(Object name) {
+        if (name instanceof Integer) {
+            return namedBlocks.get(name);
+        } else if (name instanceof String) {
+            return namedBlocks.get(STRINGS.get((String) name));
+        } else {
+            return null;
+        }
+    }
+
     public void addNamedItemStack(String name, ItemStack stack) {
         namedItemStacks.put(STRINGS.get(name), stack);
     }
@@ -149,6 +178,7 @@ public class Progress {
         readStates(nbt);
         readNamedPositions(nbt);
         readNamedItemStacks(nbt);
+        readNamedBlocks(nbt);
         readPlayerProgress(nbt);
         readInitializedScopes(nbt);
         rootActivated = nbt.getBoolean("rootActivated");
@@ -185,6 +215,23 @@ public class Progress {
         }
     }
 
+    private void readNamedBlocks(NBTTagCompound nbt) {
+        NBTTagList list = nbt.getTagList("blocks", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < list.tagCount() ; i++) {
+            NBTTagCompound tc = (NBTTagCompound) list.get(i);
+            int name = STRINGS.get(tc.getString("s"));
+            String regname = tc.getString("reg");
+            Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(regname));
+            if (block != null) {
+                int meta = tc.getInteger("meta");
+                IBlockState state = block.getStateFromMeta(meta);
+                namedBlocks.put(name, state);
+            } else {
+                Enigma.logger.warn("Block '" + regname + "' is missing!");
+            }
+        }
+    }
+
     private void readNamedItemStacks(NBTTagCompound nbt) {
         NBTTagList list = nbt.getTagList("itemstacks", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < list.tagCount() ; i++) {
@@ -212,6 +259,7 @@ public class Progress {
         writeStates(compound);
         writeNamedPositions(compound);
         writeNamedItemStacks(compound);
+        writeNamedBlocks(compound);
         writePlayerProgress(compound);
         writeInitializedScopes(compound);
         return compound;
@@ -267,6 +315,19 @@ public class Progress {
             list.appendTag(tc);
         }
         compound.setTag("itemstacks", list);
+    }
+
+    private void writeNamedBlocks(NBTTagCompound compound) {
+        NBTTagList list = new NBTTagList();
+        for (Map.Entry<Integer, IBlockState> entry : namedBlocks.entrySet()) {
+            NBTTagCompound tc = new NBTTagCompound();
+            tc.setString("s", STRINGS.get(entry.getKey()));
+            IBlockState state = entry.getValue();
+            tc.setString("reg", state.getBlock().getRegistryName().toString());
+            tc.setInteger("meta", state.getBlock().getMetaFromState(state));
+            list.appendTag(tc);
+        }
+        compound.setTag("blocks", list);
     }
 
     private void writeInitializedScopes(NBTTagCompound compound) {
