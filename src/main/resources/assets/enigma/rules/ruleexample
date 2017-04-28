@@ -5,6 +5,16 @@ on setup:
     position testpos 808 4 1903 0
     position lockeddoor 800 4 1903 0
     position exitposition 800 4 1900 0
+    position changeblock 808 4 1900 0
+
+    blockstate diamond:
+        block "minecraft:diamond_block"
+        meta 0
+    blockstate emerald:
+        block "minecraft:emerald_block"
+        meta 0
+
+    state changeblock diamond
 
     itemstack mysteriouskey:
         item "enigma:key"
@@ -17,6 +27,16 @@ on init:
 on activate:
     log "root.activate"
     state main beginroom
+
+scope "diamond" state(changeblock) == diamond:
+    on rightclickblock changeblock:
+        setblock changeblock emerald
+        state changeblock emerald
+scope "emerald" state(changeblock) == emerald:
+    on rightclickblock changeblock:
+        setblock changeblock diamond
+        state changeblock diamond
+
 
 on login:
     log "Player logged in!"
