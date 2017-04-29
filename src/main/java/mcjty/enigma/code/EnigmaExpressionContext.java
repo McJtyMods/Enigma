@@ -33,7 +33,7 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
         });
         FUNCTIONS.put("hasitem", (context, o) -> {
             Progress progress = ProgressHolder.getProgress(context.getWorld());
-            ItemStack stack = progress.getNamedItemStack(o);
+            ItemStack stack = progress.getNamedItemStack(o[0]);
             if (ItemStackTools.isValid(stack)) {
                 List<ItemStack> items = InventoryTools.getMainInventory(context.getPlayer());
                 for (ItemStack item : items) {
@@ -48,7 +48,7 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
         });
         FUNCTIONS.put("hasitemmain", (context, o) -> {
             Progress progress = ProgressHolder.getProgress(context.getWorld());
-            ItemStack stack = progress.getNamedItemStack(o);
+            ItemStack stack = progress.getNamedItemStack(o[0]);
             if (ItemStackTools.isValid(stack)) {
                 if (InventoryHelper.stackEqualExact(stack, context.getPlayer().getHeldItem(EnumHand.MAIN_HAND))) {
                     return true;
@@ -58,7 +58,7 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
         });
         FUNCTIONS.put("hasitemoff", (context, o) -> {
             Progress progress = ProgressHolder.getProgress(context.getWorld());
-            ItemStack stack = progress.getNamedItemStack(o);
+            ItemStack stack = progress.getNamedItemStack(o[0]);
             if (ItemStackTools.isValid(stack)) {
                 if (InventoryHelper.stackEqualExact(stack, context.getPlayer().getHeldItem(EnumHand.OFF_HAND))) {
                     return true;

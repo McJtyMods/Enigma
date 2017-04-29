@@ -107,5 +107,7 @@ scope "end" state(main) == theend:
         teleport tppos
         sound tppos "minecraft:entity.endermen.teleport"
 
-
+scope "test" true:
+    on init:
+        message max(3,5)
 

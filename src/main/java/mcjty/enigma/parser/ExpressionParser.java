@@ -182,10 +182,27 @@ public class ExpressionParser<T> {
             } else if (context.isVariable(func)) {
                 x = new ParsedExpression<T>(context.getVariable(func), false, func);
             } else if (context.isFunction(func)) {
-                x = parseFactor();
-                Expression<T> finalX = x.getExpression();
+                if (!eat('(')) {
+                    throw new RuntimeException("Excected '(' after a function");
+                }
                 ExpressionFunction<T> function = context.getFunction(func);
-                x = new ParsedExpression<T>(w -> function.eval(w, finalX.eval(w)), false, func + " " + x.getDebug());
+                if (eat(')')) {
+                    x = new ParsedExpression<T>(w -> function.eval(w), false, func + "()");
+                } else {
+                    ParsedExpression<T> x1 = parseFactor();
+                    Expression<T> finalX1 = x1.getExpression();
+                    if (eat(')')) {
+                        x = new ParsedExpression<T>(w -> function.eval(w, finalX1.eval(w)), false, func + " " + x1.getDebug());
+                    } else {
+                        eat(',');
+                        ParsedExpression<T> x2 = parseFactor();
+                        Expression<T> finalX2 = x2.getExpression();
+                        x = new ParsedExpression<T>(w -> function.eval(w, finalX1.eval(w), finalX2.eval(w)), false, func + " " + x1.getDebug() + "," + x2.getDebug());
+                        if (!eat(')')) {
+                            throw new RuntimeException("Excected ')' after the function parameters");
+                        }
+                    }
+                }
             } else {
                 x = new ParsedExpression<>(w -> func, true, func);
             }

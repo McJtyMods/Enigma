@@ -1,7 +1,6 @@
 package mcjty.enigma.parser;
 
 import mcjty.enigma.Enigma;
-import mcjty.enigma.code.EnigmaExpressionContext;
 import mcjty.enigma.code.Scope;
 import org.apache.logging.log4j.Level;
 
@@ -110,13 +109,15 @@ public class RuleParser<T> {
             @Override
             public ExpressionFunction<Void> getFunction(String name) {
                 if ("double".equals(name)) {
-                    return (w,o) -> ObjectTools.asIntSafe(o) * 2;
+                    return (w,o) -> ObjectTools.asIntSafe(o[0]) * 2;
                 } else if ("state".equals(name)) {
-                    return (w,o) -> o;
+                    return (w,o) -> o[0];
                 } else if ("pstate".equals(name)) {
-                    return (w,o) -> o;
+                    return (w,o) -> o[0];
                 } else if ("hasitem".equals(name)) {
-                    return (w,o) -> false;
+                    return (w, o) -> false;
+                } else if ("max".equals(name)) {
+                    return (w, o) -> Math.max(ObjectTools.asIntSafe(o[0]), ObjectTools.asIntSafe(o[1]));
                 } else {
                     return null;
                 }
@@ -125,7 +126,7 @@ public class RuleParser<T> {
             @Override
             public boolean isFunction(String name) {
                 return "double".equals(name) || "state".equals(name) || "hasitem".equals(name)
-                        || "pstate".equals(name);
+                        || "pstate".equals(name) || "max".equals(name);
             }
         };
 
@@ -141,7 +142,7 @@ public class RuleParser<T> {
             System.out.println("e.getMessage() = " + e.getMessage() + " at line " + e.getLinenumber());
         }
 
-        StringPointer str = new StringPointer("double(1)*var   8/2!=2+2 sqrt 16 \"Dit is \\\"een\\\" test\"+' (echt)' 'nog eentje' blub");
+        StringPointer str = new StringPointer("double(1)*var   8/2!=2+2 sqrt 16 \"Dit is \\\"een\\\" test\"+' (echt)' 'nog eentje' max(8 16)");
         System.out.println("result = " + ExpressionParser.eval(str, context).getExpression().eval(null));
         System.out.println("result = " + ExpressionParser.eval(str, context).getExpression().eval(null));
         System.out.println("result = " + ExpressionParser.eval(str, context).getExpression().eval(null));
