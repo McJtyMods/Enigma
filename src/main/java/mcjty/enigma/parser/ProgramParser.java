@@ -92,7 +92,10 @@ public class ProgramParser {
             case BLOCKAT:
                 break;
             case DELAY:
-                scope.addOnDelay(actionBlock, line.getParameters().get(0));
+                scope.addOnDelay(actionBlock, line.getParameters().get(0), false);
+                break;
+            case REPEAT:
+                scope.addOnDelay(actionBlock, line.getParameters().get(0), true);
                 break;
             case LOGIN:
                 scope.addOnLogin(actionBlock);

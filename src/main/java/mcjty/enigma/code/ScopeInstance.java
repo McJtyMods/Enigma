@@ -1,5 +1,7 @@
 package mcjty.enigma.code;
 
+import mcjty.enigma.parser.Expression;
+import mcjty.enigma.parser.ObjectTools;
 import mcjty.enigma.progress.PlayerProgress;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
@@ -7,9 +9,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.BiConsumer;
 
 public class ScopeInstance {
@@ -17,6 +17,37 @@ public class ScopeInstance {
     private final Scope scope;
     private Map<ScopeID, ScopeInstance> nestedScopeInstances = new HashMap<>();
     private Map<Pair<UUID, ScopeID>, ScopeInstance> nestedPlayerScopeInstances = new HashMap<>();
+    private List<TimedAction> timedActions = new ArrayList<>();
+
+    private static class TimedAction {
+        private final ActionBlock actionBlock;
+        private final Expression<EnigmaFunctionContext> delay;
+        private final long time;
+        private final boolean repeating;
+
+        public TimedAction(ActionBlock actionBlock, Expression<EnigmaFunctionContext> delay, long time, boolean repeating) {
+            this.actionBlock = actionBlock;
+            this.delay = delay;
+            this.time = time;
+            this.repeating = repeating;
+        }
+
+        public ActionBlock getActionBlock() {
+            return actionBlock;
+        }
+
+        public Expression<EnigmaFunctionContext> getDelay() {
+            return delay;
+        }
+
+        public long getTime() {
+            return time;
+        }
+
+        public boolean isRepeating() {
+            return repeating;
+        }
+    }
 
     private Boolean active = null;
 
@@ -70,13 +101,22 @@ public class ScopeInstance {
         if (active != null) {
             // If we didn't know our state then we don't call 'start' because then we are just loading
             // from start
-            scope.onActivate(context); // @todo rename to onActivate
+            scope.onActivate(context);
             System.out.println("Scope.activate");
         }
 
+        clearTimers();
+        // Install scope specific timers
+        long t = System.currentTimeMillis();
+        for (Scope.DelayedAction action : scope.getOnDelay()) {
+            int ms = ObjectTools.asIntSafe(action.getDelay().eval(context));
+            timedActions.add(new TimedAction(action.getActionBlock(), action.getDelay(), t + ms, action.isRepeating()));
+        }
+
+
         // Possibly activate children
         for (Scope child : scope.getNestedScopes()) {
-            if (child.isActive(context)) {
+            if (child.isScopeConditionTrue(context)) {
                 ScopeInstance scopeInstance = findScopeInstance(child, context);
                 scopeInstance.setActive(active);
                 scopeInstance.activate(context);
@@ -86,7 +126,7 @@ public class ScopeInstance {
             for (EntityPlayerMP player : context.getWorld().getMinecraftServer().getPlayerList().getPlayers()) {
                 EnigmaFunctionContext newctxt = new EnigmaFunctionContext(context.getWorld(), player);
                 for (Scope child : scope.getNestedPlayerScopes()) {
-                    if (child.isActive(newctxt)) {
+                    if (child.isScopeConditionTrue(newctxt)) {
                         ScopeInstance scopeInstance = findScopeInstance(player.getPersistentID(), child, newctxt);
                         scopeInstance.setActive(active);
                         scopeInstance.activate(newctxt);
@@ -96,6 +136,10 @@ public class ScopeInstance {
         }
 
         active = true;
+    }
+
+    private void clearTimers() {
+        timedActions.clear();
     }
 
     // Deactivate this scope. This does not check the condition
@@ -113,8 +157,9 @@ public class ScopeInstance {
             EntityPlayerMP player = context.getWorld().getMinecraftServer().getPlayerList().getPlayerByUUID(key);
             ScopeInstance scopeInstance = entry.getValue();
             EnigmaFunctionContext newctxt = new EnigmaFunctionContext(context.getWorld(), player);
-            scopeInstance.deactivate(context);
+            scopeInstance.deactivate(newctxt);
         }
+        clearTimers();
 
         if (active != null) {
             // If we didn't know our state then we don't call 'stop' because then we are just loading
@@ -126,7 +171,7 @@ public class ScopeInstance {
     }
 
     public void checkActivity(EnigmaFunctionContext context) {
-        if (scope.isActive(context)) {
+        if (scope.isScopeConditionTrue(context)) {
             activate(context);
 
             for (Scope child : scope.getNestedScopes()) {
@@ -142,6 +187,21 @@ public class ScopeInstance {
                     }
                 }
             }
+            long t = System.currentTimeMillis();
+            List<TimedAction> newActions = new ArrayList<>(timedActions.size());
+            for (TimedAction action : timedActions) {
+                if (t >= action.getTime()) {
+                    action.getActionBlock().execute(context);
+                    if (action.isRepeating()) {
+                        int ms = ObjectTools.asIntSafe(action.getDelay().eval(context));
+                        newActions.add(new TimedAction(action.getActionBlock(), action.getDelay(), t + ms, action.isRepeating()));
+                    }
+                } else {
+                    newActions.add(action);
+                }
+            }
+            timedActions = newActions;
+
         } else {
             deactivate(context);
         }

@@ -70,6 +70,12 @@ scope "begin" state(main) == beginroom:
     on deactivate:
         log "begin.deactivate"
 
+    on delay 4000:
+        log "We waited 4s!"
+
+    on repeat 1000:
+        log "ping"
+
     on rightclickblock testpos:
         message "You receive a mysterious key"
         give mysteriouskey
@@ -78,6 +84,7 @@ scope "begin" state(main) == beginroom:
     on rightclickblock lockeddoor:
         if hasitem(mysteriouskey):
             message "The door opens!"
+            take mysteriouskey
         else:
             message "You need a key!"
         cancel
@@ -99,5 +106,6 @@ scope "end" state(main) == theend:
     on rightclickblock lockeddoor:
         teleport tppos
         sound tppos "minecraft:entity.endermen.teleport"
+
 
 

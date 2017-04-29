@@ -12,6 +12,7 @@ public enum Token {
     LEFTCLICKBLOCK(1),  // on leftclickblock <position>
     BLOCKAT(2),         // on blockat <position> <blocktype>
     DELAY(1),           // on delay <time>
+    REPEAT(1),          // on repeat <time>
     OPEN(1),            // on open <name>
     LOGIN(0),           // on login
     INIT(0),            // on init

@@ -25,12 +25,36 @@ public class Scope {
     private final List<ActionBlock> onInit = new ArrayList<>();
     private final List<ActionBlock> onSetup = new ArrayList<>();
     private final List<ActionBlock> onLogin = new ArrayList<>();
-    private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onDelay = new ArrayList<>();
+    private final List<DelayedAction> onDelay = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onRightClickItem = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onRightClickBlock = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onLeftClickBlock = new ArrayList<>();
     private final List<Scope> nestedScopes = new ArrayList<>();
     private final List<Scope> nestedPlayerScopes = new ArrayList<>();
+
+    public static class DelayedAction {
+        private final ActionBlock actionBlock;
+        private final Expression<EnigmaFunctionContext> delay;
+        private final boolean repeating;
+
+        public DelayedAction(ActionBlock actionBlock, Expression<EnigmaFunctionContext> delay, boolean repeating) {
+            this.actionBlock = actionBlock;
+            this.delay = delay;
+            this.repeating = repeating;
+        }
+
+        public ActionBlock getActionBlock() {
+            return actionBlock;
+        }
+
+        public Expression<EnigmaFunctionContext> getDelay() {
+            return delay;
+        }
+
+        public boolean isRepeating() {
+            return repeating;
+        }
+    }
 
     private Expression<EnigmaFunctionContext> condition;
 
@@ -42,12 +66,16 @@ public class Scope {
         return id;
     }
 
-    public boolean isActive(EnigmaFunctionContext context) {
+    public boolean isScopeConditionTrue(EnigmaFunctionContext context) {
         return condition == null || ObjectTools.asBoolSafe(condition.eval(context));
     }
 
     public void setCondition(Expression<EnigmaFunctionContext> condition) {
         this.condition = condition;
+    }
+
+    public List<DelayedAction> getOnDelay() {
+        return onDelay;
     }
 
     public List<Scope> getNestedScopes() {
@@ -130,8 +158,8 @@ public class Scope {
         onSetup.add(actionBlock);
     }
 
-    public void addOnDelay(ActionBlock actionBlock, Expression<EnigmaFunctionContext> delayPar) {
-        onDelay.add(Pair.of(actionBlock, delayPar));
+    public void addOnDelay(ActionBlock actionBlock, Expression<EnigmaFunctionContext> delayPar, boolean repeating) {
+        onDelay.add(new DelayedAction(actionBlock, delayPar, repeating));
     }
 
     public void addOnLogin(ActionBlock actionBlock) {
@@ -176,9 +204,9 @@ public class Scope {
             System.out.println(StringUtils.repeat(' ', indent+4) + "On Deactivate:");
             block.dump(indent+4);
         }
-        for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onDelay) {
-            System.out.println(StringUtils.repeat(' ', indent+4) + "On Delay (" + pair.getValue() + "):");
-            pair.getKey().dump(indent+4);
+        for (DelayedAction action : onDelay) {
+            System.out.println(StringUtils.repeat(' ', indent+4) + "On Delay:");
+            action.actionBlock.dump(indent+4);
         }
         for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onRightClickBlock) {
             System.out.println(StringUtils.repeat(' ', indent+4) + "On Right Click Block (" + pair.getValue() + "):");
