@@ -1,0 +1,12 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "enigma:coin",
+    "textures": { "txt": "enigma:items/coin_gold" }
+  },
+  "variants": {
+    "normal": [{}],
+    "coin0": [{ "textures": { "txt": "enigma:items/coin_gold" } }],
+    "coin1": [{ "textures": { "txt": "enigma:items/coin_silver" } }]
+  }
+}

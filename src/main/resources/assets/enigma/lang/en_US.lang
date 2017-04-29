@@ -3,6 +3,8 @@ item.enigma_key0.name=Gold Key
 item.enigma_key1.name=Red Key
 item.enigma_key2.name=Silver Key
 item.enigma_key3.name=Black Key
+item.enigma_coin0.name=Gold Coin
+item.enigma_coin1.name=Silver Coin
 
 # Creative Tabs
 itemGroup.Enigma=Enigma
