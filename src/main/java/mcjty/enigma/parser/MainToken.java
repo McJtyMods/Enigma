@@ -28,6 +28,7 @@ public enum MainToken {
     META(false,1),          // meta <value>
     TELEPORT(false,1),      // teleport <position>
     DESCRIPTION(false,1),   // description <string>
+    SOUND(false,2),         // description <position> <sound>
     TAG(false, 2);          // tag <object> <tagname>
 
     private final boolean hasSecondaryToken;

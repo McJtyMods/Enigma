@@ -311,6 +311,9 @@ public class ProgramParser {
                 case TELEPORT:
                     actionBlock.addAction(new TeleportAction(line.getParameters().get(0)));
                     break;
+                case SOUND:
+                    actionBlock.addAction(new SoundAction(line.getParameters().get(0), line.getParameters().get(1)));
+                    break;
                 case TAG:
                     break;
                 default:
