@@ -1,16 +1,10 @@
 package mcjty.enigma.proxy;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import mcjty.enigma.Enigma;
 import mcjty.enigma.ForgeEventHandlers;
-import mcjty.enigma.code.EnigmaExpressionContext;
 import mcjty.enigma.code.RootScope;
 import mcjty.enigma.items.ModItems;
 import mcjty.enigma.network.EnigmaMessages;
-import mcjty.enigma.parser.ParserException;
-import mcjty.enigma.parser.ProgramParser;
-import mcjty.enigma.parser.RuleParser;
-import mcjty.enigma.parser.TokenizedLine;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -22,7 +16,6 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Level;
 
 import java.io.*;
-import java.util.List;
 import java.util.concurrent.Callable;
 
 public abstract class CommonProxy {
@@ -35,7 +28,7 @@ public abstract class CommonProxy {
         mainConfig = new Configuration(new File(modConfigDir.getPath(), "enigma.cfg"));
 
         readMainConfig();
-        readRules();
+        RootScope.readRules();
 
         EnigmaMessages.registerMessages("enigma");
 
@@ -56,19 +49,6 @@ public abstract class CommonProxy {
             if (mainConfig.hasChanged()) {
                 mainConfig.save();
             }
-        }
-    }
-
-    private void readRules() {
-        InputStream inputstream = Enigma.class.getResourceAsStream("/assets/enigma/rules/ruleexample");
-        try {
-            List<TokenizedLine> lines = RuleParser.parse(new BufferedReader(new InputStreamReader(inputstream)), new EnigmaExpressionContext());
-            RootScope.root = ProgramParser.parse(lines);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ParserException e) {
-            Enigma.logger.log(Level.ERROR, "ERROR: " + e.getMessage() + " at line " + e.getLinenumber(), e);
-            throw new RuntimeException(e);
         }
     }
 

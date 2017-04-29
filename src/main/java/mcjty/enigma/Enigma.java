@@ -1,6 +1,7 @@
 package mcjty.enigma;
 
 
+import mcjty.enigma.commands.CmdReload;
 import mcjty.enigma.commands.CmdReset;
 import mcjty.enigma.commands.CmdStates;
 import mcjty.enigma.progress.ProgressHolder;
@@ -73,6 +74,7 @@ public class Enigma {
     public void serverLoad(FMLServerStartingEvent event) {
         event.registerServerCommand(new CmdStates());
         event.registerServerCommand(new CmdReset());
+        event.registerServerCommand(new CmdReload());
     }
 
     public String getModId() {

@@ -10,21 +10,21 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 
-public class CmdReset extends CompatCommandBase {
+public class CmdReload extends CompatCommandBase {
     @Override
     public String getName() {
-        return "e_reset";
+        return "e_reload";
     }
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "e_reset";
+        return "e_reload";
     }
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         Enigma.logger.info("Reset status:");
-        RootScope.reset(server.getEntityWorld());
-        ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Total Enigma State Reset!"));
+        RootScope.reload(server.getEntityWorld());
+        ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.YELLOW + "Rules reloaded!"));
     }
 }
