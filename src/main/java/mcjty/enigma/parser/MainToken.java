@@ -26,6 +26,7 @@ public enum MainToken {
     ITEM(false,1),          // item <name>
     AMOUNT(false,1),        // amount <number>
     META(false,1),          // meta <value>
+    TELEPORT(false,1),      // teleport <position>
     DESCRIPTION(false,1),   // description <string>
     TAG(false, 2);          // tag <object> <tagname>
 

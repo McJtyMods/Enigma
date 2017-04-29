@@ -308,6 +308,9 @@ public class ProgramParser {
                 case CANCEL:
                     actionBlock.addAction(new CancelAction());
                     break;
+                case TELEPORT:
+                    actionBlock.addAction(new TeleportAction(line.getParameters().get(0)));
+                    break;
                 case TAG:
                     break;
                 default:

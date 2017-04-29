@@ -6,6 +6,7 @@ on setup:
     position lockeddoor 800 4 1903 0
     position exitposition 800 4 1900 0
     position changeblock 808 4 1900 0
+    position tppos 830 4 1900 0
 
     blockstate diamond:
         block "minecraft:diamond_block"
@@ -95,5 +96,7 @@ scope "end" state(main) == theend:
     on deactivate:
         log "end.deactivate"
 
+    on rightclickblock lockeddoor:
+        teleport tppos
 
 
