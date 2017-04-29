@@ -29,11 +29,18 @@ on activate:
     state main beginroom
 
 scope "diamond" state(changeblock) == diamond:
+    on activate:
+        log "diamond.activate"
     on rightclickblock changeblock:
+        log "diamond.rightclickblock"
         setblock changeblock emerald
         state changeblock emerald
+
 scope "emerald" state(changeblock) == emerald:
+    on activate:
+        log "emerald.activate"
     on rightclickblock changeblock:
+        log "emerald.rightclickblock"
         setblock changeblock diamond
         state changeblock diamond
 

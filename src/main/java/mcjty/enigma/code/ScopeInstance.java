@@ -28,8 +28,7 @@ public class ScopeInstance {
         consumer.accept(context, scope);
 
         for (ScopeInstance scopeInstance : nestedScopeInstances.values()) {
-            Scope child = scopeInstance.getScope();
-            if (child.isActive(context)) {
+            if (scopeInstance.isActive()) {
                 scopeInstance.forActiveScopes(context, consumer);
             }
         }
@@ -41,8 +40,8 @@ public class ScopeInstance {
                 if (player == null) {
                     throw new RuntimeException("What? Player is missing!");
                 }
-                EnigmaFunctionContext newctxt = new EnigmaFunctionContext(context.getWorld(), player);
-                if (scopeInstance.getScope().isActive(newctxt)) {
+                if (scopeInstance.isActive()) {
+                    EnigmaFunctionContext newctxt = new EnigmaFunctionContext(context.getWorld(), player);
                     scopeInstance.forActiveScopes(newctxt, consumer);
                     if (newctxt.isCanceled()) {
                         context.setCanceled(true);
