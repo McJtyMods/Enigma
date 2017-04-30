@@ -13,7 +13,7 @@ public class ExpressionParser<T> {
         this.context = context;
     }
 
-    public static <T> ParsedExpression<T> eval(final StringPointer str, ExpressionContext<T> context) {
+    public static <T> ParsedExpression<T> eval(final StringPointer str, ExpressionContext<T> context) throws ExpressionException {
         return new ExpressionParser<T>(str, context).parse();
     }
 
@@ -55,7 +55,7 @@ public class ExpressionParser<T> {
         return false;
     }
 
-    public ParsedExpression<T> parse() {
+    public ParsedExpression<T> parse() throws ExpressionException {
         nextChar();
         ParsedExpression<T> x = parseExpression();
         if (str.hasMore() && str.current() != ',' && str.current() != ':') {
@@ -71,7 +71,7 @@ public class ExpressionParser<T> {
     // factor = `+` factor | `-` factor | `(` expression `)`
     //        | number | functionName factor | factor `^` factor
 
-    private ParsedExpression<T> parseExpression() {
+    private ParsedExpression<T> parseExpression() throws ExpressionException {
         ParsedExpression<T> x = parseTermEquals();
         while (true) {
             if (eat2('=', '=')) {
@@ -110,7 +110,7 @@ public class ExpressionParser<T> {
         }
     }
 
-    private ParsedExpression<T> parseTermEquals() {
+    private ParsedExpression<T> parseTermEquals() throws ExpressionException {
         ParsedExpression<T> x = parseTerm();
         while (true) {
             if (eat('+')) {
@@ -129,7 +129,7 @@ public class ExpressionParser<T> {
         }
     }
 
-    private ParsedExpression<T> parseTerm() {
+    private ParsedExpression<T> parseTerm() throws ExpressionException {
         ParsedExpression<T> x = parseFactor();
         while (true) {
             if (eat('*')) {
@@ -148,7 +148,7 @@ public class ExpressionParser<T> {
         }
     }
 
-    private ParsedExpression<T> parseFactor() {
+    private ParsedExpression<T> parseFactor() throws ExpressionException {
         if (eat('+')) {
             return parseFactor(); // unary plus
         }
@@ -214,7 +214,7 @@ public class ExpressionParser<T> {
                 x = new ParsedExpression<T>(context.getVariable(func), false, func);
             } else if (context.isFunction(func)) {
                 if (!eat('(')) {
-                    throw new RuntimeException("Excected '(' after a function");
+                    throw new ExpressionException("Excected '(' after a function");
                 }
                 ExpressionFunction<T> function = context.getFunction(func);
                 if (eat(')')) {
@@ -230,7 +230,7 @@ public class ExpressionParser<T> {
                         Expression<T> finalX2 = x2.getExpression();
                         x = new ParsedExpression<T>(w -> function.eval(w, finalX1.eval(w), finalX2.eval(w)), false, func + " " + x1.getDebug() + "," + x2.getDebug());
                         if (!eat(')')) {
-                            throw new RuntimeException("Excected ')' after the function parameters");
+                            throw new ExpressionException("Excected ')' after the function parameters");
                         }
                     }
                 }
@@ -238,7 +238,7 @@ public class ExpressionParser<T> {
                 x = new ParsedExpression<>(w -> func, true, func);
             }
         } else {
-            throw new RuntimeException("Unexpected: " + (char) ch);
+            throw new ExpressionException("Unexpected: " + (char) ch);
         }
 
         if (eat('^')) {

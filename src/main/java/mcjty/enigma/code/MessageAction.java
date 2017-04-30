@@ -28,7 +28,10 @@ public class MessageAction extends Action {
 
     @Override
     public void execute(EnigmaFunctionContext context) {
-        checkPlayer(context);
-        EnigmaMessages.INSTANCE.sendTo(new PacketAddMessage(ObjectTools.asStringSafe(message.eval(context)), timeout), (EntityPlayerMP) context.getPlayer());
+        if (context.hasPlayer()) {
+            EnigmaMessages.INSTANCE.sendTo(new PacketAddMessage(ObjectTools.asStringSafe(message.eval(context)), timeout), (EntityPlayerMP) context.getPlayer());
+        } else {
+            EnigmaMessages.INSTANCE.sendToAll(new PacketAddMessage(ObjectTools.asStringSafe(message.eval(context)), timeout));
+        }
     }
 }

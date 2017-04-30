@@ -58,7 +58,7 @@ public class RootScope {
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (ParserException e) {
-            Enigma.logger.log(Level.ERROR, "ERROR: " + e.getMessage() + " at line " + e.getLinenumber(), e);
+            Enigma.logger.log(Level.ERROR, "ERROR: " + e.getMessage() + " at line " + (e.getLinenumber()+1), e);
             throw new RuntimeException(e);
         }
     }
