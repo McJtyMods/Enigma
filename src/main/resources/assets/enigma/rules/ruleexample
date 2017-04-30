@@ -29,6 +29,14 @@ on activate:
     log "root.activate"
     state main beginroom
 
+pscope "player" true:
+    on repeat 1000:
+        if distance(tppos) < 5:
+            message "Close!"
+
+on rightclickblock lockeddoor:
+    message "What even"
+
 scope "diamond" state(changeblock) == diamond:
     on activate:
         log "diamond.activate"
@@ -82,6 +90,7 @@ scope "begin" state(main) == beginroom:
         cancel
 
     on rightclickblock lockeddoor:
+        log "testtesttesttest"
         if hasitem(mysteriouskey):
             message "The door opens!"
             take mysteriouskey
@@ -106,8 +115,4 @@ scope "end" state(main) == theend:
     on rightclickblock lockeddoor:
         teleport tppos
         sound tppos "minecraft:entity.endermen.teleport"
-
-scope "test" true:
-    on init:
-        message max(3,5)
 

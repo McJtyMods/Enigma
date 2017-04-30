@@ -6,11 +6,14 @@ import mcjty.enigma.parser.ExpressionFunction;
 import mcjty.enigma.progress.PlayerProgress;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
+import mcjty.enigma.varia.BlockPosDim;
 import mcjty.enigma.varia.InventoryHelper;
 import mcjty.lib.tools.InventoryTools;
 import mcjty.lib.tools.ItemStackTools;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -24,12 +27,12 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
     static {
         FUNCTIONS.put("state", (context, o) -> {
             Progress progress = ProgressHolder.getProgress(context.getWorld());
-            return progress.getState(o);
+            return progress.getState(o[0]);
         });
         FUNCTIONS.put("pstate", (context, o) -> {
             Progress progress = ProgressHolder.getProgress(context.getWorld());
             PlayerProgress playerProgress = progress.getPlayerProgress(context.getPlayer().getPersistentID());
-            return playerProgress.getState(o);
+            return playerProgress.getState(o[0]);
         });
         FUNCTIONS.put("hasitem", (context, o) -> {
             Progress progress = ProgressHolder.getProgress(context.getWorld());
@@ -65,6 +68,25 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
                 }
             }
             return false;
+        });
+        FUNCTIONS.put("distance", (context, o) -> {
+            Progress progress = ProgressHolder.getProgress(context.getWorld());
+            BlockPosDim pos1 = progress.getNamedPosition(o[0]);
+            BlockPos pos2;
+            if (o.length > 1) {
+                BlockPosDim p2 = progress.getNamedPosition(o[1]);
+                if (pos1.getDimension() != p2.getDimension()) {
+                    return -1;
+                }
+                pos2 = p2.getPos();
+            } else {
+                EntityPlayer player = context.getPlayer();
+                if (player.getEntityWorld().provider.getDimension() != pos1.getDimension()) {
+                    return -1;
+                }
+                pos2 = player.getPosition();
+            }
+            return BlockPosDim.distance(pos1.getPos(), pos2);
         });
 
     }

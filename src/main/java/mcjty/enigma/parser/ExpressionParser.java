@@ -22,6 +22,11 @@ public class ExpressionParser<T> {
         ch = str.hasMore() ? str.current() : -1;
     }
 
+    private void prevChar() {
+        str.dec();
+        ch = str.hasMore() ? str.current() : -1;
+    }
+
     private boolean eat(int charToEat) {
         while (ch == ' ') {
             nextChar();
@@ -43,7 +48,7 @@ public class ExpressionParser<T> {
                 nextChar();
                 return true;
             } else {
-                str.dec();
+                prevChar();
                 return false;
             }
         }
@@ -54,13 +59,13 @@ public class ExpressionParser<T> {
         nextChar();
         ParsedExpression<T> x = parseExpression();
         if (str.hasMore() && str.current() != ',' && str.current() != ':') {
-            str.dec();
+            prevChar();
         }
         return x;
     }
 
     // Grammar:
-    // expression = termequals | expression `==` termequals | expression `!=` termequals
+    // expression = termequals | expression `==` termequals | expression `!=` termequals | expression '<' termequals
     // termequals = term | expression `+` term | expression `-` term
     // term = factor | term `*` factor | term `/` factor
     // factor = `+` factor | `-` factor | `(` expression `)`
@@ -79,6 +84,26 @@ public class ExpressionParser<T> {
                 ParsedExpression<T> bexp = parseTermEquals();
                 Expression<T> b = bexp.getExpression();
                 x = optimizeBinaryOperator(w -> !ObjectTools.equals(a.eval(w), b.eval(w)), x, bexp, "!=");
+            } else if (eat2('<', '=')) {
+                Expression<T> a = x.getExpression();
+                ParsedExpression<T> bexp = parseTermEquals();
+                Expression<T> b = bexp.getExpression();
+                x = optimizeBinaryOperator(w -> ObjectTools.lessOrEqual(a.eval(w), b.eval(w)), x, bexp, "<=");
+            } else if (eat2('>', '=')) {
+                Expression<T> a = x.getExpression();
+                ParsedExpression<T> bexp = parseTermEquals();
+                Expression<T> b = bexp.getExpression();
+                x = optimizeBinaryOperator(w -> ObjectTools.lessOrEqual(b.eval(w), a.eval(w)), x, bexp, ">=");
+            } else if (eat('<')) {
+                Expression<T> a = x.getExpression();
+                ParsedExpression<T> bexp = parseTermEquals();
+                Expression<T> b = bexp.getExpression();
+                x = optimizeBinaryOperator(w -> ObjectTools.less(a.eval(w), b.eval(w)), x, bexp, "<");
+            } else if (eat('>')) {
+                Expression<T> a = x.getExpression();
+                ParsedExpression<T> bexp = parseTermEquals();
+                Expression<T> b = bexp.getExpression();
+                x = optimizeBinaryOperator(w -> ObjectTools.less(b.eval(w), a.eval(w)), x, bexp, ">");
             } else {
                 return x;
             }

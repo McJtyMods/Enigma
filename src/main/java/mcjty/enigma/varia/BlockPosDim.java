@@ -1,6 +1,7 @@
 package mcjty.enigma.varia;
 
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nonnull;
 
@@ -41,4 +42,12 @@ public class BlockPosDim {
         result = 31 * result + dimension;
         return result;
     }
+
+    public static double distance(BlockPos p1, BlockPos p2) {
+        double d0 = p1.getX() - p2.getX();
+        double d1 = p1.getY() - p2.getY();
+        double d2 = p1.getZ() - p2.getZ();
+        return d0 * d0 + d1 * d1 + d2 * d2;
+    }
+
 }

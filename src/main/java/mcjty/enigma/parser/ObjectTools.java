@@ -19,6 +19,8 @@ public class ObjectTools {
     public static int asIntSafe(Object o) {
         if (o instanceof Integer) {
             return (int) o;
+        } else if (o instanceof Double) {
+            return ((Double) o).intValue();
         } else if (o instanceof Boolean) {
             return ((Boolean) o) ? 1 : 0;
         } else if (o instanceof String) {
@@ -28,9 +30,25 @@ public class ObjectTools {
         }
     }
 
+    public static double asDoubleSafe(Object o) {
+        if (o instanceof Double) {
+            return (Double) o;
+        } else if (o instanceof Integer) {
+            return ((Integer) o).doubleValue();
+        } else if (o instanceof Boolean) {
+            return ((Boolean) o) ? 1.0 : 0.0;
+        } else if (o instanceof String) {
+            return Double.parseDouble((String) o);
+        } else {
+            return 0.0;
+        }
+    }
+
     public static String asStringSafe(Object o) {
         if (o instanceof Integer) {
             return Integer.toString((Integer) o);
+        } else if (o instanceof Double) {
+            return Double.toString((Double) o);
         } else if (o instanceof Boolean) {
             return ((Boolean) o) ? "true" : "false";
         } else if (o instanceof String) {
@@ -85,5 +103,42 @@ public class ObjectTools {
             return o2.equals(STRINGS.get((String) o1));
         }
         return o1.equals(o2);
+    }
+
+    public static boolean less(Object o1, Object o2) {
+        if (o1 == null) {
+            return false;
+        }
+        if (o2 == null) {
+            return true;
+        }
+        if (o1 instanceof Integer) {
+            return ((Integer) o1) < asIntSafe(o2);
+        } else if (o1 instanceof Double) {
+            return ((Double) o1) < asDoubleSafe(o2);
+        } else if (o1 instanceof String) {
+            return ((String) o1).compareTo(asStringSafe(o2)) < 0;
+        }
+        return false;
+    }
+
+    public static boolean lessOrEqual(Object o1, Object o2) {
+        if (equals(o1, o2)) {
+            return true;
+        }
+        if (o1 == null) {
+            return false;
+        }
+        if (o2 == null) {
+            return true;
+        }
+        if (o1 instanceof Integer) {
+            return ((Integer) o1) < asIntSafe(o2);
+        } else if (o1 instanceof Double) {
+            return ((Double) o1) < asDoubleSafe(o2);
+        } else if (o1 instanceof String) {
+            return ((String) o1).compareTo(asStringSafe(o2)) < 0;
+        }
+        return false;
     }
 }

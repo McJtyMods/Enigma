@@ -36,7 +36,6 @@ public class ForgeEventHandlers {
         if (!event.getWorld().isRemote && event.getHand() == EnumHand.MAIN_HAND) {
             EntityPlayer player = event.getEntityPlayer();
             World world = player.getEntityWorld();
-            Progress progress = ProgressHolder.getProgress(world);
             ItemStack stack = player.getHeldItemMainhand();
             if (ItemStackTools.isValid(stack)) {
                 EnigmaFunctionContext context = new EnigmaFunctionContext(world, player);

@@ -112,6 +112,8 @@ public class RuleParser<T> {
                     return (w,o) -> ObjectTools.asIntSafe(o[0]) * 2;
                 } else if ("state".equals(name)) {
                     return (w,o) -> o[0];
+                } else if ("distance".equals(name)) {
+                    return (w,o) -> o[0];
                 } else if ("pstate".equals(name)) {
                     return (w,o) -> o[0];
                 } else if ("hasitem".equals(name)) {
@@ -126,7 +128,7 @@ public class RuleParser<T> {
             @Override
             public boolean isFunction(String name) {
                 return "double".equals(name) || "state".equals(name) || "hasitem".equals(name)
-                        || "pstate".equals(name) || "max".equals(name);
+                        || "pstate".equals(name) || "max".equals(name) || "distance".equals(name);
             }
         };
 
