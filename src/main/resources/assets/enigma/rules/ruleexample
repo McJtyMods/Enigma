@@ -34,9 +34,6 @@ pscope "player" true:
         if distance(tppos) < 5:
             message "Close!"
 
-on rightclickblock lockeddoor:
-    message "What even"
-
 scope "diamond" state(changeblock) == diamond:
     on activate:
         log "diamond.activate"
@@ -93,6 +90,7 @@ scope "begin" state(main) == beginroom:
         log "testtesttesttest"
         if hasitem(mysteriouskey):
             message "The door opens!"
+            sound lockeddoor "enigma:locking"
             take mysteriouskey
         else:
             message "You need a key!"
