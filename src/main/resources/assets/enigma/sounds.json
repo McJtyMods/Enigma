@@ -1,3 +1,6 @@
 {
-    "locking" : {"category": "block", "sounds": ["enigma:locking"]}
+    "locking" : {"category": "block", "sounds": ["enigma:locking"]},
+    "rockbreaking" : {"category": "block", "sounds": ["enigma:rockbreaking"]},
+    "rockbreaking2" : {"category": "block", "sounds": ["enigma:rockbreaking2"]},
+    "stonedoor" : {"category": "block", "sounds": ["enigma:stonedoor"]}
 }
