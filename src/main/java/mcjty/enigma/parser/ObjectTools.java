@@ -63,6 +63,8 @@ public class ObjectTools {
             return asStringSafe(o1) + asStringSafe(o2);
         } else if (o1 instanceof Integer) {
             return asIntSafe(o1) + asIntSafe(o2);
+        } else if (o1 instanceof Double) {
+            return asDoubleSafe(o1) + asDoubleSafe(o2);
         } else {
             return "";
         }
@@ -71,6 +73,8 @@ public class ObjectTools {
     public static Object sub(Object o1, Object o2) {
         if (o1 instanceof Integer) {
             return asIntSafe(o1) - asIntSafe(o2);
+        } else if (o1 instanceof Double) {
+            return asDoubleSafe(o1) - asDoubleSafe(o2);
         } else {
             return "";
         }
@@ -79,6 +83,8 @@ public class ObjectTools {
     public static Object mul(Object o1, Object o2) {
         if (o1 instanceof Integer) {
             return asIntSafe(o1) * asIntSafe(o2);
+        } else if (o1 instanceof Double) {
+            return asDoubleSafe(o1) * asDoubleSafe(o2);
         } else {
             return "";
         }
@@ -87,6 +93,8 @@ public class ObjectTools {
     public static Object div(Object o1, Object o2) {
         if (o1 instanceof Integer) {
             return asIntSafe(o1) / asIntSafe(o2);
+        } else if (o1 instanceof Double) {
+            return asDoubleSafe(o1) / asDoubleSafe(o2);
         } else {
             return "";
         }

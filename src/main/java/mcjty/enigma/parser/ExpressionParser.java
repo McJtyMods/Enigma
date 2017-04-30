@@ -173,8 +173,14 @@ public class ExpressionParser<T> {
             while ((ch >= '0' && ch <= '9') || ch == '.') {
                 nextChar();
             }
-            int d = Integer.parseInt(str.substring(startPos, str.index()));
-            x = new ParsedExpression<T>(w -> d, true, Integer.toString(d));
+            String substring = str.substring(startPos, str.index());
+            if (substring.contains(".")) {
+                double d = Double.parseDouble(substring);
+                x = new ParsedExpression<T>(w -> d, true, Double.toString(d));
+            } else {
+                int d = Integer.parseInt(substring);
+                x = new ParsedExpression<T>(w -> d, true, Integer.toString(d));
+            }
         } else if (ch == '"' || ch == '\'') {
             int toquote = ch;
             StrBuilder builder = new StrBuilder();
@@ -198,10 +204,10 @@ public class ExpressionParser<T> {
                 x = parseFactor();
                 Expression<T> finalX = x.getExpression();
                 if (x.isConstant()) {
-                    double result = Math.sqrt(ObjectTools.asIntSafe(finalX.eval(null)));
+                    double result = Math.sqrt(ObjectTools.asDoubleSafe(finalX.eval(null)));
                     x = new ParsedExpression<T>(w -> result, true, Double.toString(result));
                 } else {
-                    x = new ParsedExpression<T>(w -> Math.sqrt(ObjectTools.asIntSafe(finalX.eval(w))), false,
+                    x = new ParsedExpression<T>(w -> Math.sqrt(ObjectTools.asDoubleSafe(finalX.eval(w))), false,
                             "sqrt(" + x.getDebug() + ")");
                 }
             } else if (context.isVariable(func)) {
