@@ -39,11 +39,14 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
         FUNCTIONS.put("isblock", (context, o) -> {
             Progress progress = ProgressHolder.getProgress(context.getWorld());
             BlockPosDim namedPosition = progress.getNamedPosition(o[0]);
-            IBlockState state = progress.getNamedBlock(o[1]);
-            if (namedPosition != null && state != null) {
-                return DimensionManager.getWorld(namedPosition.getDimension()).getBlockState(namedPosition.getPos()).equals(state);
+            if (namedPosition == null) {
+                throw new RuntimeException("Cannot find position " + o[0] + "!");
             }
-            return false;
+            IBlockState state = progress.getNamedBlock(o[1]);
+            if (state == null) {
+                throw new RuntimeException("Cannot find block state " + o[1] + "!");
+            }
+            return DimensionManager.getWorld(namedPosition.getDimension()).getBlockState(namedPosition.getPos()).equals(state);
         });
         FUNCTIONS.put("hasitem", (context, o) -> {
             Progress progress = ProgressHolder.getProgress(context.getWorld());
@@ -57,6 +60,8 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
                         }
                     }
                 }
+            } else {
+                throw new RuntimeException("Cannot find item " + o[0] + "!");
             }
             return false;
         });
@@ -67,6 +72,8 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
                 if (InventoryHelper.stackEqualExact(stack, context.getPlayer().getHeldItem(EnumHand.MAIN_HAND))) {
                     return true;
                 }
+            } else {
+                throw new RuntimeException("Cannot find item " + o[0] + "!");
             }
             return false;
         });
@@ -77,15 +84,23 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
                 if (InventoryHelper.stackEqualExact(stack, context.getPlayer().getHeldItem(EnumHand.OFF_HAND))) {
                     return true;
                 }
+            } else {
+                throw new RuntimeException("Cannot find item " + o[0] + "!");
             }
             return false;
         });
         FUNCTIONS.put("distance", (context, o) -> {
             Progress progress = ProgressHolder.getProgress(context.getWorld());
             BlockPosDim pos1 = progress.getNamedPosition(o[0]);
+            if (pos1 == null) {
+                throw new RuntimeException("Cannot find position " + o[0] + "!");
+            }
             BlockPos pos2;
             if (o.length > 1) {
                 BlockPosDim p2 = progress.getNamedPosition(o[1]);
+                if (p2 == null) {
+                    throw new RuntimeException("Cannot find position " + o[1] + "!");
+                }
                 if (pos1.getDimension() != p2.getDimension()) {
                     return -1;
                 }
