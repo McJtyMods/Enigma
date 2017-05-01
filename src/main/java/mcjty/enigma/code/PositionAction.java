@@ -29,11 +29,10 @@ public class PositionAction extends Action {
     }
 
     @Override
-    public void execute(EnigmaFunctionContext context) {
+    public void execute(EnigmaFunctionContext context) throws ExecutionException {
         Progress progress = ProgressHolder.getProgress(context.getWorld());
         BlockPos p = new BlockPos(ObjectTools.asIntSafe(x.eval(context)), ObjectTools.asIntSafe(y.eval(context)), ObjectTools.asIntSafe(z.eval(context)));
         String name = ObjectTools.asStringSafe(this.name.eval(context));
-        System.out.println("Set Position: " + name);
         int dim = ObjectTools.asIntSafe(dimension.eval(context));
         progress.addNamedPosition(name, new BlockPosDim(p, dim));
         ProgressHolder.save(context.getWorld());

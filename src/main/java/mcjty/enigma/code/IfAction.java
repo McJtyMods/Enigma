@@ -31,7 +31,7 @@ public class IfAction extends Action {
     }
 
     @Override
-    public void execute(EnigmaFunctionContext context) {
+    public void execute(EnigmaFunctionContext context) throws ExecutionException {
         if (ObjectTools.asBoolSafe(condition.eval(context))) {
             if (positiveBlock != null) {
                 positiveBlock.execute(context);

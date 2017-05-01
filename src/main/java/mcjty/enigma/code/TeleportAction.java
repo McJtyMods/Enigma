@@ -20,10 +20,13 @@ public class TeleportAction extends Action {
     }
 
     @Override
-    public void execute(EnigmaFunctionContext context) {
+    public void execute(EnigmaFunctionContext context) throws ExecutionException {
         Progress progress = ProgressHolder.getProgress(context.getWorld());
-        BlockPosDim namedPosition = progress.getNamedPosition(position.eval(context));
-        // @todo error checking
+        Object pos = position.eval(context);
+        BlockPosDim namedPosition = progress.getNamedPosition(pos);
+        if (namedPosition == null) {
+            throw new ExecutionException("Cannot find named position '" + pos + "'!");
+        }
         TeleportationTools.teleportToDimension(context.getPlayer(), namedPosition.getDimension(), namedPosition.getPos().getX(), namedPosition.getPos().getY(), namedPosition.getPos().getZ());
     }
 }

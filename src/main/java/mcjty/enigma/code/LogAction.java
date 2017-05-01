@@ -18,7 +18,7 @@ public class LogAction extends Action {
     }
 
     @Override
-    public void execute(EnigmaFunctionContext context) {
+    public void execute(EnigmaFunctionContext context) throws ExecutionException {
         Enigma.logger.info(message.eval(context));
     }
 }

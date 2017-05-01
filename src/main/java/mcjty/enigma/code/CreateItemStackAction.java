@@ -34,9 +34,8 @@ public class CreateItemStackAction extends Action {
     }
 
     @Override
-    public void execute(EnigmaFunctionContext context) {
+    public void execute(EnigmaFunctionContext context) throws ExecutionException {
         Progress progress = ProgressHolder.getProgress(context.getWorld());
-        System.out.println("Creating stack " + name + " to " + item);
 
         String name = ObjectTools.asStringSafe(this.name.eval(context));
         String itemName = ObjectTools.asStringSafe(this.item.eval(context));
@@ -48,7 +47,7 @@ public class CreateItemStackAction extends Action {
         String description = ObjectTools.asStringSafe(this.description.eval(context));
         Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
         if (item == null) {
-            throw new RuntimeException("Cannot find item '" + itemName + "'!");
+            throw new ExecutionException("Cannot find item '" + itemName + "'!");
         }
         ItemStack stack = new ItemStack(item, amount, meta);
 

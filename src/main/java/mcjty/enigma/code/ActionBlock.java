@@ -2,7 +2,6 @@ package mcjty.enigma.code;
 
 import mcjty.enigma.network.EnigmaMessages;
 import mcjty.enigma.network.PacketAddMessage;
-import mcjty.enigma.parser.ObjectTools;
 import net.minecraft.util.text.TextFormatting;
 
 import java.util.ArrayList;
@@ -30,6 +29,8 @@ public class ActionBlock {
             EnigmaMessages.INSTANCE.sendToAll(new PacketAddMessage(TextFormatting.RED + "Out of bounds exception!", 400));
         } catch (NumberFormatException e) {
             EnigmaMessages.INSTANCE.sendToAll(new PacketAddMessage(TextFormatting.RED + "Number format exception!", 400));
+        } catch (ExecutionException e) {
+            EnigmaMessages.INSTANCE.sendToAll(new PacketAddMessage(TextFormatting.RED + e.getMessage(), 400));
         } catch(Exception e) {
             EnigmaMessages.INSTANCE.sendToAll(new PacketAddMessage(TextFormatting.RED + "Exception: " + e.getMessage(), 400));
         }

@@ -22,11 +22,10 @@ public class SetPlayerStateAction extends Action {
     }
 
     @Override
-    public void execute(EnigmaFunctionContext context) {
+    public void execute(EnigmaFunctionContext context) throws ExecutionException {
         checkPlayer(context);
 
         Progress progress = ProgressHolder.getProgress(context.getWorld());
-        System.out.println("Setting player state " + name + " to " + value);
 
         PlayerProgress playerProgress = progress.getPlayerProgress(context.getPlayer().getPersistentID());
         playerProgress.setState(ObjectTools.asStringSafe(name.eval(context)), ObjectTools.asStringSafe(value.eval(context)));

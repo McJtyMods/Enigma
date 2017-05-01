@@ -4,11 +4,11 @@ public abstract class Action {
     public void dump(int indent) {
     }
 
-    public abstract void execute(EnigmaFunctionContext context);
+    public abstract void execute(EnigmaFunctionContext context) throws ExecutionException;
 
-    protected void checkPlayer(EnigmaFunctionContext context) {
+    protected void checkPlayer(EnigmaFunctionContext context) throws ExecutionException {
         if (!context.hasPlayer()) {
-            throw new RuntimeException("message used without valid player!");
+            throw new ExecutionException("No valid player!");
         }
     }
 }

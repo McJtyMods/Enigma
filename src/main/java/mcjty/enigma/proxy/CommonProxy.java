@@ -5,7 +5,6 @@ import mcjty.enigma.ForgeEventHandlers;
 import mcjty.enigma.code.RootScope;
 import mcjty.enigma.items.ModItems;
 import mcjty.enigma.network.EnigmaMessages;
-import mcjty.enigma.sounds.Sounds;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -34,8 +33,6 @@ public abstract class CommonProxy {
         EnigmaMessages.registerMessages("enigma");
 
         ModItems.init();
-        Sounds.init();
-//        ModBlocks.init();
     }
 
     private void readMainConfig() {

@@ -26,7 +26,7 @@ public class TakeAction extends Action {
     }
 
     @Override
-    public void execute(EnigmaFunctionContext context) {
+    public void execute(EnigmaFunctionContext context) throws ExecutionException {
         checkPlayer(context);
 
         Progress progress = ProgressHolder.getProgress(context.getWorld());

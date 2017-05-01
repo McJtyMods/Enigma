@@ -21,12 +21,9 @@ public class SetStateAction extends Action {
     }
 
     @Override
-    public void execute(EnigmaFunctionContext context) {
+    public void execute(EnigmaFunctionContext context) throws ExecutionException {
         Progress progress = ProgressHolder.getProgress(context.getWorld());
-        System.out.println("Setting state " + name + " to " + value);
-
         progress.setState(ObjectTools.asStringSafe(name.eval(context)), ObjectTools.asStringSafe(value.eval(context)));
-
         ProgressHolder.save(context.getWorld());
     }
 }

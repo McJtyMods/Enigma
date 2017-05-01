@@ -22,7 +22,7 @@ public class GiveAction extends Action {
     }
 
     @Override
-    public void execute(EnigmaFunctionContext context) {
+    public void execute(EnigmaFunctionContext context) throws ExecutionException {
         checkPlayer(context);
 
         Progress progress = ProgressHolder.getProgress(context.getWorld());
@@ -34,8 +34,9 @@ public class GiveAction extends Action {
             EntityPlayer player = context.getPlayer();
             player.inventory.addItemStackToInventory(stack.copy());
             player.openContainer.detectAndSendChanges();
+        } else {
+            throw new ExecutionException("Cannot find item '" + st + "'!");
         }
-        // @todo error reporting
     }
 
 }

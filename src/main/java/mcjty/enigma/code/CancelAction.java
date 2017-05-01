@@ -11,7 +11,7 @@ public class CancelAction extends Action {
     }
 
     @Override
-    public void execute(EnigmaFunctionContext context) {
+    public void execute(EnigmaFunctionContext context) throws ExecutionException {
         context.setCanceled(true);
     }
 }

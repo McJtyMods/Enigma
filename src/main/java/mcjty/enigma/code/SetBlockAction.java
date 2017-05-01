@@ -24,12 +24,18 @@ public class SetBlockAction extends Action {
     }
 
     @Override
-    public void execute(EnigmaFunctionContext context) {
+    public void execute(EnigmaFunctionContext context) throws ExecutionException {
         Progress progress = ProgressHolder.getProgress(context.getWorld());
-        BlockPosDim namedPosition = progress.getNamedPosition(position.eval(context));
-        // @todo error checking
-        IBlockState namedBlock = progress.getNamedBlock(block.eval(context));
-        // @todo error checking
+        Object pos = position.eval(context);
+        BlockPosDim namedPosition = progress.getNamedPosition(pos);
+        if (namedPosition == null) {
+            throw new ExecutionException("Cannot find named position '" + pos + "'!");
+        }
+        Object blockname = block.eval(context);
+        IBlockState namedBlock = progress.getNamedBlock(blockname);
+        if (namedBlock == null) {
+            throw new ExecutionException("Cannot find named block '" + blockname + "'!");
+        }
         DimensionManager.getWorld(namedPosition.getDimension()).setBlockState(namedPosition.getPos(), namedBlock, 3);
     }
 }
