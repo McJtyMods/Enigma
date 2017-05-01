@@ -48,6 +48,7 @@ scope "diamond" state(changeblock) == diamond:
         setblock changeblock emerald
         state changeblock emerald
         particle changeblock "smoke"
+        cancel
 
 scope "emerald" state(changeblock) == emerald:
     on activate:
@@ -56,6 +57,8 @@ scope "emerald" state(changeblock) == emerald:
         log "emerald.rightclickblock"
         setblock changeblock diamond
         state changeblock diamond
+        particle changeblock "smoke"
+        cancel
 
 
 on login:
