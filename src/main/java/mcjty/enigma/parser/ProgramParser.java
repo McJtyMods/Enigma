@@ -171,7 +171,7 @@ public class ProgramParser {
             context.nextLine();
 
             switch (line.getMainToken()) {
-                case ITEM:
+                case NAME:
                     item = line.getParameters().get(0);
                     break;
                 case AMOUNT:
@@ -189,11 +189,72 @@ public class ProgramParser {
         }
 
         if (item == null) {
-            throw new ParserException("Missing 'item' for itemstack!", line.getLineNumber());
+            throw new ParserException("Missing 'name' for itemstack!", line.getLineNumber());
         }
 
         context.setCurrentIndent(origIndent);
         return new CreateItemStackAction(name, item, amount, meta, description);
+    }
+
+    private static CreateParticleAction parseParticleConfig(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line) throws ParserException {
+        if (!line.isEndsWithColon()) {
+            throw new ParserException("Expected ':' after 'CREATEPARTICLES' statement", line.getLineNumber());
+        }
+
+        Expression<EnigmaFunctionContext> name = line.getParameters().get(0);
+
+        line = context.getLine();
+        if (line.getIndentation() <= context.getCurrentIndent()) {
+            throw new ParserException("Commands in an createparticles block must be indented to the right!", line.getLineNumber());
+        }
+
+        int origIndent = context.getCurrentIndent();
+        context.setCurrentIndent(line.getIndentation());
+
+        Expression<EnigmaFunctionContext> partsys = null;
+        Expression<EnigmaFunctionContext> amount = c -> 1;
+        Expression<EnigmaFunctionContext> offsetX = c -> 0.0;
+        Expression<EnigmaFunctionContext> offsetY = c -> 0.0;
+        Expression<EnigmaFunctionContext> offsetZ = c -> 0.0;
+        Expression<EnigmaFunctionContext> speed = c -> 0.15;
+
+        while (context.hasLines()) {
+            line = context.getLine();
+            if (line.getIndentation() > context.getCurrentIndent()) {
+                throw new ParserException("Unexpected indentation in createparticles block", line.getLineNumber());
+            }
+            if (line.getIndentation() < context.getCurrentIndent()) {
+                break;
+            }
+            int linenumber = line.getLineNumber();
+            context.nextLine();
+
+            switch (line.getMainToken()) {
+                case NAME:
+                    partsys = line.getParameters().get(0);
+                    break;
+                case AMOUNT:
+                    amount = line.getParameters().get(0);
+                    break;
+                case OFFSET:
+                    offsetX = line.getParameters().get(0);
+                    offsetY = line.getParameters().get(1);
+                    offsetZ = line.getParameters().get(2);
+                    break;
+                case SPEED:
+                    speed = line.getParameters().get(0);
+                    break;
+                default:
+                    throw new ParserException("Unexpected command '" + line.getMainToken().name() + "' for createparticles block", linenumber);
+            }
+        }
+
+        if (partsys == null) {
+            throw new ParserException("Missing 'name' for createparticles!", line.getLineNumber());
+        }
+
+        context.setCurrentIndent(origIndent);
+        return new CreateParticleAction(name, partsys, amount, offsetX, offsetY, offsetZ, speed);
     }
 
     private static CreateBlockStateAction parseBlockState(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line) throws ParserException {
@@ -226,7 +287,7 @@ public class ProgramParser {
             context.nextLine();
 
             switch (line.getMainToken()) {
-                case BLOCK:
+                case NAME:
                     block = line.getParameters().get(0);
                     break;
                 case META:
@@ -238,7 +299,7 @@ public class ProgramParser {
         }
 
         if (block == null) {
-            throw new ParserException("Missing 'item' for blockstate!", line.getLineNumber());
+            throw new ParserException("Missing 'name' for blockstate!", line.getLineNumber());
         }
 
         context.setCurrentIndent(origIndent);
@@ -275,6 +336,9 @@ public class ProgramParser {
                     break;
                 case IF:
                     actionBlock.addAction(parseIf(context, line));
+                    break;
+                case CREATEPARTICLES:
+                    actionBlock.addAction(parseParticleConfig(context, line));
                     break;
                 case ITEMSTACK:
                     actionBlock.addAction(parseItemStack(context, line));
@@ -316,6 +380,9 @@ public class ProgramParser {
                     break;
                 case SOUND:
                     actionBlock.addAction(new SoundAction(line.getParameters().get(0), line.getParameters().get(1)));
+                    break;
+                case PARTICLE:
+                    actionBlock.addAction(new ParticleAction(line.getParameters().get(0), line.getParameters().get(1)));
                     break;
                 case TAG:
                     break;

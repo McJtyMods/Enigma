@@ -9,16 +9,22 @@ on setup:
     position tppos 820 4 1900 0
 
     blockstate diamond:
-        block "minecraft:diamond_block"
+        name "minecraft:diamond_block"
         meta 0
     blockstate emerald:
-        block "minecraft:emerald_block"
+        name "minecraft:emerald_block"
         meta 0
+
+    createparticles smoke:
+        name "smoke"
+        amount 500
+        offset 0 0 0
+        speed .20
 
     state changeblock diamond
 
     itemstack mysteriouskey:
-        item "enigma:key"
+        name "enigma:key"
         meta 1
         description "Mysterious key"
 
@@ -41,6 +47,7 @@ scope "diamond" state(changeblock) == diamond:
         log "diamond.rightclickblock"
         setblock changeblock emerald
         state changeblock emerald
+        particle changeblock "smoke"
 
 scope "emerald" state(changeblock) == emerald:
     on activate:

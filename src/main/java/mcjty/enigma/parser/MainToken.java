@@ -21,14 +21,17 @@ public enum MainToken {
     TAKEALL(false, 1),      // takeall <item>
     ITEMSTACK(false, 1),    // itemstack <name>
     BLOCKSTATE(false,1),    // blockstate <name>
-    BLOCK(false,1),         // block <name>
     SETBLOCK(false,2),      // setblock <position> <block>
-    ITEM(false,1),          // item <name>
+    NAME(false,1),          // name <name>
     AMOUNT(false,1),        // amount <number>
+    SPEED(false,1),         // speed <number>
+    OFFSET(false,3),        // offset <x> <y> <z>
     META(false,1),          // meta <value>
     TELEPORT(false,1),      // teleport <position>
     DESCRIPTION(false,1),   // description <string>
     SOUND(false,2),         // description <position> <sound>
+    PARTICLE(false,2),      // description <position> <particlesys>
+    CREATEPARTICLES(false,1),// createparticles <name>
     TAG(false, 2);          // tag <object> <tagname>
 
     private final boolean hasSecondaryToken;

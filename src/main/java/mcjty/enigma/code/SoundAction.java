@@ -8,6 +8,7 @@ import mcjty.enigma.varia.BlockPosDim;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
+import net.minecraftforge.common.DimensionManager;
 import org.apache.commons.lang3.StringUtils;
 
 public class SoundAction extends Action {
@@ -34,6 +35,6 @@ public class SoundAction extends Action {
         }
         String soundname = ObjectTools.asStringSafe(sound.eval(context));
         SoundEvent sound = new SoundEvent(new ResourceLocation(soundname));
-        context.getWorld().playSound(null, namedPosition.getPos(), sound, SoundCategory.BLOCKS, 1.0f, 1.0f);
+        DimensionManager.getWorld(namedPosition.getDimension()).playSound(null, namedPosition.getPos(), sound, SoundCategory.BLOCKS, 1.0f, 1.0f);
     }
 }

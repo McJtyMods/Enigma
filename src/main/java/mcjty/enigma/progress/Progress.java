@@ -10,6 +10,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
@@ -28,6 +29,7 @@ public class Progress {
     private final Map<UUID, PlayerProgress> playerProgress = new HashMap<>();
     private final Map<Integer, ItemStack> namedItemStacks = new HashMap<>();
     private final Map<Integer, IBlockState> namedBlocks = new HashMap<>();
+    private final Map<Integer, ParticleConfig> namedParticleConfigs = new HashMap<>();
     private final Set<ScopeID> initializedScopes = new HashSet<>();
 
     private boolean rootActivated = false;
@@ -45,6 +47,28 @@ public class Progress {
 
     public Map<Integer, Integer> getStates() {
         return states;
+    }
+
+    public void addNamedParticleConfig(String name, @Nonnull ParticleConfig config) {
+        namedParticleConfigs.put(STRINGS.get(name), config);
+    }
+
+    public ParticleConfig getNamedParticleConfig(String name) {
+        return namedParticleConfigs.get(STRINGS.get(name));
+    }
+
+    public ParticleConfig getNamedParticleConfig(Integer name) {
+        return namedParticleConfigs.get(name);
+    }
+
+    public ParticleConfig getNamedParticleConfig(Object o) {
+        if (o instanceof Integer) {
+            return getNamedParticleConfig((Integer) o);
+        } else if (o instanceof String) {
+            return getNamedParticleConfig((String) o);
+        } else {
+            return null;
+        }
     }
 
     public void setScopeInitialized(Integer scope) {
@@ -191,6 +215,7 @@ public class Progress {
         readNamedBlocks(nbt);
         readPlayerProgress(nbt);
         readInitializedScopes(nbt);
+        readNamedParticleConfigs(nbt);
         rootActivated = nbt.getBoolean("rootActivated");
     }
 
@@ -222,6 +247,21 @@ public class Progress {
             BlockPosDim pd = new BlockPosDim(p, tc.getInteger("dim"));
             namedPositions.put(name, pd);
             positionsToName.put(pd, name);
+        }
+    }
+
+    private void readNamedParticleConfigs(NBTTagCompound nbt) {
+        NBTTagList list = nbt.getTagList("particles", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < list.tagCount() ; i++) {
+            NBTTagCompound tc = (NBTTagCompound) list.get(i);
+            int name = STRINGS.get(tc.getString("s"));
+            String pn = tc.getString("pn");
+            int amount = tc.getInteger("a");
+            double ox = tc.getDouble("ox");
+            double oy = tc.getDouble("oy");
+            double oz = tc.getDouble("oz");
+            double speed = tc.getDouble("speed");
+            namedParticleConfigs.put(name, new ParticleConfig(EnumParticleTypes.getByName(pn), amount, ox, oy, oz, speed));
         }
     }
 
@@ -272,6 +312,7 @@ public class Progress {
         writeNamedBlocks(compound);
         writePlayerProgress(compound);
         writeInitializedScopes(compound);
+        writeNamedParticleConfigs(compound);
         return compound;
     }
 
@@ -310,6 +351,23 @@ public class Progress {
             list.appendTag(tc);
         }
         compound.setTag("positions", list);
+    }
+
+    private void writeNamedParticleConfigs(NBTTagCompound compound) {
+        NBTTagList list = new NBTTagList();
+        for (Map.Entry<Integer, ParticleConfig> entry : namedParticleConfigs.entrySet()) {
+            NBTTagCompound tc = new NBTTagCompound();
+            tc.setString("s", STRINGS.get(entry.getKey()));
+            ParticleConfig pc = entry.getValue();
+            tc.setString("pn", pc.getParticles().getParticleName());
+            tc.setInteger("a", pc.getAmount());
+            tc.setDouble("ox", pc.getOffsetX());
+            tc.setDouble("oy", pc.getOffsetY());
+            tc.setDouble("oz", pc.getOffsetZ());
+            tc.setDouble("speed", pc.getSpeed());
+            list.appendTag(tc);
+        }
+        compound.setTag("particles", list);
     }
 
     private void writeNamedItemStacks(NBTTagCompound compound) {
