@@ -17,7 +17,7 @@ on setup:
 
     createparticles smoke:
         name "smoke"
-        amount 500
+        amount 100
         offset 0 0 0
         speed .20
 
@@ -36,7 +36,7 @@ on activate:
     state main beginroom
 
 pscope "player" true:
-    on repeat 1000:
+    on repeat 50:
         if distance(tppos) < 5:
             message "Close!"
 
@@ -82,10 +82,10 @@ scope "begin" state(main) == beginroom:
     on deactivate:
         log "begin.deactivate"
 
-    on delay 4000:
+    on delay 80:
         log "We waited 4s!"
 
-    on repeat 1000:
+    on repeat 20:
         log "ping"
 
     on rightclickblock testpos:

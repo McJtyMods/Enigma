@@ -18,17 +18,18 @@ public class ScopeInstance {
     private Map<ScopeID, ScopeInstance> nestedScopeInstances = new HashMap<>();
     private Map<Pair<UUID, ScopeID>, ScopeInstance> nestedPlayerScopeInstances = new HashMap<>();
     private List<TimedAction> timedActions = new ArrayList<>();
+    private int ticker = 0;
 
     private static class TimedAction {
         private final ActionBlock actionBlock;
         private final Expression<EnigmaFunctionContext> delay;
-        private final long time;
+        private final int ticks;
         private final boolean repeating;
 
-        public TimedAction(ActionBlock actionBlock, Expression<EnigmaFunctionContext> delay, long time, boolean repeating) {
+        public TimedAction(ActionBlock actionBlock, Expression<EnigmaFunctionContext> delay, int ticks, boolean repeating) {
             this.actionBlock = actionBlock;
             this.delay = delay;
-            this.time = time;
+            this.ticks = ticks;
             this.repeating = repeating;
         }
 
@@ -40,8 +41,8 @@ public class ScopeInstance {
             return delay;
         }
 
-        public long getTime() {
-            return time;
+        public int getTicks() {
+            return ticks;
         }
 
         public boolean isRepeating() {
@@ -107,10 +108,10 @@ public class ScopeInstance {
 
         clearTimers();
         // Install scope specific timers
-        long t = System.currentTimeMillis();
+        ticker = 0;
         for (Scope.DelayedAction action : scope.getOnDelay()) {
-            int ms = ObjectTools.asIntSafe(action.getDelay().eval(context));
-            timedActions.add(new TimedAction(action.getActionBlock(), action.getDelay(), t + ms, action.isRepeating()));
+            int ticks = ObjectTools.asIntSafe(action.getDelay().eval(context));
+            timedActions.add(new TimedAction(action.getActionBlock(), action.getDelay(), ticks, action.isRepeating()));
         }
 
 
@@ -173,6 +174,7 @@ public class ScopeInstance {
     public void checkActivity(EnigmaFunctionContext context) {
         if (scope.isScopeConditionTrue(context)) {
             activate(context);
+            ticker++;
 
             for (Scope child : scope.getNestedScopes()) {
                 ScopeInstance scopeInstance = findScopeInstance(child, context);
@@ -187,10 +189,10 @@ public class ScopeInstance {
                     }
                 }
             }
-            long t = System.currentTimeMillis();
+            int t = ticker;
             List<TimedAction> newActions = new ArrayList<>(timedActions.size());
             for (TimedAction action : timedActions) {
-                if (t >= action.getTime()) {
+                if (t >= action.getTicks()) {
                     action.getActionBlock().execute(context);
                     if (action.isRepeating()) {
                         int ms = ObjectTools.asIntSafe(action.getDelay().eval(context));
