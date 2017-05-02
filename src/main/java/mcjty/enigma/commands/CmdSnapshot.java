@@ -1,5 +1,6 @@
 package mcjty.enigma.commands;
 
+import mcjty.enigma.snapshot.FakeWorld;
 import mcjty.lib.compat.CompatCommandBase;
 import mcjty.lib.tools.ChatTools;
 import net.minecraft.block.state.IBlockState;
@@ -34,8 +35,11 @@ public class CmdSnapshot extends CompatCommandBase {
         World world = sender.getEntityWorld();
         BlockPos pos = sender.getPosition();
         Chunk curchunk = world.getChunkFromBlockCoords(pos);
+
+//        FakeWorld fakeWorld = new FakeWorld(world);
         IChunkGenerator chunkGenerator = world.provider.createChunkGenerator();
         Chunk origchunk = chunkGenerator.provideChunk(pos.getX() >> 4, pos.getZ() >> 4);
+//        origchunk.populateChunk(fakeWorld.getChunkProvider(), chunkGenerator);
 
         List<BlockPos> diffWithOrig = new ArrayList<>();
         for (int y = 0 ; y < world.getHeight() ; y++) {
@@ -52,5 +56,9 @@ public class CmdSnapshot extends CompatCommandBase {
                 }
             }
         }
+        for (BlockPos blockPos : diffWithOrig) {
+            System.out.println("blockPos = " + blockPos);
+        }
+
     }
 }
