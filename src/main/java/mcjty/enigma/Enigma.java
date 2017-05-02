@@ -1,10 +1,7 @@
 package mcjty.enigma;
 
 
-import mcjty.enigma.commands.CmdReload;
-import mcjty.enigma.commands.CmdReset;
-import mcjty.enigma.commands.CmdSnapshot;
-import mcjty.enigma.commands.CmdStates;
+import mcjty.enigma.commands.*;
 import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.proxy.CommonProxy;
 import mcjty.lib.compat.CompatCreativeTabs;
@@ -77,6 +74,7 @@ public class Enigma {
         event.registerServerCommand(new CmdReset());
         event.registerServerCommand(new CmdReload());
         event.registerServerCommand(new CmdSnapshot());
+        event.registerServerCommand(new CmdRestore());
     }
 
     public String getModId() {

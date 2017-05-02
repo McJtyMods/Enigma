@@ -12,18 +12,16 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
-public class CmdSnapshot extends CompatCommandBase {
+public class CmdRestore extends CompatCommandBase {
     @Override
     public String getName() {
-        return "e_snapshot";
+        return "e_restore";
     }
 
     @Override
     public String getUsage(ICommandSender sender) {
-        return "e_snapshot";
+        return "e_restore";
     }
-
-    public static String temporaryTest;
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
@@ -31,9 +29,6 @@ public class CmdSnapshot extends CompatCommandBase {
         World world = sender.getEntityWorld();
         BlockPos pos = sender.getPosition();
         Chunk curchunk = world.getChunkFromBlockCoords(pos);
-        String output = SnapshotTools.makeChunkSnapshot(world, curchunk);
-        System.out.println("bytes = " + output.length());
-        System.out.println("output = " + output);
-        temporaryTest = output;
+        SnapshotTools.restoreChunkSnapshot(world, curchunk, CmdSnapshot.temporaryTest);
     }
 }
