@@ -121,7 +121,7 @@ public class SnapshotTools {
                             compress(cnt, output);
                             compress(differentBlocks.get(prev), output);
                         }
-                        cnt = 0;
+                        cnt = 1;
                         prev = p;
                     }
                 }
