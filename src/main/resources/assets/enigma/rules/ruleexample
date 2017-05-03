@@ -34,7 +34,7 @@ on init:
 
 on activate:
     log "root.activate"
-    var "counter" 0
+    var counter 0
     state main beginroom
 
 pscope "player" true:
@@ -91,8 +91,8 @@ scope "begin" state(main) == beginroom:
         log "We waited 4s!"
 
     on repeat 40:
-        log "ping: " + counter
-        var "counter" counter+1
+        log "ping: " + $counter
+        var counter $counter+1
 
     on rightclickblock testpos:
         message "You receive a mysterious key"

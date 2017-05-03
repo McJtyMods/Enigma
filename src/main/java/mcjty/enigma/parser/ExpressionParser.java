@@ -189,12 +189,19 @@ public class ExpressionParser<T> {
                 if (ch == '\\') {
                     nextChar();
                 }
-                builder.append((char)ch);
+                builder.append((char) ch);
                 nextChar();
             }
             nextChar();
             String s = builder.toString();
             x = new ParsedExpression<T>(w -> s, true, "\"" + s + "\"");
+        } else if (ch == '$') {
+            nextChar();
+            while (ch >= 'a' && ch <= 'z') {
+                nextChar();
+            }
+            String func = str.substring(startPos+1, str.index());
+            x = new ParsedExpression<T>(context.getVariable(func), false, func);
         } else if (ch >= 'a' && ch <= 'z') { // functions
             while (ch >= 'a' && ch <= 'z') {
                 nextChar();
@@ -233,7 +240,7 @@ public class ExpressionParser<T> {
                     }
                 }
             } else {
-                x = new ParsedExpression<T>(context.getVariable(func), false, func);
+                x = new ParsedExpression<>(w -> func, true, func);
             }
         } else {
             throw new ExpressionException("Unexpected: " + (char) ch);
