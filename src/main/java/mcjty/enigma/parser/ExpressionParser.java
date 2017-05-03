@@ -197,13 +197,13 @@ public class ExpressionParser<T> {
             x = new ParsedExpression<T>(w -> s, true, "\"" + s + "\"");
         } else if (ch == '$') {
             nextChar();
-            while (ch >= 'a' && ch <= 'z') {
+            while (ch == '_' || (ch >= 'a' && ch <= 'z')) {
                 nextChar();
             }
             String func = str.substring(startPos+1, str.index());
             x = new ParsedExpression<T>(context.getVariable(func), false, func);
-        } else if (ch >= 'a' && ch <= 'z') { // functions
-            while (ch >= 'a' && ch <= 'z') {
+        } else if (ch == '_' || (ch >= 'a' && ch <= 'z')) { // functions
+            while (ch == '_' || (ch >= 'a' && ch <= 'z')) {
                 nextChar();
             }
             String func = str.substring(startPos, str.index());

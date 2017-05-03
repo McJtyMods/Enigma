@@ -8,7 +8,7 @@ public class OverlayRenderer {
         TimedMessages.tick();
         int y = 30;
         for (TimedMessage message : TimedMessages.getMessages()) {
-            RenderHelper.renderText(Minecraft.getMinecraft(), 30, y, message.getMessage());
+            RenderHelper.renderText(Minecraft.getMinecraft(), 30, y, message.getMessage(), 1);
             y += 10;
         }
     }

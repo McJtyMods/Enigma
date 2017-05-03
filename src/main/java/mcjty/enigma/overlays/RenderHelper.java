@@ -548,12 +548,13 @@ public class RenderHelper {
     }
 
 
-    public static int renderText(Minecraft mc, int x, int y, String txt) {
+    public static int renderText(Minecraft mc, int x, int y, String txt, double scale) {
         GlStateManager.color(1.0F, 1.0F, 1.0F);
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(0.0F, 0.0F, 32.0F);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.scale(scale, scale, scale);
         GlStateManager.enableRescaleNormal();
         GlStateManager.enableLighting();
         net.minecraft.client.renderer.RenderHelper.enableGUIStandardItemLighting();

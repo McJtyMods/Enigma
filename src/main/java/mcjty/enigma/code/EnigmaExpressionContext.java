@@ -15,6 +15,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.DimensionManager;
 
 import javax.annotation.Nullable;
@@ -35,6 +36,28 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
     private static final Map<String, ExpressionFunction<EnigmaFunctionContext>> FUNCTIONS = new HashMap<>();
 
     static {
+        FUNCTIONS.put("fmt_black", (context, o) -> String.valueOf(TextFormatting.BLACK));
+        FUNCTIONS.put("fmt_darkblue", (context, o) -> String.valueOf(TextFormatting.DARK_BLUE));
+        FUNCTIONS.put("fmt_darkgreen", (context, o) -> String.valueOf(TextFormatting.DARK_GREEN));
+        FUNCTIONS.put("fmt_darkaqua", (context, o) -> String.valueOf(TextFormatting.DARK_AQUA));
+        FUNCTIONS.put("fmt_darkred", (context, o) -> String.valueOf(TextFormatting.DARK_RED));
+        FUNCTIONS.put("fmt_darkpurple", (context, o) -> String.valueOf(TextFormatting.DARK_PURPLE));
+        FUNCTIONS.put("fmt_gold", (context, o) -> String.valueOf(TextFormatting.GOLD));
+        FUNCTIONS.put("fmt_gray", (context, o) -> String.valueOf(TextFormatting.GRAY));
+        FUNCTIONS.put("fmt_darkgray", (context, o) -> String.valueOf(TextFormatting.DARK_GRAY));
+        FUNCTIONS.put("fmt_blue", (context, o) -> String.valueOf(TextFormatting.BLUE));
+        FUNCTIONS.put("fmt_green", (context, o) -> String.valueOf(TextFormatting.GREEN));
+        FUNCTIONS.put("fmt_aqua", (context, o) -> String.valueOf(TextFormatting.AQUA));
+        FUNCTIONS.put("fmt_red", (context, o) -> String.valueOf(TextFormatting.RED));
+        FUNCTIONS.put("fmt_lightpurple", (context, o) -> String.valueOf(TextFormatting.LIGHT_PURPLE));
+        FUNCTIONS.put("fmt_yellow", (context, o) -> String.valueOf(TextFormatting.YELLOW));
+        FUNCTIONS.put("fmt_white", (context, o) -> String.valueOf(TextFormatting.WHITE));
+        FUNCTIONS.put("fmt_bold", (context, o) -> String.valueOf(TextFormatting.BOLD));
+        FUNCTIONS.put("fmt_strikethrough", (context, o) -> String.valueOf(TextFormatting.STRIKETHROUGH));
+        FUNCTIONS.put("fmt_underline", (context, o) -> String.valueOf(TextFormatting.UNDERLINE));
+        FUNCTIONS.put("fmt_italic", (context, o) -> String.valueOf(TextFormatting.ITALIC));
+        FUNCTIONS.put("fmt_reset", (context, o) -> String.valueOf(TextFormatting.RESET));
+
         FUNCTIONS.put("state", (context, o) -> {
             Progress progress = ProgressHolder.getProgress(context.getWorld());
             return progress.getState(o[0]);
