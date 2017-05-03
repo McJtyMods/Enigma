@@ -197,13 +197,16 @@ public class ExpressionParser<T> {
             x = new ParsedExpression<T>(w -> s, true, "\"" + s + "\"");
         } else if (ch == '$') {
             nextChar();
-            while (ch == '_' || (ch >= 'a' && ch <= 'z')) {
+            if (isIdentifierCharFirst(ch)) {
                 nextChar();
+                while (isIdentifierChar(ch)) {
+                    nextChar();
+                }
             }
             String func = str.substring(startPos+1, str.index());
             x = new ParsedExpression<T>(context.getVariable(func), false, func);
-        } else if (ch == '_' || (ch >= 'a' && ch <= 'z')) { // functions
-            while (ch == '_' || (ch >= 'a' && ch <= 'z')) {
+        } else if (isIdentifierCharFirst(ch)) { // functions
+            while (isIdentifierChar(ch)) {
                 nextChar();
             }
             String func = str.substring(startPos, str.index());
@@ -254,6 +257,14 @@ public class ExpressionParser<T> {
         }
 
         return x;
+    }
+
+    private static boolean isIdentifierCharFirst(int ch) {
+        return ch == '_' || (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z');
+    }
+
+    private static boolean isIdentifierChar(int ch) {
+        return ch == '_' || (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' || ch <= '9');
     }
 
     private ParsedExpression<T> optimizeBinaryOperator(Expression<T> operation, ParsedExpression<T> p1, ParsedExpression<T> p2, String op) {
