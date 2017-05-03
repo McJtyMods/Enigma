@@ -75,6 +75,7 @@ public class Enigma {
         event.registerServerCommand(new CmdReload());
         event.registerServerCommand(new CmdSnapshot());
         event.registerServerCommand(new CmdRestore());
+        event.registerServerCommand(new CmdEval());
     }
 
     public String getModId() {
