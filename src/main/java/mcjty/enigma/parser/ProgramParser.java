@@ -332,6 +332,9 @@ public class ProgramParser {
                 case PSTATE:
                     actionBlock.addAction(new SetPlayerStateAction(line.getParameters().get(0), line.getParameters().get(1)));
                     break;
+                case RESTORE:
+                    actionBlock.addAction(new RestoreAction(line.getParameters().get(0)));
+                    break;
                 case VAR:
                     break;
                 case IF:

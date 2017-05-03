@@ -7,6 +7,7 @@ public enum MainToken {
     STATE(false, 2),        // state <statename> <name>
     PSTATE(false, 2),       // pstate <statename> <name>
     VAR(false, 2),          // var <varname> <value>
+    RESTORE(false, 1),      // restore <snapshotname>
     ON(true, 0),
     POSITION(false, 5),     // position <name>, <x>, <y>, <z>, <dim>
     SCOPE(false, 2),        // scope <id>, <expression>

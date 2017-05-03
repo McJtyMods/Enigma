@@ -2,6 +2,7 @@
 
 on setup:
     log "root.setup"
+    #restore "startsnapshot"
     position testpos 808 4 1903 0
     position lockeddoor 800 4 1903 0
     position exitposition 800 4 1900 0
