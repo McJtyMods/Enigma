@@ -16,11 +16,28 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.apache.logging.log4j.Level;
+
+import java.io.File;
+import java.io.IOException;
 
 public class ForgeEventHandlers {
 
     @SubscribeEvent
     public void onWorldLoad(WorldEvent.Load event) {
+        if (!event.getWorld().isRemote) {
+            File dataDir = new File(((WorldServer) event.getWorld()).getChunkSaveLocation(), "enigma");
+            dataDir.mkdirs();
+            File file = new File(dataDir, "autostart.esc");
+            if (file.exists()) {
+                Enigma.logger.log(Level.INFO, "Reading script from 'autostart.esc'!");
+                try {
+                    RootScope.setRoot(RootScope.readRules(event.getWorld(), file));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @SubscribeEvent

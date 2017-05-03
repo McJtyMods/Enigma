@@ -37,7 +37,7 @@ public class CmdRestore extends CompatCommandBase {
 
         World world = sender.getEntityWorld();
         try {
-            File dataDir = new File(((WorldServer) world).getChunkSaveLocation(), "enigmasnap");
+            File dataDir = new File(((WorldServer) world).getChunkSaveLocation(), "enigma");
             dataDir.mkdirs();
             File file = new File(dataDir, fn);
             SnapshotTools.restoreChunkSnapshot(world, file);

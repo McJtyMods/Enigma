@@ -68,7 +68,7 @@ public class CmdSnapshot extends CompatCommandBase {
         }
 
         try {
-            File dataDir = new File(((WorldServer) world).getChunkSaveLocation(), "enigmasnap");
+            File dataDir = new File(((WorldServer) world).getChunkSaveLocation(), "enigma");
             dataDir.mkdirs();
             File file = new File(dataDir, fn);
             SnapshotTools.makeChunkSnapshot(world, chunks, file);

@@ -28,7 +28,7 @@ public class RestoreAction extends Action {
 
         String fn = ObjectTools.asStringSafe(file.eval(context));
         try {
-            File dataDir = new File(((WorldServer) context.getWorld()).getChunkSaveLocation(), "enigmasnap");
+            File dataDir = new File(((WorldServer) context.getWorld()).getChunkSaveLocation(), "enigma");
             dataDir.mkdirs();
             File file = new File(dataDir, fn);
             SnapshotTools.restoreChunkSnapshot(context.getWorld(), file);

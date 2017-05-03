@@ -73,6 +73,7 @@ public class Enigma {
         event.registerServerCommand(new CmdStates());
         event.registerServerCommand(new CmdReset());
         event.registerServerCommand(new CmdReload());
+        event.registerServerCommand(new CmdLoad());
         event.registerServerCommand(new CmdSnapshot());
         event.registerServerCommand(new CmdRestore());
         event.registerServerCommand(new CmdEval());
