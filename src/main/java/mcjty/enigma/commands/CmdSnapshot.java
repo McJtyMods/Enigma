@@ -23,7 +23,7 @@ public class CmdSnapshot extends CompatCommandBase {
         return "e_snapshot";
     }
 
-    public static String temporaryTest;
+    public static byte[] temporaryTest;
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
@@ -31,9 +31,8 @@ public class CmdSnapshot extends CompatCommandBase {
         World world = sender.getEntityWorld();
         BlockPos pos = sender.getPosition();
         Chunk curchunk = world.getChunkFromBlockCoords(pos);
-        String output = SnapshotTools.makeChunkSnapshot(world, curchunk);
-        System.out.println("bytes = " + output.length());
-        System.out.println("output = " + output);
+        byte[] output = SnapshotTools.makeChunkSnapshot(world, curchunk);
+        System.out.println("bytes = " + output.length);
         temporaryTest = output;
     }
 }

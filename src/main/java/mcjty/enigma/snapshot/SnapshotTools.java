@@ -3,17 +3,21 @@ package mcjty.enigma.snapshot;
 import mcjty.enigma.parser.StringPointer;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,51 +55,76 @@ public class SnapshotTools {
         }
     }
 
-    public static void restoreChunkSnapshot(World world, Chunk curchunk, String input) {
-        List<IBlockState> differentBlocks = new ArrayList<>();
-        BufferedReader reader = new BufferedReader(new StringReader(input));
-        int cnt = 0;
+    public static void restoreChunkSnapshot(World world, Chunk curchunk, byte[] input) {
+        ByteArrayInputStream stream = new ByteArrayInputStream(input);
+        NBTTagCompound tag;
         try {
-            String line = reader.readLine();
-            while (line != null && line.startsWith(":")) {
-                String[] split = StringUtils.split(line.substring(1), "@");
-                Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(split[0]));
-                int meta = Integer.parseInt(split[1]);
-                differentBlocks.add(block.getStateFromMeta(meta));
-                line = reader.readLine();
-            }
-            if (line != null) {
-                Loc loc = new Loc();
-                StringPointer s = new StringPointer(line);
-                s.inc();
-                while (s.hasMore()) {
-                    int count = uncompress(s);
-                    int index = uncompress(s);
-                    IBlockState state = differentBlocks.get(index);
-                    for (int i = 0 ; i < count ; i++) {
-                        int x = curchunk.getPos().chunkXPos * 16 + loc.getX();
-                        int y = loc.getY();
-                        int z = curchunk.getPos().chunkZPos * 16 + loc.getZ();
-                        loc.inc();
-                        BlockPos p = new BlockPos(x, y, z);
-                        IBlockState curstate = curchunk.getBlockState(p);
-                        if (!curstate.equals(state)) {
-                            world.setBlockState(p, state, 3);
-                            cnt++;
-                        }
-                    }
-                }
-            }
+            tag = CompressedStreamTools.readCompressed(stream);
         } catch (IOException e) {
             e.printStackTrace();
+            return;
         }
+
+        List<IBlockState> differentBlocks = new ArrayList<>();
+        NBTTagList blocks = tag.getTagList("blocks", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < blocks.tagCount() ; i++) {
+            NBTTagCompound tc = blocks.getCompoundTagAt(i);
+            String n = tc.getString("n");
+            int meta = tc.getByte("m");
+            Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(n));
+            differentBlocks.add(block.getStateFromMeta(meta));
+        }
+
+        String line = tag.getString("chunk");
+
+        int cnt = 0;
+        Loc loc = new Loc();
+        StringPointer s = new StringPointer(line);
+        s.inc();
+        while (s.hasMore()) {
+            int count = uncompress(s);
+            int index = uncompress(s);
+            IBlockState state = differentBlocks.get(index);
+            for (int i = 0 ; i < count ; i++) {
+                int x = curchunk.getPos().chunkXPos * 16 + loc.getX();
+                int y = loc.getY();
+                int z = curchunk.getPos().chunkZPos * 16 + loc.getZ();
+                loc.inc();
+                BlockPos p = new BlockPos(x, y, z);
+                IBlockState curstate = curchunk.getBlockState(p);
+                if (!curstate.equals(state)) {
+                    world.setBlockState(p, state, 3);
+                    cnt++;
+                }
+            }
+        }
+
+        NBTTagList telist = tag.getTagList("te", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < telist.tagCount() ; i++) {
+            NBTTagCompound tc = telist.getCompoundTagAt(i);
+            int x = tc.getShort("x");
+            int y = tc.getShort("y");
+            int z = tc.getShort("z");
+            NBTTagCompound nbt = tc.getCompoundTag("nbt");
+            BlockPos pos = new BlockPos(curchunk.getPos().chunkXPos * 16 + x, y, curchunk.getPos().chunkZPos * 16 + z);
+            TileEntity te = world.getTileEntity(pos);
+            if (te != null) {
+                nbt.setInteger("x", pos.getX());
+                nbt.setInteger("y", pos.getY());
+                nbt.setInteger("z", pos.getZ());
+                te.readFromNBT(nbt);
+            }
+        }
+
         System.out.println("cnt = " + cnt);
     }
 
-    public static String makeChunkSnapshot(World world, Chunk curchunk) {
+    public static byte[] makeChunkSnapshot(World world, Chunk curchunk) {
         Map<Pair<String,Integer>, Integer> differentBlocks = new HashMap<>();
         StringBuffer output = new StringBuffer();
         int maxindex = 0;
+
+        Map<BlockPos, NBTTagCompound> tileEntityData = new HashMap<>();
 
         Pair<String, Integer> prev = null;
         int cnt = 0;
@@ -124,6 +153,13 @@ public class SnapshotTools {
                         cnt = 1;
                         prev = p;
                     }
+
+                    TileEntity te = world.getTileEntity(new BlockPos(curchunk.getPos().chunkXPos * 16 + x, y, curchunk.getPos().chunkZPos * 16 + z));
+                    if (te != null) {
+                        NBTTagCompound nbt = new NBTTagCompound();
+                        te.writeToNBT(nbt);
+                        tileEntityData.put(new BlockPos(x, y, z), nbt);
+                    }
                 }
             }
         }
@@ -133,6 +169,7 @@ public class SnapshotTools {
         }
 
         System.out.println("differentBlocks = " + differentBlocks.size());
+        System.out.println("tileEntityData = " + tileEntityData.size());
         System.out.println("bytes = " + output.length());
         System.out.println("output = " + output);
 
@@ -141,14 +178,40 @@ public class SnapshotTools {
             reverseBlockMap.put(entry.getValue(), entry.getKey());
         }
 
-        StringBuffer fullOut = new StringBuffer();
+        NBTTagCompound tag = new NBTTagCompound();
+
+        NBTTagList list = new NBTTagList();
         for (int i = 0 ; i < maxindex ; i++) {
             String name = reverseBlockMap.get(i).getKey();
             Integer meta = reverseBlockMap.get(i).getValue();
-            fullOut.append(":").append(name).append("@").append(meta).append('\n');
+            NBTTagCompound tc = new NBTTagCompound();
+            tc.setString("n", name);
+            tc.setByte("m", (byte) (int) meta);
+            list.appendTag(tc);
         }
-        fullOut.append(output);
-        return fullOut.toString();
+        tag.setTag("blocks", list);
+        tag.setString("chunk", output.toString());
+
+        list = new NBTTagList();
+        for (Map.Entry<BlockPos, NBTTagCompound> entry : tileEntityData.entrySet()) {
+            BlockPos p = entry.getKey();
+            NBTTagCompound tc = new NBTTagCompound();
+            tc.setShort("x", (short) p.getX());
+            tc.setShort("y", (short) p.getY());
+            tc.setShort("z", (short) p.getZ());
+            tc.setTag("nbt", entry.getValue());
+            list.appendTag(tc);
+        }
+        tag.setTag("te", list);
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        try {
+            CompressedStreamTools.writeCompressed(tag, stream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return stream.toByteArray();
     }
 
     private static void compress(int i, StringBuffer buf) {
