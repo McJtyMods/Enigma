@@ -1,6 +1,5 @@
 package mcjty.enigma.commands;
 
-import mcjty.enigma.Enigma;
 import mcjty.enigma.code.RootScope;
 import mcjty.lib.compat.CompatCommandBase;
 import mcjty.lib.tools.ChatTools;
