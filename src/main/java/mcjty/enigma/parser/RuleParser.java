@@ -123,11 +123,6 @@ public class RuleParser<T> {
                 return "var".equals(var) ? w -> 666 : null;
             }
 
-            @Override
-            public boolean isVariable(String var) {
-                return "var".equals(var);
-            }
-
             @Nullable
             @Override
             public ExpressionFunction<Void> getFunction(String name) {

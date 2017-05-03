@@ -29,6 +29,7 @@ public class Progress {
     private final Map<UUID, PlayerProgress> playerProgress = new HashMap<>();
     private final Map<Integer, ItemStack> namedItemStacks = new HashMap<>();
     private final Map<Integer, IBlockState> namedBlocks = new HashMap<>();
+    private final Map<Integer, Object> namedVariables = new HashMap<>();
     private final Map<Integer, ParticleConfig> namedParticleConfigs = new HashMap<>();
     private final Set<ScopeID> initializedScopes = new HashSet<>();
 
@@ -42,11 +43,42 @@ public class Progress {
         playerProgress.clear();
         namedItemStacks.clear();
         namedBlocks.clear();
+        namedVariables.clear();
         initializedScopes.clear();
     }
 
     public Map<Integer, Integer> getStates() {
         return states;
+    }
+
+    public void addNamedVariable(String name, Object value) {
+        namedVariables.put(STRINGS.get(name), value);
+    }
+
+    public Object getNamedVariable(String name) {
+        return namedVariables.get(STRINGS.get(name));
+    }
+
+    public Object getNamedVariable(Integer name) {
+        return namedVariables.get(name);
+    }
+
+    public boolean isNamedVariable(String name) {
+        return namedVariables.containsKey(STRINGS.get(name));
+    }
+
+    public boolean isNamedVariable(Integer name) {
+        return namedVariables.containsKey(name);
+    }
+
+    public Object getNamedVariable(Object o) {
+        if (o instanceof Integer) {
+            return getNamedVariable((Integer) o);
+        } else if (o instanceof String) {
+            return getNamedVariable((String) o);
+        } else {
+            return null;
+        }
     }
 
     public void addNamedParticleConfig(String name, @Nonnull ParticleConfig config) {
@@ -220,7 +252,27 @@ public class Progress {
         readPlayerProgress(nbt);
         readInitializedScopes(nbt);
         readNamedParticleConfigs(nbt);
+        readNamedVariables(nbt);
         rootActivated = nbt.getBoolean("rootActivated");
+    }
+
+    private void readNamedVariables(NBTTagCompound nbt) {
+        NBTTagList list = nbt.getTagList("variables", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < list.tagCount() ; i++) {
+            NBTTagCompound tc = (NBTTagCompound) list.get(i);
+            int name = STRINGS.get(tc.getString("s"));
+            Object v = null;
+            if (tc.hasKey("v")) {
+                v = tc.getInteger("v");
+            } else if (tc.hasKey("vs")) {
+                v = tc.getString("vs");
+            } else if (tc.hasKey("vb")) {
+                v = tc.getBoolean("vb");
+            } else if (tc.hasKey("vd")) {
+                v = tc.getDouble("vd");
+            }
+            namedVariables.put(name, v);
+        }
     }
 
     private void readPlayerProgress(NBTTagCompound nbt) {
@@ -317,7 +369,30 @@ public class Progress {
         writePlayerProgress(compound);
         writeInitializedScopes(compound);
         writeNamedParticleConfigs(compound);
+        writeNamedVariables(compound);
         return compound;
+    }
+
+    private void writeNamedVariables(NBTTagCompound compound) {
+        NBTTagList list = new NBTTagList();
+        for (Map.Entry<Integer, Object> entry : namedVariables.entrySet()) {
+            NBTTagCompound tc = new NBTTagCompound();
+            tc.setString("s", STRINGS.get(entry.getKey()));
+            Object v = entry.getValue();
+            if (v != null) {
+                if (v instanceof Integer) {
+                    tc.setInteger("v", (Integer) v);
+                } else if (v instanceof String) {
+                    tc.setString("vs", (String) v);
+                } else if (v instanceof Boolean) {
+                    tc.setBoolean("vb", (Boolean) v);
+                } else if (v instanceof Double) {
+                    tc.setDouble("vd", (Double) v);
+                }
+            }
+            list.appendTag(tc);
+        }
+        compound.setTag("variables", list);
     }
 
     private void writePlayerProgress(NBTTagCompound compound) {

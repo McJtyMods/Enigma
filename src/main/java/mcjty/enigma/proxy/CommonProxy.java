@@ -28,7 +28,6 @@ public abstract class CommonProxy {
         mainConfig = new Configuration(new File(modConfigDir.getPath(), "enigma.cfg"));
 
         readMainConfig();
-        RootScope.readRules();
 
         EnigmaMessages.registerMessages("enigma");
 

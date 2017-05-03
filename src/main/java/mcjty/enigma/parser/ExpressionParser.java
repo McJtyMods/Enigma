@@ -210,8 +210,6 @@ public class ExpressionParser<T> {
                     x = new ParsedExpression<T>(w -> Math.sqrt(ObjectTools.asDoubleSafe(finalX.eval(w))), false,
                             "sqrt(" + x.getDebug() + ")");
                 }
-            } else if (context.isVariable(func)) {
-                x = new ParsedExpression<T>(context.getVariable(func), false, func);
             } else if (context.isFunction(func)) {
                 if (!eat('(')) {
                     throw new ExpressionException("Excected '(' after a function");
@@ -235,7 +233,7 @@ public class ExpressionParser<T> {
                     }
                 }
             } else {
-                x = new ParsedExpression<>(w -> func, true, func);
+                x = new ParsedExpression<T>(context.getVariable(func), false, func);
             }
         } else {
             throw new ExpressionException("Unexpected: " + (char) ch);

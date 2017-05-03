@@ -18,13 +18,19 @@ import java.util.List;
 
 public class RootScope {
 
-    public static Scope root;
+    private static Scope root = null;
     private static ScopeInstance rootInstance = null;
+
+    private static Scope getRoot(World world) {
+        if (root == null) {
+            root = RootScope.readRules(world);
+        }
+        return root;
+    }
 
     public static ScopeInstance getRootInstance(World world) {
         if (rootInstance == null) {
-            rootInstance = new ScopeInstance(root);
-
+            rootInstance = new ScopeInstance(getRoot(world));
             root.onInit(new EnigmaFunctionContext(world, null));
 
             Progress progress = ProgressHolder.getProgress(world);
@@ -47,14 +53,16 @@ public class RootScope {
     }
 
     public static void reload(World world) {
-        readRules();
+        root = readRules(world);
+        rootInstance = null;
     }
 
-    public static void readRules() {
+    public static Scope readRules(World world) {
         InputStream inputstream = Enigma.class.getResourceAsStream("/assets/enigma/rules/ruleexample");
         try {
-            List<TokenizedLine> lines = RuleParser.parse(new BufferedReader(new InputStreamReader(inputstream)), new EnigmaExpressionContext());
-            root = ProgramParser.parse(lines);
+            Progress progress = ProgressHolder.getProgress(world);
+            List<TokenizedLine> lines = RuleParser.parse(new BufferedReader(new InputStreamReader(inputstream)), new EnigmaExpressionContext(progress));
+            return ProgramParser.parse(lines);
         } catch (IOException e) {
             throw new RuntimeException(e);
         } catch (ParserException e) {

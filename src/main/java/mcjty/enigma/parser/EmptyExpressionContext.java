@@ -6,12 +6,7 @@ public class EmptyExpressionContext implements ExpressionContext<Void> {
     @Nullable
     @Override
     public Expression<Void> getVariable(String var) {
-        return null;
-    }
-
-    @Override
-    public boolean isVariable(String var) {
-        return false;
+        return c -> var;
     }
 
     @Nullable

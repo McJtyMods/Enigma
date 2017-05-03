@@ -22,7 +22,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static mcjty.enigma.varia.StringRegister.STRINGS;
+
 public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunctionContext> {
+
+    private final Progress progress;
+
+    public EnigmaExpressionContext(Progress progress) {
+        this.progress = progress;
+    }
 
     private static final Map<String, ExpressionFunction<EnigmaFunctionContext>> FUNCTIONS = new HashMap<>();
 
@@ -120,12 +128,10 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
     @Nullable
     @Override
     public Expression<EnigmaFunctionContext> getVariable(String var) {
-        return null;
-    }
-
-    @Override
-    public boolean isVariable(String var) {
-        return false;
+        int i = STRINGS.get(var);
+        return context -> {
+            return progress.isNamedVariable(i) ? progress.getNamedVariable(i) : var;
+        };
     }
 
     @Nullable
