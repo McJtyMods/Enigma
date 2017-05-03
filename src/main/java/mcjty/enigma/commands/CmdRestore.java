@@ -10,7 +10,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
+
+import java.io.File;
+import java.io.IOException;
 
 public class CmdRestore extends CompatCommandBase {
     @Override
@@ -25,10 +29,21 @@ public class CmdRestore extends CompatCommandBase {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.GREEN + "Making a snapshot!"));
+        if (args.length < 1) {
+            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "File missing!"));
+            return;
+        }
+        String fn = args[0];
+
         World world = sender.getEntityWorld();
-        BlockPos pos = sender.getPosition();
-        Chunk curchunk = world.getChunkFromBlockCoords(pos);
-        SnapshotTools.restoreChunkSnapshot(world, curchunk, CmdSnapshot.temporaryTest);
+        try {
+            File dataDir = new File(((WorldServer) world).getChunkSaveLocation(), "enigmasnap");
+            dataDir.mkdirs();
+            File file = new File(dataDir, fn);
+            SnapshotTools.restoreChunkSnapshot(world, file);
+            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.GREEN + "Restored snapshot from '" + fn + "'"));
+        } catch (IOException e) {
+            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Error reading snapshot from '" + fn + "'!"));
+        }
     }
 }

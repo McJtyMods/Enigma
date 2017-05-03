@@ -11,13 +11,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,7 +55,7 @@ public class SnapshotTools {
         }
     }
 
-    public static void restoreChunkSnapshot(World world, Chunk curchunk, byte[] input) {
+    public static void restoreChunkSnapshot(World world, byte[] input) {
         ByteArrayInputStream stream = new ByteArrayInputStream(input);
         NBTTagCompound tag;
         try {
@@ -65,6 +65,32 @@ public class SnapshotTools {
             return;
         }
 
+        restoreChunkSnapshotTag(world, tag);
+    }
+
+    public static void restoreChunkSnapshot(World world, File file) throws IOException {
+        FileInputStream stream = new FileInputStream(file);
+        NBTTagCompound tag = CompressedStreamTools.readCompressed(stream);
+        restoreChunkSnapshotTag(world, tag);
+    }
+
+    public static void restoreChunkSnapshotTag(World world, NBTTagCompound tag) {
+        NBTTagList list = tag.getTagList("chunks", Constants.NBT.TAG_COMPOUND);
+        for (int i = 0 ; i < list.tagCount() ; i++) {
+            NBTTagCompound tc = list.getCompoundTagAt(i);
+            int x = tc.getInteger("x");
+            int z = tc.getInteger("z");
+            int id = tc.getInteger("dimension");
+            World w = DimensionManager.getWorld(id);
+            if (w == null) {
+                w = world.getMinecraftServer().worldServerForDimension(id);
+            }
+            Chunk chunk = w.getChunkFromChunkCoords(x, z);
+            restoreChunkSnapshotTag(world, chunk, tc.getCompoundTag("data"));
+        }
+    }
+
+    public static void restoreChunkSnapshotTag(World world, Chunk curchunk, NBTTagCompound tag) {
         List<IBlockState> differentBlocks = new ArrayList<>();
         NBTTagList blocks = tag.getTagList("blocks", Constants.NBT.TAG_COMPOUND);
         for (int i = 0 ; i < blocks.tagCount() ; i++) {
@@ -119,7 +145,41 @@ public class SnapshotTools {
         System.out.println("cnt = " + cnt);
     }
 
-    public static byte[] makeChunkSnapshot(World world, Chunk curchunk) {
+    public static void makeChunkSnapshot(World world, List<Chunk> chunks, File file) throws IOException {
+        NBTTagCompound tag = makeChunkSnapshotTag(world, chunks);
+        FileOutputStream stream = new FileOutputStream(file);
+        CompressedStreamTools.writeCompressed(tag, stream);
+    }
+
+    public static byte[] makeChunkSnapshot(World world, List<Chunk> chunks) {
+        NBTTagCompound tag = makeChunkSnapshotTag(world, chunks);
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        try {
+            CompressedStreamTools.writeCompressed(tag, stream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return stream.toByteArray();
+    }
+
+    public static NBTTagCompound makeChunkSnapshotTag(World world, List<Chunk> chunks) {
+        NBTTagCompound tag = new NBTTagCompound();
+        NBTTagList list = new NBTTagList();
+        for (Chunk chunk : chunks) {
+            NBTTagCompound tc = new NBTTagCompound();
+            tc.setInteger("x", chunk.getPos().chunkXPos);
+            tc.setInteger("z", chunk.getPos().chunkZPos);
+            tc.setInteger("dimension", chunk.getWorld().provider.getDimension());
+            tc.setTag("data", makeChunkSnapshotTag(world, chunk));
+            list.appendTag(tc);
+        }
+        tag.setTag("chunks", list);
+        return tag;
+    }
+
+    public static NBTTagCompound makeChunkSnapshotTag(World world, Chunk curchunk) {
         Map<Pair<String,Integer>, Integer> differentBlocks = new HashMap<>();
         StringBuffer output = new StringBuffer();
         int maxindex = 0;
@@ -203,15 +263,7 @@ public class SnapshotTools {
             list.appendTag(tc);
         }
         tag.setTag("te", list);
-
-        ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        try {
-            CompressedStreamTools.writeCompressed(tag, stream);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return stream.toByteArray();
+        return tag;
     }
 
     private static void compress(int i, StringBuffer buf) {

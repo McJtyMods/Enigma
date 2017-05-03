@@ -125,6 +125,10 @@ public class Progress {
         this.rootActivated = rootActivated;
     }
 
+    public Collection<BlockPosDim> getNamedPositions() {
+        return namedPositions.values();
+    }
+
     public void addNamedPosition(String name, @Nonnull BlockPosDim pos) {
         namedPositions.put(STRINGS.get(name), pos);
         positionsToName.put(pos, STRINGS.get(name));
