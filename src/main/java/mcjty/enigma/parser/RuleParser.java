@@ -69,13 +69,15 @@ public class RuleParser<T> {
             throw new ParserException("Error parsing token: " + e.getMessage(), linenumber);
         }
 
-        int parameters = 0;
+        int minParameters = 0;
+        int maxParameters = 0;
 
         MainToken mainToken = MainToken.getTokenByName(token);
         if (mainToken == null) {
             throw new ParserException("ERROR: Unknown token '" + token, linenumber);
         }
-        parameters = mainToken.getParameters();
+        minParameters = mainToken.getMinParameters();
+        maxParameters = mainToken.getMaxParameters();
 
         Token secondaryToken = null;
         if (mainToken.isHasSecondaryToken()) {
@@ -88,11 +90,15 @@ public class RuleParser<T> {
             if (secondaryToken == null) {
                 throw new ParserException("ERROR: Unknown token '" + token, linenumber);
             }
-            parameters = secondaryToken.getParameters();
+            minParameters = secondaryToken.getParameters();
+            maxParameters = secondaryToken.getParameters();
         }
 
-        List<Expression<T>> params = new ArrayList<>(parameters);
-        for (int t = 0 ; t < parameters ; t++) {
+        List<Expression<T>> params = new ArrayList<>(minParameters);
+        for (int t = 0 ; t < maxParameters ; t++) {
+            if (t >= minParameters && !str.hasMore()) {
+                break;
+            }
             ParsedExpression<T> expression = null;
             try {
                 expression = ExpressionParser.eval(str, expressionContext);

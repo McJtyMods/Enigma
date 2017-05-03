@@ -7,17 +7,15 @@ import mcjty.enigma.parser.ObjectTools;
 import net.minecraft.entity.player.EntityPlayerMP;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.List;
+
 public class MessageAction extends Action {
     private final Expression<EnigmaFunctionContext> message;
-    private final int timeout;
+    private final Expression<EnigmaFunctionContext> timeout;
 
-    public MessageAction(Expression<EnigmaFunctionContext> message) {
-        this(message, 100);
-    }
-
-    public MessageAction(Expression<EnigmaFunctionContext> message, int timeout) {
+    public MessageAction(Expression<EnigmaFunctionContext> message,  List<Expression<EnigmaFunctionContext>> parameters) {
         this.message = message;
-        this.timeout = timeout;
+        this.timeout = parameters.size() > 1 ? parameters.get(1) : (context -> 100);
     }
 
     @Override
@@ -28,10 +26,11 @@ public class MessageAction extends Action {
 
     @Override
     public void execute(EnigmaFunctionContext context) throws ExecutionException {
+        int t = ObjectTools.asIntSafe(timeout.eval(context));
         if (context.hasPlayer()) {
-            EnigmaMessages.INSTANCE.sendTo(new PacketAddMessage(ObjectTools.asStringSafe(message.eval(context)), timeout), (EntityPlayerMP) context.getPlayer());
+            EnigmaMessages.INSTANCE.sendTo(new PacketAddMessage(ObjectTools.asStringSafe(message.eval(context)), t), (EntityPlayerMP) context.getPlayer());
         } else {
-            EnigmaMessages.INSTANCE.sendToAll(new PacketAddMessage(ObjectTools.asStringSafe(message.eval(context)), timeout));
+            EnigmaMessages.INSTANCE.sendToAll(new PacketAddMessage(ObjectTools.asStringSafe(message.eval(context)), t));
         }
     }
 }

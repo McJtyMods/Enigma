@@ -264,7 +264,7 @@ public class ExpressionParser<T> {
     }
 
     private static boolean isIdentifierChar(int ch) {
-        return ch == '_' || (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' || ch <= '9');
+        return ch == '_' || (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9');
     }
 
     private ParsedExpression<T> optimizeBinaryOperator(Expression<T> operation, ParsedExpression<T> p1, ParsedExpression<T> p2, String op) {

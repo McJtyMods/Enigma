@@ -362,7 +362,7 @@ public class ProgramParser {
                             line.getParameters().get(4)));
                     break;
                 case MESSAGE:
-                    actionBlock.addAction(new MessageAction(line.getParameters().get(0)));
+                    actionBlock.addAction(new MessageAction(line.getParameters().get(0), line.getParameters()));
                     break;
                 case LOG:
                     actionBlock.addAction(new LogAction(line.getParameters().get(0)));

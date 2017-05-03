@@ -95,7 +95,7 @@ scope "begin" state(main) == beginroom:
         var counter $counter+1
 
     on rightclickblock testpos:
-        message fmt_green() + fmt_bold() + "You receive a mysterious key"
+        message fmt_green() + fmt_bold() + "You receive a mysterious key" 20
         give mysteriouskey
         cancel
 
