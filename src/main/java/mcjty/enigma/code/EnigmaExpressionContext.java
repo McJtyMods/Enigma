@@ -23,6 +23,7 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static mcjty.enigma.varia.StringRegister.STRINGS;
 
@@ -35,6 +36,8 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
     }
 
     public static final Map<String, ExpressionFunction<EnigmaFunctionContext>> FUNCTIONS = new HashMap<>();
+
+    private static Random random = new Random(System.currentTimeMillis());
 
     static {
         FUNCTIONS.put("fmt_black", (context, o) -> String.valueOf(TextFormatting.BLACK));
@@ -163,6 +166,8 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
         FUNCTIONS.put("int", (context, o) -> ObjectTools.asIntSafe(o[0]));
         FUNCTIONS.put("double", (context, o) -> ObjectTools.asDoubleSafe(o[0]));
         FUNCTIONS.put("boolean", (context, o) -> ObjectTools.asBoolSafe(o[0]));
+
+        FUNCTIONS.put("random", (context, o) -> random.nextDouble());
 
         FUNCTIONS.put("state", (context, o) -> {
             Progress progress = ProgressHolder.getProgress(context.getWorld());
