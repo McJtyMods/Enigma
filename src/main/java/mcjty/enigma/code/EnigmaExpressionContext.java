@@ -178,30 +178,60 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
         });
         FUNCTIONS.put("max", (context, o) -> {
             if (o[0] instanceof Integer) {
-                return Math.max(ObjectTools.asIntSafe(o[0]), ObjectTools.asIntSafe(o[1]));
+                int m = ObjectTools.asIntSafe(o[0]);
+                for (int i = 1 ; i < o.length ; i++) {
+                    m = Math.max(m, ObjectTools.asIntSafe(o[i]));
+                }
+                return m;
             } else if (o[0] instanceof Double) {
-                return Math.max(ObjectTools.asDoubleSafe(o[0]), ObjectTools.asDoubleSafe(o[1]));
+                double m = ObjectTools.asDoubleSafe(o[0]);
+                for (int i = 1 ; i < o.length ; i++) {
+                    m = Math.max(m, ObjectTools.asDoubleSafe(o[i]));
+                }
+                return m;
             } else if (o[0] instanceof String) {
-                String s1 = ObjectTools.asStringSafe(o[0]);
-                String s2 = ObjectTools.asStringSafe(o[1]);
-                return s1.compareTo(s2) < 0 ? s2 : s1;
+                String m = ObjectTools.asStringSafe(o[0]);
+                for (int i = 1 ; i < o.length ; i++) {
+                    String s = ObjectTools.asStringSafe(o[1]);
+                    m = m.compareTo(s) < 0 ? s : m;
+                }
+                return m;
             } else if (o[0] instanceof Boolean) {
-                return ObjectTools.asBoolSafe(o[0]) || ObjectTools.asBoolSafe(o[1]);
+                boolean m = ObjectTools.asBoolSafe(o[0]);
+                for (int i = 1 ; i < o.length ; i++) {
+                    m = m || ObjectTools.asBoolSafe(o[i]);
+                }
+                return m;
             } else {
                 return o[0];
             }
         });
         FUNCTIONS.put("min", (context, o) -> {
             if (o[0] instanceof Integer) {
-                return Math.min(ObjectTools.asIntSafe(o[0]), ObjectTools.asIntSafe(o[1]));
+                int m = ObjectTools.asIntSafe(o[0]);
+                for (int i = 1 ; i < o.length ; i++) {
+                    m = Math.min(m, ObjectTools.asIntSafe(o[i]));
+                }
+                return m;
             } else if (o[0] instanceof Double) {
-                return Math.min(ObjectTools.asDoubleSafe(o[0]), ObjectTools.asDoubleSafe(o[1]));
+                double m = ObjectTools.asDoubleSafe(o[0]);
+                for (int i = 1 ; i < o.length ; i++) {
+                    m = Math.min(m, ObjectTools.asDoubleSafe(o[i]));
+                }
+                return m;
             } else if (o[0] instanceof String) {
-                String s1 = ObjectTools.asStringSafe(o[0]);
-                String s2 = ObjectTools.asStringSafe(o[1]);
-                return s1.compareTo(s2) < 0 ? s1 : s2;
+                String m = ObjectTools.asStringSafe(o[0]);
+                for (int i = 1 ; i < o.length ; i++) {
+                    String s = ObjectTools.asStringSafe(o[1]);
+                    m = m.compareTo(s) < 0 ? m : s;
+                }
+                return m;
             } else if (o[0] instanceof Boolean) {
-                return ObjectTools.asBoolSafe(o[0]) && ObjectTools.asBoolSafe(o[1]);
+                boolean m = ObjectTools.asBoolSafe(o[0]);
+                for (int i = 1 ; i < o.length ; i++) {
+                    m = m && ObjectTools.asBoolSafe(o[i]);
+                }
+                return m;
             } else {
                 return o[0];
             }
