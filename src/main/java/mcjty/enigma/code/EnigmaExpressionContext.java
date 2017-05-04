@@ -338,7 +338,13 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
     public Expression<EnigmaFunctionContext> getVariable(String var) {
         int i = STRINGS.get(var);
         return context -> {
-            return progress.isNamedVariable(i) ? progress.getNamedVariable(i) : var;
+            if (context.isLocalVar(i)) {
+                return context.getLocalVar(i);
+            } else if (progress.isNamedVariable(i)) {
+                return progress.getNamedVariable(i);
+            } else {
+                return var;
+            }
         };
     }
 

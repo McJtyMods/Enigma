@@ -338,6 +338,9 @@ public class ProgramParser {
                 case VAR:
                     actionBlock.addAction(new SetVariableAction(line.getParameters().get(0), line.getParameters().get(1)));
                     break;
+                case LOCAL:
+                    actionBlock.addAction(new SetLocalVariableAction(line.getParameters().get(0), line.getParameters().get(1)));
+                    break;
                 case IF:
                     actionBlock.addAction(parseIf(context, line));
                     break;
