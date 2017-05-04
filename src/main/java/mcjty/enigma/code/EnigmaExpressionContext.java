@@ -16,6 +16,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.common.DimensionManager;
 
@@ -160,6 +161,15 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
                 throw new RuntimeException("Cannot find position " + o[0] + "!");
             }
             return new BlockPosDim(namedPosition.getPos().east(ObjectTools.asIntSafe(o[1])), namedPosition.getDimension());
+        });
+        FUNCTIONS.put("lookat", (context, o) -> {
+            double dist = ObjectTools.asDoubleSafe(o[0]);
+            EntityPlayer player = context.getPlayer();
+            if (player == null) {
+                throw new RuntimeException("Player is needed for 'lookat' function!");
+            }
+            Vec3d offset = player.getLookVec().normalize().scale(dist);
+            return new BlockPosDim(player.getPosition().add(offset.xCoord, offset.yCoord, offset.zCoord), player.getEntityWorld().provider.getDimension());
         });
 
         FUNCTIONS.put("istr", (context, o) -> {

@@ -46,7 +46,7 @@ public class DropAction extends Action {
                 world = world.getMinecraftServer().worldServerForDimension(namedPosition.getDimension());
             }
             BlockPos p = namedPosition.getPos();
-            EntityItem entityItem = new EntityItem(world, p.getX(), p.getY(), p.getZ(), stack);
+            EntityItem entityItem = new EntityItem(world, p.getX(), p.getY(), p.getZ(), stack.copy());
             WorldTools.spawnEntity(world, entityItem);
         } else {
             throw new ExecutionException("Cannot find item '" + st + "'!");
