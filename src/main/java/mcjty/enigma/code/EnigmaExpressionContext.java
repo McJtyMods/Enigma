@@ -155,11 +155,48 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
             return new BlockPosDim(namedPosition.getPos().east(ObjectTools.asIntSafe(o[1])), namedPosition.getDimension());
         });
 
-        FUNCTIONS.put("intern", (context, o) -> {
+        FUNCTIONS.put("istr", (context, o) -> {
             if (o[0] instanceof Integer) {
                 return STRINGS.get((Integer) o[0]);
             } else {
                 return ObjectTools.asStringSafe(o[0]);
+            }
+        });
+        FUNCTIONS.put("intern", (context, o) -> {
+            if (o[0] instanceof String) {
+                return STRINGS.get((String) o[0]);
+            } else {
+                return o[0];
+            }
+        });
+        FUNCTIONS.put("max", (context, o) -> {
+            if (o[0] instanceof Integer) {
+                return Math.max(ObjectTools.asIntSafe(o[0]), ObjectTools.asIntSafe(o[1]));
+            } else if (o[0] instanceof Double) {
+                return Math.max(ObjectTools.asDoubleSafe(o[0]), ObjectTools.asDoubleSafe(o[1]));
+            } else if (o[0] instanceof String) {
+                String s1 = ObjectTools.asStringSafe(o[0]);
+                String s2 = ObjectTools.asStringSafe(o[1]);
+                return s1.compareTo(s2) < 0 ? s2 : s1;
+            } else if (o[0] instanceof Boolean) {
+                return ObjectTools.asBoolSafe(o[0]) || ObjectTools.asBoolSafe(o[1]);
+            } else {
+                return o[0];
+            }
+        });
+        FUNCTIONS.put("min", (context, o) -> {
+            if (o[0] instanceof Integer) {
+                return Math.min(ObjectTools.asIntSafe(o[0]), ObjectTools.asIntSafe(o[1]));
+            } else if (o[0] instanceof Double) {
+                return Math.min(ObjectTools.asDoubleSafe(o[0]), ObjectTools.asDoubleSafe(o[1]));
+            } else if (o[0] instanceof String) {
+                String s1 = ObjectTools.asStringSafe(o[0]);
+                String s2 = ObjectTools.asStringSafe(o[1]);
+                return s1.compareTo(s2) < 0 ? s1 : s2;
+            } else if (o[0] instanceof Boolean) {
+                return ObjectTools.asBoolSafe(o[0]) && ObjectTools.asBoolSafe(o[1]);
+            } else {
+                return o[0];
             }
         });
         FUNCTIONS.put("str", (context, o) -> ObjectTools.asStringSafe(o[0]));
