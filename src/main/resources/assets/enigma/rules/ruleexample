@@ -124,7 +124,8 @@ scope "end" state(main) == theend:
         log "end.deactivate"
 
     on rightclickitem mysteriouskey:
-        teleport up(playerpos(),10)
+        local p playerpos()
+        teleport up($p,10)
 
     on rightclickblock lockeddoor:
         teleport tppos
