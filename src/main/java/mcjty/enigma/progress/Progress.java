@@ -272,6 +272,9 @@ public class Progress {
                 v = tc.getBoolean("vb");
             } else if (tc.hasKey("vd")) {
                 v = tc.getDouble("vd");
+            } else if (tc.hasKey("vpx")) {
+                v = new BlockPosDim(new BlockPos(tc.getInteger("vpx"), tc.getInteger("vpy"), tc.getInteger("vzz")),
+                        tc.getInteger("vpd"));
             }
             namedVariables.put(name, v);
         }
@@ -390,6 +393,12 @@ public class Progress {
                     tc.setBoolean("vb", (Boolean) v);
                 } else if (v instanceof Double) {
                     tc.setDouble("vd", (Double) v);
+                } else if (v instanceof BlockPosDim) {
+                    BlockPosDim p = (BlockPosDim) v;
+                    tc.setInteger("vpx", p.getPos().getX());
+                    tc.setInteger("vpy", p.getPos().getY());
+                    tc.setInteger("vpz", p.getPos().getZ());
+                    tc.setInteger("vpd", p.getDimension());
                 }
             }
             list.appendTag(tc);
