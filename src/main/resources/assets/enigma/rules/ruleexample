@@ -8,6 +8,7 @@ on setup:
     position exitposition 800 4 1900 0
     position changeblock 808 4 1900 0
     position tppos 820 4 1900 0
+    position startblock 804 4 1900 0
 
     blockstate diamond:
         name "minecraft:diamond_block"
@@ -15,6 +16,11 @@ on setup:
     blockstate emerald:
         name "minecraft:emerald_block"
         meta 0
+    blockstate gold:
+        name "minecraft:gold_block"
+    blockstate air:
+        name "minecraft:air"
+    var score 0
 
     createparticles smoke:
         name "smoke"
@@ -23,6 +29,7 @@ on setup:
         speed .20
 
     state changeblock diamond
+    state goldgame waiting
 
     itemstack mysteriouskey:
         name "enigma:key"
@@ -41,6 +48,7 @@ on activate:
     log "root.activate"
     var counter 0
     state main beginroom
+
 
 pscope "player" true:
     on repeat 50:
@@ -142,4 +150,32 @@ scope "end" state(main) == theend:
     on rightclickposition lockeddoor:
         teleport tppos
         sound tppos "minecraft:entity.endermen.teleport"
+
+
+scope "waiting" state(goldgame) == waiting:
+
+    on rightclickposition startblock:
+        state goldgame game
+        cancel
+
+scope "gamescope" state(goldgame) == game:
+
+    pscope "players_start" true:
+        on activate:
+            teleport tppos
+            pvar score 0
+
+    on delay 1000:
+        state goldgame theend
+
+    on rightclickblock gold:
+        setblock $event_pos air
+        pvar score $score+1
+        sound $event_pos "entity.experience_orb.pickup"
+
+scope "theend" state(goldgame) == theend:
+
+    pscope "players_score" true:
+        on activate:
+            message fmt_green() + "You got a score of: " + fmt_blue() + $score + "!"
 

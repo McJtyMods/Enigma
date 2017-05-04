@@ -123,7 +123,7 @@ public class ScopeInstance {
                 scopeInstance.activate(context);
             }
         }
-        if (!nestedPlayerScopeInstances.isEmpty()) {
+        if (!scope.getNestedPlayerScopes().isEmpty()) {
             for (EntityPlayerMP player : context.getWorld().getMinecraftServer().getPlayerList().getPlayers()) {
                 EnigmaFunctionContext newctxt = new EnigmaFunctionContext(context.getWorld(), player);
                 for (Scope child : scope.getNestedPlayerScopes()) {
