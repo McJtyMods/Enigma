@@ -353,6 +353,9 @@ public class ProgramParser {
                 case BLOCKSTATE:
                     actionBlock.addAction(parseBlockState(context, line));
                     break;
+                case COMMAND:
+                    actionBlock.addAction(new CommandAction(line.getParameters().get(0)));
+                    break;
                 case POSITION:
                     actionBlock.addAction(new PositionAction(
                             line.getParameters().get(0),
