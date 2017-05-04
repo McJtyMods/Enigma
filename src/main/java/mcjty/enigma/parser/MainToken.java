@@ -11,6 +11,7 @@ public enum MainToken {
     RESTORE(false, 1, 1),      // restore <snapshotname>
     ON(true, 0, 0),
     POSITION(false, 5, 5),     // position <name>, <x>, <y>, <z>, <dim>
+    LOOKAT(false, 1, 1),       // lookat <position>
     COMMAND(false, 1, 1),      // command <command>
     SCOPE(false, 2, 2),        // scope <id>, <expression>
     PSCOPE(false, 2, 2),       // pscope <id>, <expression>

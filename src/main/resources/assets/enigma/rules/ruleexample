@@ -29,6 +29,11 @@ on setup:
         meta 1
         description "Mysterious key"
 
+    itemstack goldcoin:
+        name "enigma:coin"
+        meta 0
+        description "A Golden Coin"
+
 on init:
     log "root.init"
 
@@ -72,6 +77,10 @@ pscope "playerhealth" pstate(health) == bad:
     on activate:
         message "Woot"
         log "Woot"
+
+on rightclickitem goldcoin:
+    message "Look at that block!"
+    lookat changeblock
 
 on rightclickitem mysteriouskey:
     message "This is a really mysterious key"

@@ -359,6 +359,9 @@ public class ProgramParser {
                 case COMMAND:
                     actionBlock.addAction(new CommandAction(line.getParameters().get(0)));
                     break;
+                case LOOKAT:
+                    actionBlock.addAction(new LookAtAction(line.getParameters().get(0)));
+                    break;
                 case POSITION:
                     actionBlock.addAction(new PositionAction(
                             line.getParameters().get(0),
