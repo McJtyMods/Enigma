@@ -50,7 +50,7 @@ pscope "player" true:
 scope "diamond" state(changeblock) == diamond:
     on activate:
         log "diamond.activate"
-    on rightclickblock changeblock:
+    on rightclickposition changeblock:
         log "diamond.rightclickblock"
         setblock changeblock emerald
         state changeblock emerald
@@ -60,7 +60,7 @@ scope "diamond" state(changeblock) == diamond:
 scope "emerald" state(changeblock) == emerald:
     on activate:
         log "emerald.activate"
-    on rightclickblock changeblock:
+    on rightclickposition changeblock:
         log "emerald.rightclickblock"
         setblock changeblock diamond
         state changeblock diamond
@@ -103,7 +103,7 @@ scope "begin" state(main) == beginroom:
         log "ping: " + $counter
         var counter $counter+1
 
-    on rightclickblock testpos:
+    on rightclickposition testpos:
         message fmt_green() + fmt_bold() + "You receive a mysterious key" 20
         give mysteriouskey
         drop goldcoin up(lookat(3),5)
@@ -111,7 +111,7 @@ scope "begin" state(main) == beginroom:
         drop goldcoin up(lookat(3),5)
         cancel
 
-    on rightclickblock lockeddoor:
+    on rightclickposition lockeddoor:
         log "testtesttesttest"
         if hasitem(mysteriouskey):
             message "The door opens!"
@@ -121,7 +121,7 @@ scope "begin" state(main) == beginroom:
             message "You need a key!"
         cancel
 
-    on rightclickblock exitposition:
+    on rightclickposition exitposition:
         state main theend
         cancel
 
@@ -139,7 +139,7 @@ scope "end" state(main) == theend:
         local p playerpos()
         teleport up($p,10)
 
-    on rightclickblock lockeddoor:
+    on rightclickposition lockeddoor:
         teleport tppos
         sound tppos "minecraft:entity.endermen.teleport"
 

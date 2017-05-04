@@ -4,6 +4,7 @@ import mcjty.enigma.code.EnigmaFunctionContext;
 import mcjty.enigma.code.RootScope;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
+import mcjty.enigma.varia.BlockPosDim;
 import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -83,6 +84,7 @@ public class ForgeEventHandlers {
             Integer namedBlock = progress.getNamedBlock(state);
             if (namedBlock != null) {
                 EnigmaFunctionContext context = new EnigmaFunctionContext(world, player);
+                context.setLocalVar("event_pos", new BlockPosDim(event.getPos(), world.provider.getDimension()));
                 RootScope.getRootInstance(world).forActiveScopes(context, (ctxt, scope) -> scope.onRightClickBlock(event, ctxt, namedBlock));
                 if (context.isCanceled()) {
                     event.setCanceled(true);
@@ -109,6 +111,7 @@ public class ForgeEventHandlers {
             Integer namedBlock = progress.getNamedBlock(state);
             if (namedBlock != null) {
                 EnigmaFunctionContext context = new EnigmaFunctionContext(world, player);
+                context.setLocalVar("event_pos", new BlockPosDim(event.getPos(), world.provider.getDimension()));
                 RootScope.getRootInstance(world).forActiveScopes(context, (ctxt, scope) -> scope.onLeftClickBlock(event, ctxt, namedBlock));
                 if (context.isCanceled()) {
                     event.setCanceled(true);
