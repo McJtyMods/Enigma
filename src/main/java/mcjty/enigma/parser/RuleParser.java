@@ -46,7 +46,7 @@ public class RuleParser<T> {
         return lines;
     }
 
-    private static <T> TokenizedLine getTokenizedLine(String line, int linenumber, ExpressionContext<T> expressionContext) throws ParserException {
+    public static <T> TokenizedLine getTokenizedLine(String line, int linenumber, ExpressionContext<T> expressionContext) throws ParserException {
         int indentation = 0;
         int i = 0;
         while (i < line.length() && (line.charAt(i) == ' ' || line.charAt(i) == '\t')) {
