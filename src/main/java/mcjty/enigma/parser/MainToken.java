@@ -21,6 +21,7 @@ public enum MainToken {
     MESSAGE(false, 1, 2),      // message <msg> [<time>]
     LOG(false, 1, 1),          // log <msg>
     GIVE(false, 1, 1),         // give <item>
+    DROP(false, 2, 2),         // drop <item> <pos>
     TAKE(false, 1, 1),         // take <item>
     TAKEALL(false, 1, 1),      // takeall <item>
     ITEMSTACK(false, 1, 1),    // itemstack <name>

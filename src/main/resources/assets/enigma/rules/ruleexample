@@ -106,6 +106,7 @@ scope "begin" state(main) == beginroom:
     on rightclickblock testpos:
         message fmt_green() + fmt_bold() + "You receive a mysterious key" 20
         give mysteriouskey
+        drop goldcoin lookat(3)
         cancel
 
     on rightclickblock lockeddoor:

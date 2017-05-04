@@ -34,7 +34,7 @@ public class TakeAllAction extends Action {
         Object st = item.eval(context);
         stack = progress.getNamedItemStack(st);
 
-        if (ItemStackTools.isValid(stack)) {
+        if (stack != null && ItemStackTools.isValid(stack)) {
             EntityPlayer player = context.getPlayer();
             List<ItemStack> inventory = InventoryTools.getMainInventory(player);
             for (int i = 0 ; i < inventory.size() ; i++) {
@@ -44,6 +44,8 @@ public class TakeAllAction extends Action {
                 }
             }
             player.openContainer.detectAndSendChanges();
+        } else {
+            throw new ExecutionException("Cannot find item '" + st + "'!");
         }
     }
 

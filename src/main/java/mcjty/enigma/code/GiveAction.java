@@ -30,7 +30,7 @@ public class GiveAction extends Action {
         Object st = item.eval(context);
         stack = progress.getNamedItemStack(st);
 
-        if (ItemStackTools.isValid(stack)) {
+        if (stack != null && ItemStackTools.isValid(stack)) {
             EntityPlayer player = context.getPlayer();
             player.inventory.addItemStackToInventory(stack.copy());
             player.openContainer.detectAndSendChanges();
