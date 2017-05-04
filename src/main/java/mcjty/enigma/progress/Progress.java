@@ -179,6 +179,8 @@ public class Progress {
             return getNamedPosition((Integer) o);
         } else if (o instanceof String) {
             return getNamedPosition((String) o);
+        } else if (o instanceof BlockPosDim) {
+            return (BlockPosDim) o;
         } else {
             return null;
         }

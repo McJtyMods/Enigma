@@ -3,6 +3,7 @@ package mcjty.enigma.code;
 import mcjty.enigma.parser.Expression;
 import mcjty.enigma.parser.ExpressionContext;
 import mcjty.enigma.parser.ExpressionFunction;
+import mcjty.enigma.parser.ObjectTools;
 import mcjty.enigma.progress.PlayerProgress;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
@@ -33,7 +34,7 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
         this.progress = progress;
     }
 
-    private static final Map<String, ExpressionFunction<EnigmaFunctionContext>> FUNCTIONS = new HashMap<>();
+    public static final Map<String, ExpressionFunction<EnigmaFunctionContext>> FUNCTIONS = new HashMap<>();
 
     static {
         FUNCTIONS.put("fmt_black", (context, o) -> String.valueOf(TextFormatting.BLACK));
@@ -57,6 +58,111 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
         FUNCTIONS.put("fmt_underline", (context, o) -> String.valueOf(TextFormatting.UNDERLINE));
         FUNCTIONS.put("fmt_italic", (context, o) -> String.valueOf(TextFormatting.ITALIC));
         FUNCTIONS.put("fmt_reset", (context, o) -> String.valueOf(TextFormatting.RESET));
+
+        FUNCTIONS.put("pos", (context, o) -> {
+            if (o.length > 3) {
+                return new BlockPosDim(new BlockPos(ObjectTools.asIntSafe(o[0]), ObjectTools.asIntSafe(o[1]), ObjectTools.asIntSafe(o[2])), ObjectTools.asIntSafe(o[3]));
+            } else {
+                int dim = 0;
+                if (context.hasPlayer()) {
+                    dim = context.getPlayer().getEntityWorld().provider.getDimension();
+                }
+                return new BlockPosDim(new BlockPos(ObjectTools.asIntSafe(o[0]), ObjectTools.asIntSafe(o[1]), ObjectTools.asIntSafe(o[2])), dim);
+            }
+        });
+        FUNCTIONS.put("playerpos", (context, o) -> new BlockPosDim(context.getPlayer().getPosition(), context.getPlayer().getEntityWorld().provider.getDimension()));
+        FUNCTIONS.put("getx", (context, o) -> {
+            Progress progress = ProgressHolder.getProgress(context.getWorld());
+            BlockPosDim namedPosition = progress.getNamedPosition(o[0]);
+            if (namedPosition == null) {
+                throw new RuntimeException("Cannot find position " + o[0] + "!");
+            }
+            return namedPosition.getPos().getX();
+        });
+        FUNCTIONS.put("gety", (context, o) -> {
+            Progress progress = ProgressHolder.getProgress(context.getWorld());
+            BlockPosDim namedPosition = progress.getNamedPosition(o[0]);
+            if (namedPosition == null) {
+                throw new RuntimeException("Cannot find position " + o[0] + "!");
+            }
+            return namedPosition.getPos().getY();
+        });
+        FUNCTIONS.put("getz", (context, o) -> {
+            Progress progress = ProgressHolder.getProgress(context.getWorld());
+            BlockPosDim namedPosition = progress.getNamedPosition(o[0]);
+            if (namedPosition == null) {
+                throw new RuntimeException("Cannot find position " + o[0] + "!");
+            }
+            return namedPosition.getPos().getZ();
+        });
+        FUNCTIONS.put("getdim", (context, o) -> {
+            Progress progress = ProgressHolder.getProgress(context.getWorld());
+            BlockPosDim namedPosition = progress.getNamedPosition(o[0]);
+            if (namedPosition == null) {
+                throw new RuntimeException("Cannot find position " + o[0] + "!");
+            }
+            return namedPosition.getDimension();
+        });
+        FUNCTIONS.put("up", (context, o) -> {
+            Progress progress = ProgressHolder.getProgress(context.getWorld());
+            BlockPosDim namedPosition = progress.getNamedPosition(o[0]);
+            if (namedPosition == null) {
+                throw new RuntimeException("Cannot find position " + o[0] + "!");
+            }
+            return new BlockPosDim(namedPosition.getPos().up(ObjectTools.asIntSafe(o[1])), namedPosition.getDimension());
+        });
+        FUNCTIONS.put("down", (context, o) -> {
+            Progress progress = ProgressHolder.getProgress(context.getWorld());
+            BlockPosDim namedPosition = progress.getNamedPosition(o[0]);
+            if (namedPosition == null) {
+                throw new RuntimeException("Cannot find position " + o[0] + "!");
+            }
+            return new BlockPosDim(namedPosition.getPos().down(ObjectTools.asIntSafe(o[1])), namedPosition.getDimension());
+        });
+        FUNCTIONS.put("south", (context, o) -> {
+            Progress progress = ProgressHolder.getProgress(context.getWorld());
+            BlockPosDim namedPosition = progress.getNamedPosition(o[0]);
+            if (namedPosition == null) {
+                throw new RuntimeException("Cannot find position " + o[0] + "!");
+            }
+            return new BlockPosDim(namedPosition.getPos().south(ObjectTools.asIntSafe(o[1])), namedPosition.getDimension());
+        });
+        FUNCTIONS.put("north", (context, o) -> {
+            Progress progress = ProgressHolder.getProgress(context.getWorld());
+            BlockPosDim namedPosition = progress.getNamedPosition(o[0]);
+            if (namedPosition == null) {
+                throw new RuntimeException("Cannot find position " + o[0] + "!");
+            }
+            return new BlockPosDim(namedPosition.getPos().north(ObjectTools.asIntSafe(o[1])), namedPosition.getDimension());
+        });
+        FUNCTIONS.put("west", (context, o) -> {
+            Progress progress = ProgressHolder.getProgress(context.getWorld());
+            BlockPosDim namedPosition = progress.getNamedPosition(o[0]);
+            if (namedPosition == null) {
+                throw new RuntimeException("Cannot find position " + o[0] + "!");
+            }
+            return new BlockPosDim(namedPosition.getPos().west(ObjectTools.asIntSafe(o[1])), namedPosition.getDimension());
+        });
+        FUNCTIONS.put("east", (context, o) -> {
+            Progress progress = ProgressHolder.getProgress(context.getWorld());
+            BlockPosDim namedPosition = progress.getNamedPosition(o[0]);
+            if (namedPosition == null) {
+                throw new RuntimeException("Cannot find position " + o[0] + "!");
+            }
+            return new BlockPosDim(namedPosition.getPos().east(ObjectTools.asIntSafe(o[1])), namedPosition.getDimension());
+        });
+
+        FUNCTIONS.put("intern", (context, o) -> {
+            if (o[0] instanceof Integer) {
+                return STRINGS.get((Integer) o[0]);
+            } else {
+                return ObjectTools.asStringSafe(o[0]);
+            }
+        });
+        FUNCTIONS.put("str", (context, o) -> ObjectTools.asStringSafe(o[0]));
+        FUNCTIONS.put("int", (context, o) -> ObjectTools.asIntSafe(o[0]));
+        FUNCTIONS.put("double", (context, o) -> ObjectTools.asDoubleSafe(o[0]));
+        FUNCTIONS.put("boolean", (context, o) -> ObjectTools.asBoolSafe(o[0]));
 
         FUNCTIONS.put("state", (context, o) -> {
             Progress progress = ProgressHolder.getProgress(context.getWorld());

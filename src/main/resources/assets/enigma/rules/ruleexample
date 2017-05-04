@@ -123,6 +123,9 @@ scope "end" state(main) == theend:
     on deactivate:
         log "end.deactivate"
 
+    on rightclickitem mysteriouskey:
+        teleport up(playerpos(),10)
+
     on rightclickblock lockeddoor:
         teleport tppos
         sound tppos "minecraft:entity.endermen.teleport"

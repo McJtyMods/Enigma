@@ -14,7 +14,7 @@ public class ExpressionParser<T> {
     }
 
     public static <T> ParsedExpression<T> eval(final StringPointer str, ExpressionContext<T> context) throws ExpressionException {
-        return new ExpressionParser<T>(str, context).parse();
+        return new ExpressionParser<>(str, context).parse();
     }
 
     private void nextChar() {
@@ -157,9 +157,9 @@ public class ExpressionParser<T> {
             Expression<T> a = aexp.getExpression();
             if (aexp.isConstant()) {
                 Object eval = ObjectTools.sub(0, a.eval(null));
-                return new ParsedExpression<T>(w -> eval, true, eval.toString());
+                return new ParsedExpression<>(w -> eval, true, eval.toString());
             } else {
-                return new ParsedExpression<T>(w -> ObjectTools.sub(0, a.eval(w)), false, "-" + aexp.getDebug());
+                return new ParsedExpression<>(w -> ObjectTools.sub(0, a.eval(w)), false, "-" + aexp.getDebug());
             }
         }
 
@@ -167,7 +167,7 @@ public class ExpressionParser<T> {
         int startPos = str.index();
         if (eat('(')) { // parentheses
             ParsedExpression<T> exp = parseExpression();
-            x = new ParsedExpression<T>(exp.getExpression(), exp.isConstant(), "(" + exp.getDebug() + ")");
+            x = new ParsedExpression<>(exp.getExpression(), exp.isConstant(), "(" + exp.getDebug() + ")");
             eat(')');
         } else if ((ch >= '0' && ch <= '9') || ch == '.') { // numbers
             while ((ch >= '0' && ch <= '9') || ch == '.') {
@@ -176,10 +176,10 @@ public class ExpressionParser<T> {
             String substring = str.substring(startPos, str.index());
             if (substring.contains(".")) {
                 double d = Double.parseDouble(substring);
-                x = new ParsedExpression<T>(w -> d, true, Double.toString(d));
+                x = new ParsedExpression<>(w -> d, true, Double.toString(d));
             } else {
                 int d = Integer.parseInt(substring);
-                x = new ParsedExpression<T>(w -> d, true, Integer.toString(d));
+                x = new ParsedExpression<>(w -> d, true, Integer.toString(d));
             }
         } else if (ch == '"' || ch == '\'') {
             int toquote = ch;
@@ -194,7 +194,7 @@ public class ExpressionParser<T> {
             }
             nextChar();
             String s = builder.toString();
-            x = new ParsedExpression<T>(w -> s, true, "\"" + s + "\"");
+            x = new ParsedExpression<>(w -> s, true, "\"" + s + "\"");
         } else if (ch == '$') {
             nextChar();
             if (isIdentifierCharFirst(ch)) {
@@ -204,20 +204,20 @@ public class ExpressionParser<T> {
                 }
             }
             String func = str.substring(startPos+1, str.index());
-            x = new ParsedExpression<T>(context.getVariable(func), false, func);
+            x = new ParsedExpression<>(context.getVariable(func), false, func);
         } else if (isIdentifierCharFirst(ch)) { // functions
             while (isIdentifierChar(ch)) {
                 nextChar();
             }
             String func = str.substring(startPos, str.index());
             if ("sqrt".equals(func)) {
-                x = parseFactor();
+                x = parseExpression();
                 Expression<T> finalX = x.getExpression();
                 if (x.isConstant()) {
                     double result = Math.sqrt(ObjectTools.asDoubleSafe(finalX.eval(null)));
-                    x = new ParsedExpression<T>(w -> result, true, Double.toString(result));
+                    x = new ParsedExpression<>(w -> result, true, Double.toString(result));
                 } else {
-                    x = new ParsedExpression<T>(w -> Math.sqrt(ObjectTools.asDoubleSafe(finalX.eval(w))), false,
+                    x = new ParsedExpression<>(w -> Math.sqrt(ObjectTools.asDoubleSafe(finalX.eval(w))), false,
                             "sqrt(" + x.getDebug() + ")");
                 }
             } else if (context.isFunction(func)) {
@@ -226,19 +226,34 @@ public class ExpressionParser<T> {
                 }
                 ExpressionFunction<T> function = context.getFunction(func);
                 if (eat(')')) {
-                    x = new ParsedExpression<T>(w -> function.eval(w), false, func + "()");
+                    x = new ParsedExpression<>(w -> function.eval(w), false, func + "()");
                 } else {
-                    ParsedExpression<T> x1 = parseFactor();
+                    ParsedExpression<T> x1 = parseExpression();
                     Expression<T> finalX1 = x1.getExpression();
                     if (eat(')')) {
-                        x = new ParsedExpression<T>(w -> function.eval(w, finalX1.eval(w)), false, func + " " + x1.getDebug());
+                        x = new ParsedExpression<>(w -> function.eval(w, finalX1.eval(w)), false, func + " " + x1.getDebug());
                     } else {
                         eat(',');
-                        ParsedExpression<T> x2 = parseFactor();
+                        ParsedExpression<T> x2 = parseExpression();
                         Expression<T> finalX2 = x2.getExpression();
-                        x = new ParsedExpression<T>(w -> function.eval(w, finalX1.eval(w), finalX2.eval(w)), false, func + " " + x1.getDebug() + "," + x2.getDebug());
-                        if (!eat(')')) {
-                            throw new ExpressionException("Excected ')' after the function parameters");
+                        if (eat(')')) {
+                            x = new ParsedExpression<>(w -> function.eval(w, finalX1.eval(w), finalX2.eval(w)), false, func + " " + x1.getDebug() + "," + x2.getDebug());
+                        } else {
+                            eat(',');
+                            ParsedExpression<T> x3 = parseExpression();
+                            Expression<T> finalX3 = x3.getExpression();
+                            if (eat(')')) {
+                                x = new ParsedExpression<>(w -> function.eval(w, finalX1.eval(w), finalX2.eval(w), finalX3.eval(w)), false, func + " " + x1.getDebug() + "," + x2.getDebug() + "," + x3.getDebug());
+                            } else {
+                                eat(',');
+                                ParsedExpression<T> x4 = parseExpression();
+                                Expression<T> finalX4 = x4.getExpression();
+                                x = new ParsedExpression<>(w -> function.eval(w, finalX1.eval(w), finalX2.eval(w), finalX3.eval(w), finalX4.eval(w)), false,
+                                        func + " " + x1.getDebug() + "," + x2.getDebug() + "," + x3.getDebug() + "," + x4.getDebug());
+                                if (!eat(')')) {
+                                    throw new ExpressionException("Excected ')' after the function parameters");
+                                }
+                            }
                         }
                     }
                 }
@@ -270,9 +285,9 @@ public class ExpressionParser<T> {
     private ParsedExpression<T> optimizeBinaryOperator(Expression<T> operation, ParsedExpression<T> p1, ParsedExpression<T> p2, String op) {
         if (p1.isConstant() && p2.isConstant()) {
             Object rc = operation.eval(null);
-            return new ParsedExpression<T>(w -> rc, true, rc.toString());
+            return new ParsedExpression<>(w -> rc, true, rc.toString());
         } else {
-            return new ParsedExpression<T>(operation, false, p1.getDebug() + op + p2.getDebug());
+            return new ParsedExpression<>(operation, false, p1.getDebug() + op + p2.getDebug());
         }
     }
 

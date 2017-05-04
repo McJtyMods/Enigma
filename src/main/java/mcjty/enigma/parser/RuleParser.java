@@ -1,6 +1,7 @@
 package mcjty.enigma.parser;
 
 import mcjty.enigma.Enigma;
+import mcjty.enigma.code.EnigmaExpressionContext;
 import mcjty.enigma.code.Scope;
 import org.apache.logging.log4j.Level;
 
@@ -145,14 +146,13 @@ public class RuleParser<T> {
                 } else if ("max".equals(name)) {
                     return (w, o) -> Math.max(ObjectTools.asIntSafe(o[0]), ObjectTools.asIntSafe(o[1]));
                 } else {
-                    return null;
+                    return (w, o) -> 0;
                 }
             }
 
             @Override
             public boolean isFunction(String name) {
-                return "double".equals(name) || "state".equals(name) || "hasitem".equals(name)
-                        || "pstate".equals(name) || "max".equals(name) || "distance".equals(name);
+                return "double".equals(name) || EnigmaExpressionContext.FUNCTIONS.containsKey(name);
             }
         };
 
@@ -168,7 +168,7 @@ public class RuleParser<T> {
             System.out.println("e.getMessage() = " + e.getMessage() + " at line " + (e.getLinenumber()+1));
         }
 
-        StringPointer str = new StringPointer("double(1)*var   8/2!=2+2 sqrt 16 \"Dit is \\\"een\\\" test\"+' (echt)' 'nog eentje' max(8 16)");
+        StringPointer str = new StringPointer("double(1)*$var   8/2!=2+2 sqrt 16 \"Dit is \\\"een\\\" test\"+' (echt)' 'nog eentje' max(8 16)");
         try {
             System.out.println("result = " + ExpressionParser.eval(str, context).getExpression().eval(null));
             System.out.println("result = " + ExpressionParser.eval(str, context).getExpression().eval(null));
