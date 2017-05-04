@@ -100,6 +100,16 @@ public class ObjectTools {
         }
     }
 
+    public static Object mod(Object o1, Object o2) {
+        if (o1 instanceof Integer) {
+            return asIntSafe(o1) % asIntSafe(o2);
+        } else if (o1 instanceof Double) {
+            return asDoubleSafe(o1) % asDoubleSafe(o2);
+        } else {
+            return "";
+        }
+    }
+
     // This functions knows how to compare interned strings
     public static boolean equals(Object o1, Object o2) {
         if (o1 == null) {

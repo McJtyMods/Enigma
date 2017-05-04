@@ -142,6 +142,11 @@ public class ExpressionParser<T> {
                 ParsedExpression<T> bexp = parseFactor();
                 Expression<T> b = bexp.getExpression();
                 x = optimizeBinaryOperator(w -> ObjectTools.div(a.eval(w), b.eval(w)), x, bexp, "/");
+            } else if (eat('%')) {
+                Expression<T> a = x.getExpression();
+                ParsedExpression<T> bexp = parseFactor();
+                Expression<T> b = bexp.getExpression();
+                x = optimizeBinaryOperator(w -> ObjectTools.mod(a.eval(w), b.eval(w)), x, bexp, "%");
             } else {
                 return x;
             }
