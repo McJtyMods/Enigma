@@ -16,8 +16,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
 import javax.annotation.Nullable;
@@ -163,10 +165,26 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
             return new BlockPosDim(namedPosition.getPos().east(ObjectTools.asIntSafe(o[1])), namedPosition.getDimension());
         });
         FUNCTIONS.put("lookat", (context, o) -> {
-            double dist = ObjectTools.asDoubleSafe(o[0]);
+            double maxdist = ObjectTools.asDoubleSafe(o[0]);
             EntityPlayer player = context.getPlayer();
             if (player == null) {
                 throw new RuntimeException("Player is needed for 'lookat' function!");
+            }
+            World world = player.getEntityWorld();
+            int dimension = world.provider.getDimension();
+            Vec3d offset = player.getLookVec().normalize().scale(maxdist);
+            Vec3d pp = new Vec3d(player.posX, player.posY, player.posZ);
+            RayTraceResult result = world.rayTraceBlocks(pp, pp.add(offset));
+            if (result == null) {
+                return null;
+            }
+            return new BlockPosDim(result.getBlockPos(), dimension);
+        });
+        FUNCTIONS.put("posat", (context, o) -> {
+            double dist = ObjectTools.asDoubleSafe(o[0]);
+            EntityPlayer player = context.getPlayer();
+            if (player == null) {
+                throw new RuntimeException("Player is needed for 'posat' function!");
             }
             Vec3d offset = player.getLookVec().normalize().scale(dist);
             return new BlockPosDim(player.getPosition().add(offset.xCoord, offset.yCoord, offset.zCoord), player.getEntityWorld().provider.getDimension());
