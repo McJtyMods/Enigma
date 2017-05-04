@@ -51,6 +51,9 @@ public class CmdAction extends CompatCommandBase {
                 case VAR:
                     new SetVariableAction(tokenizedLine.getParameters().get(0), tokenizedLine.getParameters().get(1)).execute(context);
                     break;
+                case PVAR:
+                    new SetPlayerVariableAction(tokenizedLine.getParameters().get(0), tokenizedLine.getParameters().get(1)).execute(context);
+                    break;
                 case GIVE:
                     new GiveAction(tokenizedLine.getParameters().get(0)).execute(context);
                     break;

@@ -368,6 +368,8 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
         return context -> {
             if (context.isLocalVar(i)) {
                 return context.getLocalVar(i);
+            } else if (context.hasPlayer() && progress.getPlayerProgress(context.getPlayer().getPersistentID()).isNamedVariable(i)) {
+                return progress.getPlayerProgress(context.getPlayer().getPersistentID()).getNamedVariable(i);
             } else if (progress.isNamedVariable(i)) {
                 return progress.getNamedVariable(i);
             } else {
