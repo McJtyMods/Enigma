@@ -63,7 +63,14 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
         FUNCTIONS.put("fmt_reset", (context, o) -> String.valueOf(TextFormatting.RESET));
 
         FUNCTIONS.put("pos", (context, o) -> {
-            if (o.length > 3) {
+            if (o.length == 1) {
+                Progress progress = ProgressHolder.getProgress(context.getWorld());
+                BlockPosDim namedPosition = progress.getNamedPosition(o[0]);
+                if (namedPosition == null) {
+                    throw new RuntimeException("Cannot find position " + o[0] + "!");
+                }
+                return namedPosition;
+            } else if (o.length > 3) {
                 return new BlockPosDim(new BlockPos(ObjectTools.asIntSafe(o[0]), ObjectTools.asIntSafe(o[1]), ObjectTools.asIntSafe(o[2])), ObjectTools.asIntSafe(o[3]));
             } else {
                 int dim = 0;
