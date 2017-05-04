@@ -28,7 +28,9 @@ public class Scope {
     private final List<DelayedAction> onDelay = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onRightClickItem = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onRightClickBlock = new ArrayList<>();
+    private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onRightClickPosition = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onLeftClickBlock = new ArrayList<>();
+    private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onLeftClickPosition = new ArrayList<>();
     private final List<Scope> nestedScopes = new ArrayList<>();
     private final List<Scope> nestedPlayerScopes = new ArrayList<>();
 
@@ -96,17 +98,33 @@ public class Scope {
         }
     }
 
-    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event, EnigmaFunctionContext context, @Nonnull Integer position) {
-        for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onRightClickBlock) {
+    public void onRightClickPosition(PlayerInteractEvent.RightClickBlock event, EnigmaFunctionContext context, @Nonnull Integer position) {
+        for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onRightClickPosition) {
             if (ObjectTools.equals(position, pair.getValue().eval(context))) {
                 pair.getKey().execute(context);
             }
         }
     }
 
-    public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event, EnigmaFunctionContext context, @Nonnull Integer position) {
-        for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onLeftClickBlock) {
+    public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event, EnigmaFunctionContext context, @Nonnull Integer blockName) {
+        for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onRightClickBlock) {
+            if (ObjectTools.equals(blockName, pair.getValue().eval(context))) {
+                pair.getKey().execute(context);
+            }
+        }
+    }
+
+    public void onLeftClickPosition(PlayerInteractEvent.LeftClickBlock event, EnigmaFunctionContext context, @Nonnull Integer position) {
+        for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onLeftClickPosition) {
             if (ObjectTools.equals(position, pair.getValue().eval(context))) {
+                pair.getKey().execute(context);
+            }
+        }
+    }
+
+    public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event, EnigmaFunctionContext context, @Nonnull Integer blockName) {
+        for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onLeftClickBlock) {
+            if (ObjectTools.equals(blockName, pair.getValue().eval(context))) {
                 pair.getKey().execute(context);
             }
         }
@@ -170,12 +188,20 @@ public class Scope {
         onRightClickItem.add(Pair.of(actionBlock, item));
     }
 
-    public void addOnRightClickBlock(ActionBlock actionBlock, Expression<EnigmaFunctionContext> position) {
-        onRightClickBlock.add(Pair.of(actionBlock, position));
+    public void addOnRightClickPosition(ActionBlock actionBlock, Expression<EnigmaFunctionContext> position) {
+        onRightClickPosition.add(Pair.of(actionBlock, position));
     }
 
-    public void addOnLeftClickBlock(ActionBlock actionBlock, Expression<EnigmaFunctionContext> position) {
-        onLeftClickBlock.add(Pair.of(actionBlock, position));
+    public void addOnRightClickBlock(ActionBlock actionBlock, Expression<EnigmaFunctionContext> block) {
+        onRightClickBlock.add(Pair.of(actionBlock, block));
+    }
+
+    public void addOnLeftClickPosition(ActionBlock actionBlock, Expression<EnigmaFunctionContext> position) {
+        onLeftClickPosition.add(Pair.of(actionBlock, position));
+    }
+
+    public void addOnLeftClickBlock(ActionBlock actionBlock, Expression<EnigmaFunctionContext> block) {
+        onLeftClickBlock.add(Pair.of(actionBlock, block));
     }
 
     public void addScope(Scope scope) {
@@ -212,8 +238,16 @@ public class Scope {
             System.out.println(StringUtils.repeat(' ', indent+4) + "On Right Click Block (" + pair.getValue() + "):");
             pair.getKey().dump(indent+4);
         }
+        for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onRightClickPosition) {
+            System.out.println(StringUtils.repeat(' ', indent+4) + "On Right Click Position (" + pair.getValue() + "):");
+            pair.getKey().dump(indent+4);
+        }
         for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onLeftClickBlock) {
             System.out.println(StringUtils.repeat(' ', indent+4) + "On Left Click Block (" + pair.getValue() + "):");
+            pair.getKey().dump(indent+4);
+        }
+        for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onLeftClickPosition) {
+            System.out.println(StringUtils.repeat(' ', indent+4) + "On Left Click Position (" + pair.getValue() + "):");
             pair.getKey().dump(indent+4);
         }
         for (Scope scope : nestedScopes) {

@@ -15,6 +15,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -29,6 +30,7 @@ public class Progress {
     private final Map<UUID, PlayerProgress> playerProgress = new HashMap<>();
     private final Map<Integer, ItemStack> namedItemStacks = new HashMap<>();
     private final Map<Integer, IBlockState> namedBlocks = new HashMap<>();
+    private final Map<Pair<String,Integer>, Integer> blocksToName = new HashMap<>();
     private final Map<Integer, Object> namedVariables = new HashMap<>();
     private final Map<Integer, ParticleConfig> namedParticleConfigs = new HashMap<>();
     private final Set<ScopeID> initializedScopes = new HashSet<>();
@@ -43,6 +45,7 @@ public class Progress {
         playerProgress.clear();
         namedItemStacks.clear();
         namedBlocks.clear();
+        blocksToName.clear();
         namedVariables.clear();
         initializedScopes.clear();
     }
@@ -192,6 +195,11 @@ public class Progress {
 
     public void addNamedBlock(String name, IBlockState state) {
         namedBlocks.put(STRINGS.get(name), state);
+        blocksToName.put(Pair.of(state.getBlock().getRegistryName().toString(), state.getBlock().getMetaFromState(state)), STRINGS.get(name));
+    }
+
+    public Integer getNamedBlock(IBlockState state) {
+        return blocksToName.get(Pair.of(state.getBlock().getRegistryName().toString(), state.getBlock().getMetaFromState(state)));
     }
 
     public IBlockState getNamedBlock(String name) {
@@ -337,6 +345,7 @@ public class Progress {
                 int meta = tc.getInteger("meta");
                 IBlockState state = block.getStateFromMeta(meta);
                 namedBlocks.put(name, state);
+                blocksToName.put(Pair.of(state.getBlock().getRegistryName().toString(), state.getBlock().getMetaFromState(state)), name);
             } else {
                 Enigma.logger.warn("Block '" + regname + "' is missing!");
             }

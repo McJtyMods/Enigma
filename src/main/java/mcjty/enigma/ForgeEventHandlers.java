@@ -5,6 +5,7 @@ import mcjty.enigma.code.RootScope;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import mcjty.lib.tools.ItemStackTools;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
@@ -73,7 +74,16 @@ public class ForgeEventHandlers {
             Integer position = progress.getNamedPosition(event.getPos(), world.provider.getDimension());
             if (position != null) {
                 EnigmaFunctionContext context = new EnigmaFunctionContext(world, player);
-                RootScope.getRootInstance(world).forActiveScopes(context, (ctxt, scope) -> scope.onRightClickBlock(event, ctxt, position));
+                RootScope.getRootInstance(world).forActiveScopes(context, (ctxt, scope) -> scope.onRightClickPosition(event, ctxt, position));
+                if (context.isCanceled()) {
+                    event.setCanceled(true);
+                }
+            }
+            IBlockState state = world.getBlockState(event.getPos());
+            Integer namedBlock = progress.getNamedBlock(state);
+            if (namedBlock != null) {
+                EnigmaFunctionContext context = new EnigmaFunctionContext(world, player);
+                RootScope.getRootInstance(world).forActiveScopes(context, (ctxt, scope) -> scope.onRightClickBlock(event, ctxt, namedBlock));
                 if (context.isCanceled()) {
                     event.setCanceled(true);
                 }
@@ -90,7 +100,16 @@ public class ForgeEventHandlers {
             Integer position = progress.getNamedPosition(event.getPos(), world.provider.getDimension());
             if (position != null) {
                 EnigmaFunctionContext context = new EnigmaFunctionContext(world, player);
-                RootScope.getRootInstance(world).forActiveScopes(context, (ctxt, scope) -> scope.onLeftClickBlock(event, ctxt, position));
+                RootScope.getRootInstance(world).forActiveScopes(context, (ctxt, scope) -> scope.onLeftClickPosition(event, ctxt, position));
+                if (context.isCanceled()) {
+                    event.setCanceled(true);
+                }
+            }
+            IBlockState state = world.getBlockState(event.getPos());
+            Integer namedBlock = progress.getNamedBlock(state);
+            if (namedBlock != null) {
+                EnigmaFunctionContext context = new EnigmaFunctionContext(world, player);
+                RootScope.getRootInstance(world).forActiveScopes(context, (ctxt, scope) -> scope.onLeftClickBlock(event, ctxt, namedBlock));
                 if (context.isCanceled()) {
                     event.setCanceled(true);
                 }

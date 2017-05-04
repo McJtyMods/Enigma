@@ -83,8 +83,14 @@ public class ProgramParser {
             case RIGHTCLICKBLOCK:
                 scope.addOnRightClickBlock(actionBlock, line.getParameters().get(0));
                 break;
+            case RIGHTCLICKPOSITION:
+                scope.addOnRightClickPosition(actionBlock, line.getParameters().get(0));
+                break;
             case RIGHTCLICKITEM:
                 scope.addOnRightClickItem(actionBlock, line.getParameters().get(0));
+                break;
+            case LEFTCLICKPOSITION:
+                scope.addOnLeftClickPosition(actionBlock, line.getParameters().get(0));
                 break;
             case LEFTCLICKBLOCK:
                 scope.addOnLeftClickBlock(actionBlock, line.getParameters().get(0));

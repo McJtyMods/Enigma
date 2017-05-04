@@ -7,9 +7,11 @@ public enum Token {
     OBTAINITEM(1),      // on obtainitem <item>
     OBTAINTAG(1),       // on obtaintag <tagname>
     BREAKBLOCK(1),      // on breakblock <position>
-    RIGHTCLICKBLOCK(1), // on rightclickblock <position>
+    RIGHTCLICKBLOCK(1), // on rightclickblock <block>
+    RIGHTCLICKPOSITION(1), // on rightclickblock <position>
     RIGHTCLICKITEM(1),  // on rightclickitem <item>
-    LEFTCLICKBLOCK(1),  // on leftclickblock <position>
+    LEFTCLICKBLOCK(1),  // on leftclickblock <block>
+    LEFTCLICKPOSITION(1),  // on leftclickblock <position>
     BLOCKAT(2),         // on blockat <position> <blocktype>
     DELAY(1),           // on delay <time>
     REPEAT(1),          // on repeat <time>
