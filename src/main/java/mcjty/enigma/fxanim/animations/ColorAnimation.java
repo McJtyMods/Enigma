@@ -73,12 +73,15 @@ public class ColorAnimation implements FxAnimation {
 
     @Override
     public void tick() {
+
         double factor = ((double) currentTick) / totalTicks;
-        if (factor < .5) {
-        } else {
-            factor = 1-factor;
+        if (andBack) {
+            if (factor < .5) {
+            } else {
+                factor = 1 - factor;
+            }
+            factor *= 2.0;
         }
-        factor *= 2.0;
         float a = (float) (startA + (endA - startA) * factor);
         float r = (float) (startR + (endR - startR) * factor);
         float g = (float) (startG + (endG - startG) * factor);
