@@ -17,6 +17,7 @@ public class FxAnimColorAction extends Action {
     private final Expression<EnigmaFunctionContext> endR;
     private final Expression<EnigmaFunctionContext> endG;
     private final Expression<EnigmaFunctionContext> endB;
+    private final boolean andBack;
 
     public FxAnimColorAction(Expression<EnigmaFunctionContext> ticks,
                              Expression<EnigmaFunctionContext> startA,
@@ -26,7 +27,8 @@ public class FxAnimColorAction extends Action {
                              Expression<EnigmaFunctionContext> endA,
                              Expression<EnigmaFunctionContext> endR,
                              Expression<EnigmaFunctionContext> endG,
-                             Expression<EnigmaFunctionContext> endB) {
+                             Expression<EnigmaFunctionContext> endB,
+                             boolean andBack) {
         this.ticks = ticks;
         this.startA = startA;
         this.startR = startR;
@@ -36,6 +38,7 @@ public class FxAnimColorAction extends Action {
         this.endR = endR;
         this.endG = endG;
         this.endB = endB;
+        this.andBack = andBack;
     }
 
     @Override
@@ -58,7 +61,7 @@ public class FxAnimColorAction extends Action {
         double endg = ObjectTools.asDoubleSafe(endG.eval(context));
         double endb = ObjectTools.asDoubleSafe(endB.eval(context));
 
-        ColorAnimation animation = new ColorAnimation(starta, startr, startg, startb, enda, endr, endg, endb, t);
+        ColorAnimation animation = new ColorAnimation(starta, startr, startg, startb, enda, endr, endg, endb, t, andBack);
         FxAnimationHandler.startAnimationServer((EntityPlayerMP)context.getPlayer(), animation);
     }
 

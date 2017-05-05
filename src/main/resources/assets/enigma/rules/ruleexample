@@ -66,19 +66,9 @@ on repeat 1000:
     spawn tppos enemy
 
 pscope "weirdcolors" true:
-    on activate:
-        var x 1
 
     on repeat 200:
-        fxanim color 20  0 1 0 0   1 0 0 1
-        delay 20:
-            var x 0
-
-    on repeat 10:
-        if $x == 0:
-            var x 1
-            fxanim color 20  1 0 0 1   0 1 0 0
-
+        fxanim colorandback 40  0 1 0 0   1 0 0 1
 
 
 pscope "player" true:

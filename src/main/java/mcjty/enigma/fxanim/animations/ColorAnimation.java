@@ -1,10 +1,8 @@
 package mcjty.enigma.fxanim.animations;
 
 import io.netty.buffer.ByteBuf;
-import mcjty.enigma.Enigma;
 import mcjty.enigma.fxanim.FxAnimation;
 import mcjty.enigma.overlays.OverlayRenderer;
-import net.minecraft.entity.player.EntityPlayer;
 
 public class ColorAnimation implements FxAnimation {
 
@@ -19,9 +17,11 @@ public class ColorAnimation implements FxAnimation {
     private final double endG;
     private final double endB;
     private final int totalTicks;
+    private final boolean andBack;
     private int currentTick = 0;
 
-    public ColorAnimation(double startA, double startR, double startG, double startB, double endA, double endR, double endG, double endB, int totalTicks) {
+    public ColorAnimation(double startA, double startR, double startG, double startB, double endA, double endR, double endG, double endB, int totalTicks,
+                          boolean andBack) {
         this.startA = startA;
         this.startR = startR;
         this.startG = startG;
@@ -30,6 +30,7 @@ public class ColorAnimation implements FxAnimation {
         this.endR = endR;
         this.endG = endG;
         this.endB = endB;
+        this.andBack = andBack;
         this.totalTicks = totalTicks;
     }
 
@@ -42,6 +43,7 @@ public class ColorAnimation implements FxAnimation {
         endR = buf.readDouble();
         endG = buf.readDouble();
         endB = buf.readDouble();
+        andBack = buf.readBoolean();
         totalTicks = buf.readInt();
     }
 
@@ -60,6 +62,7 @@ public class ColorAnimation implements FxAnimation {
         buf.writeDouble(endR);
         buf.writeDouble(endG);
         buf.writeDouble(endB);
+        buf.writeBoolean(andBack);
         buf.writeInt(totalTicks);
     }
 
@@ -70,8 +73,12 @@ public class ColorAnimation implements FxAnimation {
 
     @Override
     public void tick() {
-        EntityPlayer player = Enigma.proxy.getClientPlayer();
         double factor = ((double) currentTick) / totalTicks;
+        if (factor < .5) {
+        } else {
+            factor = 1-factor;
+        }
+        factor *= 2.0;
         float a = (float) (startA + (endA - startA) * factor);
         float r = (float) (startR + (endR - startR) * factor);
         float g = (float) (startG + (endG - startG) * factor);
