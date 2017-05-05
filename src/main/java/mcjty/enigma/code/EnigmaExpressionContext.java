@@ -11,16 +11,20 @@ import mcjty.enigma.varia.BlockPosDim;
 import mcjty.enigma.varia.InventoryHelper;
 import mcjty.lib.tools.InventoryTools;
 import mcjty.lib.tools.ItemStackTools;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -291,6 +295,31 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
                 throw new RuntimeException("Cannot find block state " + o[1] + "!");
             }
             return DimensionManager.getWorld(namedPosition.getDimension()).getBlockState(namedPosition.getPos()).equals(state);
+        });
+        FUNCTIONS.put("itemstack", (context, o) -> {
+            if (o[0] instanceof String) {
+                int amount = 1;
+                int meta = 0;
+                if (o.length > 1) {
+                    amount = ObjectTools.asIntSafe(o[1]);
+                    if (o.length > 2) {
+                        meta = ObjectTools.asIntSafe(o[2]);
+                    }
+                }
+                String n = ObjectTools.asStringSafe(o[0]);
+                Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(n));
+                if (item != null) {
+                    return new ItemStack(item, amount, meta);
+                }
+                Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(n));
+                if (block != null) {
+                    return new ItemStack(block, amount, meta);
+                }
+                throw new RuntimeException("Cannot find item or block '" + n + "'!");
+            } else {
+                Progress progress = ProgressHolder.getProgress(context.getWorld());
+                return progress.getNamedItemStack(o[0]);
+            }
         });
         FUNCTIONS.put("hasitem", (context, o) -> {
             Progress progress = ProgressHolder.getProgress(context.getWorld());
