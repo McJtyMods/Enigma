@@ -20,7 +20,8 @@ public enum Token {
     INIT(0),            // on init
     SETUP(0),           // on setup
     ACTIVATE(0),        // on activate
-    DEACTIVATE(0);      // on deactivate
+    DEACTIVATE(0),      // on deactivate
+    MOVE(3);            // fxanim move <ticks> <start> <end>
 
     private static final Map<String, Token> MAP = new HashMap<>();
     private final int parameters;

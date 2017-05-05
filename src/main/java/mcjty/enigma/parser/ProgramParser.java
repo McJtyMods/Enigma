@@ -125,6 +125,18 @@ public class ProgramParser {
         }
     }
 
+    private static Action parseFxAnim(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line) throws ParserException {
+        Token secondaryToken = line.getSecondaryToken();
+        assert secondaryToken != null;
+
+        switch (secondaryToken) {
+            case MOVE:
+                return new FxAnimMoveAction(line.getParameters().get(0), line.getParameters().get(1), line.getParameters().get(2));
+            default:
+                throw new ParserException("Unexpected token '" + secondaryToken.name() + "' for 'fxanim' command!", line.getLineNumber());
+        }
+    }
+
     private static IfAction parseIf(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line) throws ParserException {
         if (!line.isEndsWithColon()) {
             throw new ParserException("Expected ':' after 'IF' statement", line.getLineNumber());
@@ -418,6 +430,9 @@ public class ProgramParser {
                     break;
                 case LOCAL:
                     actionBlock.addAction(new SetLocalVariableAction(line.getParameters().get(0), line.getParameters().get(1)));
+                    break;
+                case FXANIM:
+                    actionBlock.addAction(parseFxAnim(context, line));
                     break;
                 case IF:
                     actionBlock.addAction(parseIf(context, line));

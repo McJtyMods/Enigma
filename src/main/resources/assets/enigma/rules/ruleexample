@@ -163,6 +163,7 @@ scope "end" state(main) == theend:
         teleport up($p,10)
 
     on rightclickposition lockeddoor:
+        fxanim move 20 playerpos() tppos
         teleport tppos
         sound tppos "minecraft:entity.endermen.teleport"
 

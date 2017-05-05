@@ -46,6 +46,7 @@ public enum MainToken {
     CREATEPARTICLES(false,1,1),// createparticles <name>
     MOB(false, 1, 1),          // mob <name>
     SPAWN(false, 2, 2),        // spawn <position> <mob>
+    FXANIM(true, 0, 0),        // fxanim <animname> ...
     TAG(false, 2, 2);          // tag <object> <tagname>
 
     private final boolean hasSecondaryToken;

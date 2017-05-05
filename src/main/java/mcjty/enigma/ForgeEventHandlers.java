@@ -2,6 +2,7 @@ package mcjty.enigma;
 
 import mcjty.enigma.code.EnigmaFunctionContext;
 import mcjty.enigma.code.RootScope;
+import mcjty.enigma.fxanim.FxAnimationHandler;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.varia.BlockPosDim;
@@ -133,5 +134,10 @@ public class ForgeEventHandlers {
 
         EnigmaFunctionContext context = new EnigmaFunctionContext(world, null);
         RootScope.getRootInstance(world).checkActivity(context);
+    }
+
+    @SubscribeEvent
+    public void onClientTickEvent(TickEvent.ClientTickEvent event) {
+        FxAnimationHandler.tick();
     }
 }
