@@ -21,6 +21,7 @@ public enum Token {
     SETUP(0),           // on setup
     ACTIVATE(0),        // on activate
     DEACTIVATE(0),      // on deactivate
+    COLOR(9),           // fxanim color <ticks> <startalpha> <startr> <startg> <startb> <endalpha> <endr> <endg> <endb>
     MOVE(3),            // fxanim move <ticks> <start> <end>
     ROTATE(5);          // fxanim rotate <ticks> <startyaw> <startpitch> <endyaw> <endpitch>
 

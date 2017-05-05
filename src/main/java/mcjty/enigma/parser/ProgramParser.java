@@ -136,6 +136,12 @@ public class ProgramParser {
                 return new FxAnimRotateAction(line.getParameters().get(0),
                         line.getParameters().get(1), line.getParameters().get(2),
                         line.getParameters().get(3), line.getParameters().get(4));
+            case COLOR:
+                return new FxAnimColorAction(line.getParameters().get(0),
+                        line.getParameters().get(1), line.getParameters().get(2),
+                        line.getParameters().get(3), line.getParameters().get(4),
+                        line.getParameters().get(5), line.getParameters().get(6),
+                        line.getParameters().get(7), line.getParameters().get(8));
             default:
                 throw new ParserException("Unexpected token '" + secondaryToken.name() + "' for 'fxanim' command!", line.getLineNumber());
         }

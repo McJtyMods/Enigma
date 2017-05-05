@@ -40,10 +40,11 @@ public class ClientProxy extends CommonProxy {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
     public void renderGameOverlayEvent(RenderGameOverlayEvent.Pre event) {
-        if (event.getType() != RenderGameOverlayEvent.ElementType.TEXT) {
-            return;
+        if (event.getType() == RenderGameOverlayEvent.ElementType.TEXT) {
+            OverlayRenderer.renderOverlays();
+        } else if (event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
+            OverlayRenderer.renderOverlayColor();
         }
-        OverlayRenderer.renderOverlays();
     }
 
     @Override

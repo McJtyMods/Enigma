@@ -62,7 +62,7 @@ on activate:
     var counter 0
     state main beginroom
 
-on repeat 500:
+on repeat 1000:
     spawn tppos enemy
 
 pscope "player" true:
@@ -74,6 +74,7 @@ scope "diamond" state(changeblock) == diamond:
     on activate:
         log "diamond.activate"
     on rightclickposition changeblock:
+        fxanim color 20 1 1 0 0 0 1 0 0
         log "diamond.rightclickblock"
         setblock changeblock emerald
         state changeblock emerald
