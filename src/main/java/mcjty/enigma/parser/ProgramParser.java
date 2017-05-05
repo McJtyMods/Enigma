@@ -167,6 +167,19 @@ public class ProgramParser {
         return new IfAction(condition, posBlock, negBlock);
     }
 
+    private static DelayAction parseDelay(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line) throws ParserException {
+        if (!line.isEndsWithColon()) {
+            throw new ParserException("Expected ':' after 'delay' statement", line.getLineNumber());
+        }
+
+        Expression<EnigmaFunctionContext> ticks = line.getParameters().get(0);
+
+        ActionBlock block = new ActionBlock();
+        parseActionBlock(context, block);
+
+        return new DelayAction(ticks, block);
+    }
+
     private static CreateItemStackAction parseItemStack(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line) throws ParserException {
         if (!line.isEndsWithColon()) {
             throw new ParserException("Expected ':' after 'ITEMSTACK' statement", line.getLineNumber());
@@ -446,6 +459,9 @@ public class ProgramParser {
                     break;
                 case IF:
                     actionBlock.addAction(parseIf(context, line));
+                    break;
+                case DELAY:
+                    actionBlock.addAction(parseDelay(context, line));
                     break;
                 case CREATEPARTICLES:
                     actionBlock.addAction(parseParticleConfig(context, line));

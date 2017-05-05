@@ -20,7 +20,7 @@ public class ScopeInstance {
     private List<TimedAction> timedActions = new ArrayList<>();
     private int ticker = 0;
 
-    private static class TimedAction {
+    public static class TimedAction {
         private final ActionBlock actionBlock;
         private final Expression<EnigmaFunctionContext> delay;
         private final int ticks;
@@ -41,7 +41,7 @@ public class ScopeInstance {
             return delay;
         }
 
-        public int getTicks() {
+        public int getStopTime() {
             return ticks;
         }
 
@@ -54,6 +54,10 @@ public class ScopeInstance {
 
     public ScopeInstance(Scope scope) {
         this.scope = scope;
+    }
+
+    public int getTicker() {
+        return ticker;
     }
 
     public void forActiveScopes(EnigmaFunctionContext context, BiConsumer<EnigmaFunctionContext, Scope> consumer) {
@@ -143,6 +147,10 @@ public class ScopeInstance {
         timedActions.clear();
     }
 
+    public void addTimedAction(TimedAction action) {
+        timedActions.add(action);
+    }
+
     // Deactivate this scope. This does not check the condition
     private void deactivate(EnigmaFunctionContext context) {
         if (active != null && !active) {
@@ -192,7 +200,7 @@ public class ScopeInstance {
             int t = ticker;
             List<TimedAction> newActions = new ArrayList<>(timedActions.size());
             for (TimedAction action : timedActions) {
-                if (t >= action.getTicks()) {
+                if (t >= action.getStopTime()) {
                     action.getActionBlock().execute(context);
                     if (action.isRepeating()) {
                         int ms = ObjectTools.asIntSafe(action.getDelay().eval(context));
