@@ -58,7 +58,7 @@ public class SpawnAction extends Action {
         if (mobConfig.getHp() != null) {
             entity.setHealth((float)(double)mobConfig.getHp());
         }
-        if (mobConfig.getHeldItem() != null) {
+        if (isValid(mobConfig.getHeldItem())) {
             ItemStack stack = progress.getNamedItemStack(mobConfig.getHeldItem());
             if (stack != null && ItemStackTools.isValid(stack)) {
                 entity.setHeldItem(EnumHand.MAIN_HAND, stack.copy());
@@ -66,7 +66,7 @@ public class SpawnAction extends Action {
                 throw new ExecutionException("Could not find item '" + mobConfig.getHeldItem() + "'!");
             }
         }
-        if (mobConfig.getHelmet() != null) {
+        if (isValid(mobConfig.getHelmet())) {
             ItemStack stack = progress.getNamedItemStack(mobConfig.getHelmet());
             if (stack != null && ItemStackTools.isValid(stack)) {
                 entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, stack.copy());
@@ -74,7 +74,7 @@ public class SpawnAction extends Action {
                 throw new ExecutionException("Could not find item '" + mobConfig.getHelmet() + "'!");
             }
         }
-        if (mobConfig.getChestplate() != null) {
+        if (isValid(mobConfig.getChestplate())) {
             ItemStack stack = progress.getNamedItemStack(mobConfig.getChestplate());
             if (stack != null && ItemStackTools.isValid(stack)) {
                 entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, stack.copy());
@@ -82,7 +82,7 @@ public class SpawnAction extends Action {
                 throw new ExecutionException("Could not find item '" + mobConfig.getChestplate() + "'!");
             }
         }
-        if (mobConfig.getLeggings() != null) {
+        if (isValid(mobConfig.getLeggings())) {
             ItemStack stack = progress.getNamedItemStack(mobConfig.getLeggings());
             if (stack != null && ItemStackTools.isValid(stack)) {
                 entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, stack.copy());
@@ -90,7 +90,7 @@ public class SpawnAction extends Action {
                 throw new ExecutionException("Could not find item '" + mobConfig.getLeggings() + "'!");
             }
         }
-        if (mobConfig.getBoots() != null) {
+        if (isValid(mobConfig.getBoots())) {
             ItemStack stack = progress.getNamedItemStack(mobConfig.getBoots());
             if (stack != null && ItemStackTools.isValid(stack)) {
                 entity.setItemStackToSlot(EntityEquipmentSlot.FEET, stack.copy());
@@ -99,5 +99,9 @@ public class SpawnAction extends Action {
             }
         }
         WorldTools.spawnEntity(world, entity);
+    }
+
+    private boolean isValid(ItemStack heldItem) {
+        return heldItem != null && ItemStackTools.isValid(heldItem);
     }
 }
