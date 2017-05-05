@@ -2,10 +2,10 @@ package mcjty.enigma.progress;
 
 public class MobConfig {
     private final String mobId;
-    private final Integer hp;
+    private final Double hp;
     private final String namedItem;
 
-    public MobConfig(String mobId, Integer hp, String namedItem) {
+    public MobConfig(String mobId, Double hp, String namedItem) {
         this.mobId = mobId;
         this.hp = hp;
         this.namedItem = namedItem;
@@ -15,7 +15,7 @@ public class MobConfig {
         return mobId;
     }
 
-    public Integer getHp() {
+    public Double getHp() {
         return hp;
     }
 

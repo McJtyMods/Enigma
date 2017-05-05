@@ -2,12 +2,9 @@ package mcjty.enigma.code;
 
 import mcjty.enigma.parser.Expression;
 import mcjty.enigma.parser.ObjectTools;
+import mcjty.enigma.progress.MobConfig;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.apache.commons.lang3.StringUtils;
 
 public class CreateMobAction extends Action {
@@ -38,11 +35,11 @@ public class CreateMobAction extends Action {
         String name = ObjectTools.asStringSafe(this.name.eval(context));
         String mobName = ObjectTools.asStringSafe(this.mob.eval(context));
         Object hpval = this.hp.eval(context);
-        Integer hp = hpval == null ? null : ObjectTools.asIntSafe(hpval);
+        Double hp = hpval == null ? null : ObjectTools.asDoubleSafe(hpval);
         Object itemval = this.item.eval(context);
         String itemName = itemval == null ? null : ObjectTools.asStringSafe(itemval);
 
-//        progress.addNamedItemStack(name, stack);
+        progress.addNamedMobConfig(name, new MobConfig(mobName, hp, itemName));
 
         ProgressHolder.save(context.getWorld());
 

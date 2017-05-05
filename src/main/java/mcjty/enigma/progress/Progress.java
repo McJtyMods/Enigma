@@ -25,6 +25,7 @@ public class Progress {
     private static final NBTData<Integer, Integer> STATE_SERIALIZER = new StateSerializer();
     private static final NBTData<Integer, BlockPosDim> POSITION_SERIALIZER = new PositionSerializer();
     private static final NBTData<Integer, ParticleConfig> PARTICLE_SERIALIZER = new ParticleSerializer();
+    private static final NBTData<Integer, MobConfig> MOB_SERIALIZER = new MobConfigSerializer();
     private static final NBTData<Integer, IBlockState> NAMEDBLOCK_SERIALIZER = new NamedBlockSerializer();
     private static final NBTData<Integer, ItemStack> ITEMSTACK_SERIALIZER = new ItemStackSerializer();
 
@@ -33,6 +34,7 @@ public class Progress {
     private final InternedKeyMap<ItemStack> namedItemStacks = new InternedKeyMap<>();
     private final InternedKeyMap<Object> namedVariables = new InternedKeyMap<>();
     private final InternedKeyMap<ParticleConfig> namedParticleConfigs = new InternedKeyMap<>();
+    private final InternedKeyMap<MobConfig> namedMobConfigs = new InternedKeyMap<>();
 
     private final InternedKeyMap<BlockPosDim> namedPositions = new InternedKeyMap<>();
     private final Map<BlockPosDim, Integer> positionsToName = new HashMap<>();
@@ -55,6 +57,8 @@ public class Progress {
         namedBlocks.clear();
         blocksToName.clear();
         namedVariables.clear();
+        namedParticleConfigs.clear();
+        namedMobConfigs.clear();
         initializedScopes.clear();
     }
 
@@ -84,6 +88,14 @@ public class Progress {
 
     public ParticleConfig getNamedParticleConfig(Object o) {
         return namedParticleConfigs.getChecked(o);
+    }
+
+    public void addNamedMobConfig(String name, @Nonnull MobConfig config) {
+        namedMobConfigs.put(name, config);
+    }
+
+    public MobConfig getNamedMobConfig(Object o) {
+        return namedMobConfigs.getChecked(o);
     }
 
     public void setScopeInitialized(Integer scope) {
@@ -194,6 +206,7 @@ public class Progress {
         NBTDataSerializer.deserialize(nbt, "states", states, STATE_SERIALIZER);
         NBTDataSerializer.deserialize(nbt, "positions", namedPositions, POSITION_SERIALIZER);
         NBTDataSerializer.deserialize(nbt, "particles", namedParticleConfigs, PARTICLE_SERIALIZER);
+        NBTDataSerializer.deserialize(nbt, "mobs", namedMobConfigs, MOB_SERIALIZER);
         NBTDataSerializer.deserialize(nbt, "itemstacks", namedItemStacks, ITEMSTACK_SERIALIZER);
         NBTDataSerializer.deserialize(nbt, "blocks", namedBlocks, NAMEDBLOCK_SERIALIZER);
         NBTDataSerializer.deserialize(nbt, "players", playerProgress, PLAYER_SERIALIZER);
@@ -229,6 +242,7 @@ public class Progress {
         NBTDataSerializer.serialize(compound, "blocks", namedBlocks, NAMEDBLOCK_SERIALIZER);
         NBTDataSerializer.serialize(compound, "players", playerProgress, PLAYER_SERIALIZER);
         NBTDataSerializer.serialize(compound, "particles", namedParticleConfigs, PARTICLE_SERIALIZER);
+        NBTDataSerializer.serialize(compound, "mobs", namedMobConfigs, MOB_SERIALIZER);
         NBTDataSerializer.serialize(compound, "variables", namedVariables, VARIABLE_SERIALIZER);
         writeInitializedScopes(compound);
         return compound;

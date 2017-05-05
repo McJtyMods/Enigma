@@ -41,6 +41,7 @@ public enum MainToken {
     PARTICLE(false, 2, 2),     // description <position> <particlesys>
     CREATEPARTICLES(false,1,1),// createparticles <name>
     MOB(false, 1, 1),          // mob <name>
+    SPAWN(false, 2, 2),        // spawn <position> <mob>
     TAG(false, 2, 2);          // tag <object> <tagname>
 
     private final boolean hasSecondaryToken;

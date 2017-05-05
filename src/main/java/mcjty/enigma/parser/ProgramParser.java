@@ -462,6 +462,9 @@ public class ProgramParser {
                 case SOUND:
                     actionBlock.addAction(new SoundAction(line.getParameters().get(0), line.getParameters().get(1)));
                     break;
+                case SPAWN:
+                    actionBlock.addAction(new SpawnAction(line.getParameters().get(0), line.getParameters().get(1)));
+                    break;
                 case PARTICLE:
                     actionBlock.addAction(new ParticleAction(line.getParameters().get(0), line.getParameters().get(1)));
                     break;
