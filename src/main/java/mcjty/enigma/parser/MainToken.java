@@ -33,6 +33,10 @@ public enum MainToken {
     SPEED(false, 1, 1),        // speed <number>
     HP(false, 1, 1),           // hp <number>
     ITEM(false, 1, 1),         // item <itemname>
+    HELMET(false, 1, 1),       // helmet <itemname>
+    CHESTPLATE(false, 1, 1),   // chestplate <itemname>
+    LEGGINGS(false, 1, 1),     // leggings <itemname>
+    BOOTS(false, 1, 1),        // boots <itemname>
     OFFSET(false, 3, 3),       // offset <x> <y> <z>
     META(false, 1, 1),         // meta <value>
     TELEPORT(false, 1, 1),     // teleport <position>

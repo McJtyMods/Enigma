@@ -185,6 +185,8 @@ public class Progress {
             return namedItemStacks.get(name);
         } else if (name instanceof String) {
             return namedItemStacks.get((String) name);
+        } else if (name instanceof ItemStack) {
+            return (ItemStack) name;
         } else {
             return ItemStackTools.getEmptyStack();
         }

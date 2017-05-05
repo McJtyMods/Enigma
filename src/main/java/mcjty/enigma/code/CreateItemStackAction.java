@@ -44,7 +44,7 @@ public class CreateItemStackAction extends Action {
         if (amount <= 0) {
             amount = 1;
         }
-        String description = ObjectTools.asStringSafe(this.description.eval(context));
+        String description = this.description == null ? null : ObjectTools.asStringSafe(this.description.eval(context));
         Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
         if (item == null) {
             throw new ExecutionException("Cannot find item '" + itemName + "'!");

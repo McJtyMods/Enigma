@@ -16,6 +16,10 @@ on setup:
     mob enemy:
         name "minecraft:zombie"
         item sword
+        helmet itemstack("minecraft:diamond_helmet")
+        chestplate itemstack("minecraft:diamond_chestplate")
+        leggings itemstack("minecraft:diamond_leggings")
+        boots itemstack("minecraft:diamond_boots")
         hp 100
 
 
@@ -58,6 +62,8 @@ on activate:
     var counter 0
     state main beginroom
 
+on repeat 500:
+    spawn tppos enemy
 
 pscope "player" true:
     on repeat 50:

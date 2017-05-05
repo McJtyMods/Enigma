@@ -30,6 +30,7 @@ public class ActionBlock {
         } catch (NumberFormatException e) {
             EnigmaMessages.INSTANCE.sendToAll(new PacketAddMessage(TextFormatting.RED + "Number format exception!", 400));
         } catch (ExecutionException e) {
+            e.printStackTrace();
             EnigmaMessages.INSTANCE.sendToAll(new PacketAddMessage(TextFormatting.RED + e.getMessage(), 400));
         } catch(Exception e) {
             EnigmaMessages.INSTANCE.sendToAll(new PacketAddMessage(TextFormatting.RED + "Exception: " + e.getMessage(), 400));

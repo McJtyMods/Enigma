@@ -220,6 +220,10 @@ public class ProgramParser {
         Expression<EnigmaFunctionContext> mob = null;
         Expression<EnigmaFunctionContext> hp = null;
         Expression<EnigmaFunctionContext> item = null;
+        Expression<EnigmaFunctionContext> helmet = null;
+        Expression<EnigmaFunctionContext> chestplate = null;
+        Expression<EnigmaFunctionContext> leggings = null;
+        Expression<EnigmaFunctionContext> boots = null;
 
         while (context.hasLines()) {
             line = context.getLine();
@@ -242,6 +246,18 @@ public class ProgramParser {
                 case ITEM:
                     item = line.getParameters().get(0);
                     break;
+                case HELMET:
+                    helmet = line.getParameters().get(0);
+                    break;
+                case CHESTPLATE:
+                    chestplate = line.getParameters().get(0);
+                    break;
+                case LEGGINGS:
+                    leggings = line.getParameters().get(0);
+                    break;
+                case BOOTS:
+                    boots = line.getParameters().get(0);
+                    break;
                 default:
                     throw new ParserException("Unexpected command '" + line.getMainToken().name() + "' for mob block", linenumber);
             }
@@ -252,7 +268,7 @@ public class ProgramParser {
         }
 
         context.setCurrentIndent(origIndent);
-        return new CreateMobAction(name, mob, hp, item);
+        return new CreateMobAction(name, mob, hp, item, helmet, chestplate, leggings, boots);
     }
 
     private static CreateParticleAction parseParticleConfig(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line) throws ParserException {

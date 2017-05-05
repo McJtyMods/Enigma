@@ -9,6 +9,7 @@ import mcjty.lib.tools.EntityTools;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.tools.WorldTools;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -57,12 +58,44 @@ public class SpawnAction extends Action {
         if (mobConfig.getHp() != null) {
             entity.setHealth((float)(double)mobConfig.getHp());
         }
-        if (mobConfig.getNamedItem() != null) {
-            ItemStack stack = progress.getNamedItemStack(mobConfig.getNamedItem());
+        if (mobConfig.getHeldItem() != null) {
+            ItemStack stack = progress.getNamedItemStack(mobConfig.getHeldItem());
             if (stack != null && ItemStackTools.isValid(stack)) {
                 entity.setHeldItem(EnumHand.MAIN_HAND, stack.copy());
             } else {
-                throw new ExecutionException("Could not find item '" + mobConfig.getNamedItem() + "'!");
+                throw new ExecutionException("Could not find item '" + mobConfig.getHeldItem() + "'!");
+            }
+        }
+        if (mobConfig.getHelmet() != null) {
+            ItemStack stack = progress.getNamedItemStack(mobConfig.getHelmet());
+            if (stack != null && ItemStackTools.isValid(stack)) {
+                entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, stack.copy());
+            } else {
+                throw new ExecutionException("Could not find item '" + mobConfig.getHelmet() + "'!");
+            }
+        }
+        if (mobConfig.getChestplate() != null) {
+            ItemStack stack = progress.getNamedItemStack(mobConfig.getChestplate());
+            if (stack != null && ItemStackTools.isValid(stack)) {
+                entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, stack.copy());
+            } else {
+                throw new ExecutionException("Could not find item '" + mobConfig.getChestplate() + "'!");
+            }
+        }
+        if (mobConfig.getLeggings() != null) {
+            ItemStack stack = progress.getNamedItemStack(mobConfig.getLeggings());
+            if (stack != null && ItemStackTools.isValid(stack)) {
+                entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, stack.copy());
+            } else {
+                throw new ExecutionException("Could not find item '" + mobConfig.getLeggings() + "'!");
+            }
+        }
+        if (mobConfig.getBoots() != null) {
+            ItemStack stack = progress.getNamedItemStack(mobConfig.getBoots());
+            if (stack != null && ItemStackTools.isValid(stack)) {
+                entity.setItemStackToSlot(EntityEquipmentSlot.FEET, stack.copy());
+            } else {
+                throw new ExecutionException("Could not find item '" + mobConfig.getBoots() + "'!");
             }
         }
         WorldTools.spawnEntity(world, entity);
