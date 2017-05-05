@@ -202,6 +202,59 @@ public class ProgramParser {
         return new CreateItemStackAction(name, item, amount, meta, description);
     }
 
+    private static CreateMobAction parseMob(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line) throws ParserException {
+        if (!line.isEndsWithColon()) {
+            throw new ParserException("Expected ':' after 'mob' statement", line.getLineNumber());
+        }
+
+        Expression<EnigmaFunctionContext> name = line.getParameters().get(0);
+
+        line = context.getLine();
+        if (line.getIndentation() <= context.getCurrentIndent()) {
+            throw new ParserException("Commands in a mob block must be indented to the right!", line.getLineNumber());
+        }
+
+        int origIndent = context.getCurrentIndent();
+        context.setCurrentIndent(line.getIndentation());
+
+        Expression<EnigmaFunctionContext> mob = null;
+        Expression<EnigmaFunctionContext> hp = null;
+        Expression<EnigmaFunctionContext> item = null;
+
+        while (context.hasLines()) {
+            line = context.getLine();
+            if (line.getIndentation() > context.getCurrentIndent()) {
+                throw new ParserException("Unexpected indentation in mob block", line.getLineNumber());
+            }
+            if (line.getIndentation() < context.getCurrentIndent()) {
+                break;
+            }
+            int linenumber = line.getLineNumber();
+            context.nextLine();
+
+            switch (line.getMainToken()) {
+                case NAME:
+                    mob = line.getParameters().get(0);
+                    break;
+                case HP:
+                    hp = line.getParameters().get(0);
+                    break;
+                case ITEM:
+                    item = line.getParameters().get(0);
+                    break;
+                default:
+                    throw new ParserException("Unexpected command '" + line.getMainToken().name() + "' for mob block", linenumber);
+            }
+        }
+
+        if (mob == null) {
+            throw new ParserException("Missing 'name' for mob!", line.getLineNumber());
+        }
+
+        context.setCurrentIndent(origIndent);
+        return new CreateMobAction(name, mob, hp, item);
+    }
+
     private static CreateParticleAction parseParticleConfig(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line) throws ParserException {
         if (!line.isEndsWithColon()) {
             throw new ParserException("Expected ':' after 'CREATEPARTICLES' statement", line.getLineNumber());
@@ -355,6 +408,9 @@ public class ProgramParser {
                     break;
                 case CREATEPARTICLES:
                     actionBlock.addAction(parseParticleConfig(context, line));
+                    break;
+                case MOB:
+                    actionBlock.addAction(parseMob(context, line));
                     break;
                 case ITEMSTACK:
                     actionBlock.addAction(parseItemStack(context, line));

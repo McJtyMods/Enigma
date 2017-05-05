@@ -31,6 +31,8 @@ public enum MainToken {
     NAME(false, 1, 1),         // name <name>
     AMOUNT(false, 1, 1),       // amount <number>
     SPEED(false, 1, 1),        // speed <number>
+    HP(false, 1, 1),           // hp <number>
+    ITEM(false, 1, 1),         // item <itemname>
     OFFSET(false, 3, 3),       // offset <x> <y> <z>
     META(false, 1, 1),         // meta <value>
     TELEPORT(false, 1, 1),     // teleport <position>
@@ -38,6 +40,7 @@ public enum MainToken {
     SOUND(false, 2, 2),        // description <position> <sound>
     PARTICLE(false, 2, 2),     // description <position> <particlesys>
     CREATEPARTICLES(false,1,1),// createparticles <name>
+    MOB(false, 1, 1),          // mob <name>
     TAG(false, 2, 2);          // tag <object> <tagname>
 
     private final boolean hasSecondaryToken;

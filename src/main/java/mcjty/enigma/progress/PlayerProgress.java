@@ -1,11 +1,11 @@
 package mcjty.enigma.progress;
 
 import mcjty.enigma.code.ScopeID;
-import mcjty.enigma.varia.BlockPosDim;
+import mcjty.enigma.progress.serializers.StateSerializer;
+import mcjty.enigma.progress.serializers.VariableSerializer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.HashMap;
@@ -16,6 +16,9 @@ import java.util.Set;
 import static mcjty.enigma.varia.StringRegister.STRINGS;
 
 public class PlayerProgress {
+
+    private static final NBTData<Integer, Object> VARIABLE_SERIALIZER = new VariableSerializer();
+    private static final NBTData<Integer, Integer> STATE_SERIALIZER = new StateSerializer();
 
     private final Map<Integer, Integer> states = new HashMap<>();
     private final Map<Integer, Object> namedVariables = new HashMap<>();
@@ -102,39 +105,9 @@ public class PlayerProgress {
     }
 
     public void readFromNBT(NBTTagCompound nbt) {
-        readStates(nbt);
-        readNamedVariables(nbt);
+        NBTDataSerializer.deserialize(nbt, "states", states, STATE_SERIALIZER);
+        NBTDataSerializer.deserialize(nbt, "variables", namedVariables, VARIABLE_SERIALIZER);
         readInitializedScopes(nbt);
-    }
-
-    private void readNamedVariables(NBTTagCompound nbt) {
-        NBTTagList list = nbt.getTagList("variables", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < list.tagCount() ; i++) {
-            NBTTagCompound tc = (NBTTagCompound) list.get(i);
-            int name = STRINGS.get(tc.getString("s"));
-            Object v = null;
-            if (tc.hasKey("v")) {
-                v = tc.getInteger("v");
-            } else if (tc.hasKey("vs")) {
-                v = tc.getString("vs");
-            } else if (tc.hasKey("vb")) {
-                v = tc.getBoolean("vb");
-            } else if (tc.hasKey("vd")) {
-                v = tc.getDouble("vd");
-            } else if (tc.hasKey("vpx")) {
-                v = new BlockPosDim(new BlockPos(tc.getInteger("vpx"), tc.getInteger("vpy"), tc.getInteger("vzz")),
-                        tc.getInteger("vpd"));
-            }
-            namedVariables.put(name, v);
-        }
-    }
-
-    private void readStates(NBTTagCompound nbt) {
-        NBTTagList statesList = nbt.getTagList("states", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < statesList.tagCount() ; i++) {
-            NBTTagCompound tc = (NBTTagCompound) statesList.get(i);
-            states.put(STRINGS.get(tc.getString("s")), STRINGS.get(tc.getString("v")));
-        }
     }
 
     public void readInitializedScopes(NBTTagCompound nbt) {
@@ -147,49 +120,10 @@ public class PlayerProgress {
     }
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        writeStates(compound);
-        writeNamedVariables(compound);
+        NBTDataSerializer.serialize(compound, "states", states, STATE_SERIALIZER);
+        NBTDataSerializer.serialize(compound, "variables", namedVariables, VARIABLE_SERIALIZER);
         writeInitializedScopes(compound);
         return compound;
-    }
-
-    private void writeNamedVariables(NBTTagCompound compound) {
-        NBTTagList list = new NBTTagList();
-        for (Map.Entry<Integer, Object> entry : namedVariables.entrySet()) {
-            NBTTagCompound tc = new NBTTagCompound();
-            tc.setString("s", STRINGS.get(entry.getKey()));
-            Object v = entry.getValue();
-            if (v != null) {
-                if (v instanceof Integer) {
-                    tc.setInteger("v", (Integer) v);
-                } else if (v instanceof String) {
-                    tc.setString("vs", (String) v);
-                } else if (v instanceof Boolean) {
-                    tc.setBoolean("vb", (Boolean) v);
-                } else if (v instanceof Double) {
-                    tc.setDouble("vd", (Double) v);
-                } else if (v instanceof BlockPosDim) {
-                    BlockPosDim p = (BlockPosDim) v;
-                    tc.setInteger("vpx", p.getPos().getX());
-                    tc.setInteger("vpy", p.getPos().getY());
-                    tc.setInteger("vpz", p.getPos().getZ());
-                    tc.setInteger("vpd", p.getDimension());
-                }
-            }
-            list.appendTag(tc);
-        }
-        compound.setTag("variables", list);
-    }
-
-    private void writeStates(NBTTagCompound compound) {
-        NBTTagList list = new NBTTagList();
-        for (Map.Entry<Integer, Integer> entry : states.entrySet()) {
-            NBTTagCompound tc = new NBTTagCompound();
-            tc.setString("s", STRINGS.get(entry.getKey()));
-            tc.setString("v", STRINGS.get(entry.getValue()));
-            list.appendTag(tc);
-        }
-        compound.setTag("states", list);
     }
 
     private void writeInitializedScopes(NBTTagCompound compound) {

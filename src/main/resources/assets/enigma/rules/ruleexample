@@ -10,6 +10,15 @@ on setup:
     position tppos 820 4 1900 0
     position startblock 804 4 1900 0
 
+    itemstack sword:
+        name "minecraft:diamond_sword"
+
+    mob enemy:
+        name "minecraft:zombie"
+        item sword
+        hp 100
+
+
     blockstate diamond:
         name "minecraft:diamond_block"
         meta 0

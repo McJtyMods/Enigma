@@ -1,20 +1,16 @@
 package mcjty.enigma.progress;
 
-import mcjty.enigma.Enigma;
 import mcjty.enigma.code.ScopeID;
+import mcjty.enigma.progress.serializers.*;
 import mcjty.enigma.varia.BlockPosDim;
 import mcjty.lib.tools.ItemStackTools;
-import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.common.util.Constants;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
@@ -23,6 +19,14 @@ import java.util.*;
 import static mcjty.enigma.varia.StringRegister.STRINGS;
 
 public class Progress {
+
+    private static final NBTData<Integer, Object> VARIABLE_SERIALIZER = new VariableSerializer();
+    private static final NBTData<UUID, PlayerProgress> PLAYER_SERIALIZER = new PlayerSerializer();
+    private static final NBTData<Integer, Integer> STATE_SERIALIZER = new StateSerializer();
+    private static final NBTData<Integer, BlockPosDim> POSITION_SERIALIZER = new PositionSerializer();
+    private static final NBTData<Integer, ParticleConfig> PARTICLE_SERIALIZER = new ParticleSerializer();
+    private static final NBTData<Integer, IBlockState> NAMEDBLOCK_SERIALIZER = new NamedBlockSerializer();
+    private static final NBTData<Integer, ItemStack> ITEMSTACK_SERIALIZER = new ItemStackSerializer();
 
     private final Map<Integer, Integer> states = new HashMap<>();
     private final Map<Integer, BlockPosDim> namedPositions = new HashMap<>();
@@ -255,114 +259,25 @@ public class Progress {
     }
 
     public void readFromNBT(NBTTagCompound nbt) {
-        readStates(nbt);
-        readNamedPositions(nbt);
-        readNamedItemStacks(nbt);
-        readNamedBlocks(nbt);
-        readPlayerProgress(nbt);
+        NBTDataSerializer.deserialize(nbt, "states", states, STATE_SERIALIZER);
+        NBTDataSerializer.deserialize(nbt, "positions", namedPositions, POSITION_SERIALIZER);
+        NBTDataSerializer.deserialize(nbt, "particles", namedParticleConfigs, PARTICLE_SERIALIZER);
+        NBTDataSerializer.deserialize(nbt, "itemstacks", namedItemStacks, ITEMSTACK_SERIALIZER);
+        NBTDataSerializer.deserialize(nbt, "blocks", namedBlocks, NAMEDBLOCK_SERIALIZER);
+        NBTDataSerializer.deserialize(nbt, "players", playerProgress, PLAYER_SERIALIZER);
+        NBTDataSerializer.deserialize(nbt, "variables", namedVariables, VARIABLE_SERIALIZER);
         readInitializedScopes(nbt);
-        readNamedParticleConfigs(nbt);
-        readNamedVariables(nbt);
         rootActivated = nbt.getBoolean("rootActivated");
-    }
 
-    private void readNamedVariables(NBTTagCompound nbt) {
-        NBTTagList list = nbt.getTagList("variables", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < list.tagCount() ; i++) {
-            NBTTagCompound tc = (NBTTagCompound) list.get(i);
-            int name = STRINGS.get(tc.getString("s"));
-            Object v = null;
-            if (tc.hasKey("v")) {
-                v = tc.getInteger("v");
-            } else if (tc.hasKey("vs")) {
-                v = tc.getString("vs");
-            } else if (tc.hasKey("vb")) {
-                v = tc.getBoolean("vb");
-            } else if (tc.hasKey("vd")) {
-                v = tc.getDouble("vd");
-            } else if (tc.hasKey("vpx")) {
-                v = new BlockPosDim(new BlockPos(tc.getInteger("vpx"), tc.getInteger("vpy"), tc.getInteger("vzz")),
-                        tc.getInteger("vpd"));
-            }
-            namedVariables.put(name, v);
+        // Reverse maps
+        for (Map.Entry<Integer, BlockPosDim> entry : namedPositions.entrySet()) {
+            positionsToName.put(entry.getValue(), entry.getKey());
         }
-    }
+        for (Map.Entry<Integer, IBlockState> entry : namedBlocks.entrySet()) {
+            IBlockState state = entry.getValue();
+            blocksToName.put(Pair.of(state.getBlock().getRegistryName().toString(), state.getBlock().getMetaFromState(state)), entry.getKey());
+        }
 
-    private void readPlayerProgress(NBTTagCompound nbt) {
-        NBTTagList list = nbt.getTagList("players", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < list.tagCount() ; i++) {
-            NBTTagCompound tc = (NBTTagCompound) list.get(i);
-            UUID uuid = tc.getUniqueId("uuid");
-            PlayerProgress p = new PlayerProgress();
-            p.readFromNBT(tc);
-            playerProgress.put(uuid, p);
-        }
-    }
-
-    private void readStates(NBTTagCompound nbt) {
-        NBTTagList statesList = nbt.getTagList("states", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < statesList.tagCount() ; i++) {
-            NBTTagCompound tc = (NBTTagCompound) statesList.get(i);
-            states.put(STRINGS.get(tc.getString("s")), STRINGS.get(tc.getString("v")));
-        }
-    }
-
-    private void readNamedPositions(NBTTagCompound nbt) {
-        NBTTagList list = nbt.getTagList("positions", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < list.tagCount() ; i++) {
-            NBTTagCompound tc = (NBTTagCompound) list.get(i);
-            int name = STRINGS.get(tc.getString("s"));
-            BlockPos p = new BlockPos(tc.getInteger("x"), tc.getInteger("y"), tc.getInteger("z"));
-            BlockPosDim pd = new BlockPosDim(p, tc.getInteger("dim"));
-            namedPositions.put(name, pd);
-            positionsToName.put(pd, name);
-        }
-    }
-
-    private void readNamedParticleConfigs(NBTTagCompound nbt) {
-        NBTTagList list = nbt.getTagList("particles", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < list.tagCount() ; i++) {
-            NBTTagCompound tc = (NBTTagCompound) list.get(i);
-            int name = STRINGS.get(tc.getString("s"));
-            String pn = tc.getString("pn");
-            int amount = tc.getInteger("a");
-            double ox = tc.getDouble("ox");
-            double oy = tc.getDouble("oy");
-            double oz = tc.getDouble("oz");
-            double speed = tc.getDouble("speed");
-            namedParticleConfigs.put(name, new ParticleConfig(EnumParticleTypes.getByName(pn), amount, ox, oy, oz, speed));
-        }
-    }
-
-    private void readNamedBlocks(NBTTagCompound nbt) {
-        NBTTagList list = nbt.getTagList("blocks", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < list.tagCount() ; i++) {
-            NBTTagCompound tc = (NBTTagCompound) list.get(i);
-            int name = STRINGS.get(tc.getString("s"));
-            String regname = tc.getString("reg");
-            Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(regname));
-            if (block != null) {
-                int meta = tc.getInteger("meta");
-                IBlockState state = block.getStateFromMeta(meta);
-                namedBlocks.put(name, state);
-                blocksToName.put(Pair.of(state.getBlock().getRegistryName().toString(), state.getBlock().getMetaFromState(state)), name);
-            } else {
-                Enigma.logger.warn("Block '" + regname + "' is missing!");
-            }
-        }
-    }
-
-    private void readNamedItemStacks(NBTTagCompound nbt) {
-        NBTTagList list = nbt.getTagList("itemstacks", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0 ; i < list.tagCount() ; i++) {
-            NBTTagCompound tc = (NBTTagCompound) list.get(i);
-            int name = STRINGS.get(tc.getString("s"));
-            ItemStack stack = ItemStackTools.getEmptyStack();
-            if (tc.hasKey("item")) {
-                stack = ItemStackTools.loadFromNBT(tc.getCompoundTag("item"));
-            }
-            namedItemStacks.put(name, stack);
-        }
     }
 
     public void readInitializedScopes(NBTTagCompound nbt) {
@@ -376,125 +291,15 @@ public class Progress {
 
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         compound.setBoolean("rootActivated", rootActivated);
-        writeStates(compound);
-        writeNamedPositions(compound);
-        writeNamedItemStacks(compound);
-        writeNamedBlocks(compound);
-        writePlayerProgress(compound);
+        NBTDataSerializer.serialize(compound, "states", states, STATE_SERIALIZER);
+        NBTDataSerializer.serialize(compound, "positions", namedPositions, POSITION_SERIALIZER);
+        NBTDataSerializer.serialize(compound, "itemstacks", namedItemStacks, ITEMSTACK_SERIALIZER);
+        NBTDataSerializer.serialize(compound, "blocks", namedBlocks, NAMEDBLOCK_SERIALIZER);
+        NBTDataSerializer.serialize(compound, "players", playerProgress, PLAYER_SERIALIZER);
+        NBTDataSerializer.serialize(compound, "particles", namedParticleConfigs, PARTICLE_SERIALIZER);
+        NBTDataSerializer.serialize(compound, "variables", namedVariables, VARIABLE_SERIALIZER);
         writeInitializedScopes(compound);
-        writeNamedParticleConfigs(compound);
-        writeNamedVariables(compound);
         return compound;
-    }
-
-    private void writeNamedVariables(NBTTagCompound compound) {
-        NBTTagList list = new NBTTagList();
-        for (Map.Entry<Integer, Object> entry : namedVariables.entrySet()) {
-            NBTTagCompound tc = new NBTTagCompound();
-            tc.setString("s", STRINGS.get(entry.getKey()));
-            Object v = entry.getValue();
-            if (v != null) {
-                if (v instanceof Integer) {
-                    tc.setInteger("v", (Integer) v);
-                } else if (v instanceof String) {
-                    tc.setString("vs", (String) v);
-                } else if (v instanceof Boolean) {
-                    tc.setBoolean("vb", (Boolean) v);
-                } else if (v instanceof Double) {
-                    tc.setDouble("vd", (Double) v);
-                } else if (v instanceof BlockPosDim) {
-                    BlockPosDim p = (BlockPosDim) v;
-                    tc.setInteger("vpx", p.getPos().getX());
-                    tc.setInteger("vpy", p.getPos().getY());
-                    tc.setInteger("vpz", p.getPos().getZ());
-                    tc.setInteger("vpd", p.getDimension());
-                }
-            }
-            list.appendTag(tc);
-        }
-        compound.setTag("variables", list);
-    }
-
-    private void writePlayerProgress(NBTTagCompound compound) {
-        NBTTagList list = new NBTTagList();
-        for (Map.Entry<UUID, PlayerProgress> entry : playerProgress.entrySet()) {
-            NBTTagCompound tc = new NBTTagCompound();
-            tc.setUniqueId("uuid", entry.getKey());
-            entry.getValue().writeToNBT(tc);
-            list.appendTag(tc);
-        }
-        compound.setTag("players", list);
-    }
-
-    private void writeStates(NBTTagCompound compound) {
-        NBTTagList list = new NBTTagList();
-        for (Map.Entry<Integer, Integer> entry : states.entrySet()) {
-            NBTTagCompound tc = new NBTTagCompound();
-            tc.setString("s", STRINGS.get(entry.getKey()));
-            tc.setString("v", STRINGS.get(entry.getValue()));
-            list.appendTag(tc);
-        }
-        compound.setTag("states", list);
-    }
-
-    private void writeNamedPositions(NBTTagCompound compound) {
-        NBTTagList list = new NBTTagList();
-        for (Map.Entry<Integer, BlockPosDim> entry : namedPositions.entrySet()) {
-            NBTTagCompound tc = new NBTTagCompound();
-            tc.setString("s", STRINGS.get(entry.getKey()));
-            BlockPos pos = entry.getValue().getPos();
-            tc.setInteger("x", pos.getX());
-            tc.setInteger("y", pos.getY());
-            tc.setInteger("z", pos.getZ());
-            tc.setInteger("dim", entry.getValue().getDimension());
-            list.appendTag(tc);
-        }
-        compound.setTag("positions", list);
-    }
-
-    private void writeNamedParticleConfigs(NBTTagCompound compound) {
-        NBTTagList list = new NBTTagList();
-        for (Map.Entry<Integer, ParticleConfig> entry : namedParticleConfigs.entrySet()) {
-            NBTTagCompound tc = new NBTTagCompound();
-            tc.setString("s", STRINGS.get(entry.getKey()));
-            ParticleConfig pc = entry.getValue();
-            tc.setString("pn", pc.getParticles().getParticleName());
-            tc.setInteger("a", pc.getAmount());
-            tc.setDouble("ox", pc.getOffsetX());
-            tc.setDouble("oy", pc.getOffsetY());
-            tc.setDouble("oz", pc.getOffsetZ());
-            tc.setDouble("speed", pc.getSpeed());
-            list.appendTag(tc);
-        }
-        compound.setTag("particles", list);
-    }
-
-    private void writeNamedItemStacks(NBTTagCompound compound) {
-        NBTTagList list = new NBTTagList();
-        for (Map.Entry<Integer, ItemStack> entry : namedItemStacks.entrySet()) {
-            NBTTagCompound tc = new NBTTagCompound();
-            tc.setString("s", STRINGS.get(entry.getKey()));
-            if (ItemStackTools.isValid(entry.getValue())) {
-                NBTTagCompound itemtag = new NBTTagCompound();
-                entry.getValue().writeToNBT(itemtag);
-                tc.setTag("item", itemtag);
-            }
-            list.appendTag(tc);
-        }
-        compound.setTag("itemstacks", list);
-    }
-
-    private void writeNamedBlocks(NBTTagCompound compound) {
-        NBTTagList list = new NBTTagList();
-        for (Map.Entry<Integer, IBlockState> entry : namedBlocks.entrySet()) {
-            NBTTagCompound tc = new NBTTagCompound();
-            tc.setString("s", STRINGS.get(entry.getKey()));
-            IBlockState state = entry.getValue();
-            tc.setString("reg", state.getBlock().getRegistryName().toString());
-            tc.setInteger("meta", state.getBlock().getMetaFromState(state));
-            list.appendTag(tc);
-        }
-        compound.setTag("blocks", list);
     }
 
     private void writeInitializedScopes(NBTTagCompound compound) {
@@ -504,4 +309,5 @@ public class Progress {
         }
         compound.setTag("scopes", list);
     }
+
 }
