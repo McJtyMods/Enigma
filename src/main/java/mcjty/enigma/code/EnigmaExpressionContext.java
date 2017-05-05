@@ -193,6 +193,50 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
             Vec3d offset = player.getLookVec().normalize().scale(dist);
             return new BlockPosDim(player.getPosition().add(offset.xCoord, offset.yCoord, offset.zCoord), player.getEntityWorld().provider.getDimension());
         });
+        FUNCTIONS.put("yaw", (context, o) -> {
+            EntityPlayer player = context.getPlayer();
+            if (player == null) {
+                throw new RuntimeException("Player is needed for 'yaw' function!");
+            }
+            if (o.length == 0) {
+                return (double) player.rotationYaw;
+            } else {
+                Progress progress = ProgressHolder.getProgress(context.getWorld());
+                BlockPosDim namedPosition = progress.getNamedPosition(o[0]);
+                if (namedPosition == null) {
+                    throw new RuntimeException("Cannot find position " + o[0] + "!");
+                }
+                BlockPos p = namedPosition.getPos();
+                double d0 = p.getX() + .5 - player.posX;
+                double d1 = p.getY() + .5 - player.posY - player.getEyeHeight();
+                double d2 = p.getZ() + .5 - player.posZ;
+
+                double d3 = Math.sqrt(d0 * d0 + d2 * d2);
+                return (Math.atan2(d2, d0) * (180D / Math.PI)) - 90.0F;
+            }
+        });
+        FUNCTIONS.put("pitch", (context, o) -> {
+            EntityPlayer player = context.getPlayer();
+            if (player == null) {
+                throw new RuntimeException("Player is needed for 'pitch' function!");
+            }
+            if (o.length == 0) {
+                return (double) player.rotationPitch;
+            } else {
+                Progress progress = ProgressHolder.getProgress(context.getWorld());
+                BlockPosDim namedPosition = progress.getNamedPosition(o[0]);
+                if (namedPosition == null) {
+                    throw new RuntimeException("Cannot find position " + o[0] + "!");
+                }
+                BlockPos p = namedPosition.getPos();
+                double d0 = p.getX() + .5 - player.posX;
+                double d1 = p.getY() + .5 - player.posY - player.getEyeHeight();
+                double d2 = p.getZ() + .5 - player.posZ;
+
+                double d3 = Math.sqrt(d0 * d0 + d2 * d2);
+                return (-(Math.atan2(d1, d3) * (180D / Math.PI)));
+            }
+        });
 
         FUNCTIONS.put("istr", (context, o) -> {
             if (o[0] instanceof Integer) {

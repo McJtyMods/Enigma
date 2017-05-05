@@ -164,6 +164,7 @@ scope "end" state(main) == theend:
 
     on rightclickposition lockeddoor:
         fxanim move 20 playerpos() tppos
+        fxanim rotate 20 yaw() pitch() yaw(tppos) pitch(tppos)
         teleport tppos
         sound tppos "minecraft:entity.endermen.teleport"
 

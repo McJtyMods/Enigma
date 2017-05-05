@@ -132,6 +132,10 @@ public class ProgramParser {
         switch (secondaryToken) {
             case MOVE:
                 return new FxAnimMoveAction(line.getParameters().get(0), line.getParameters().get(1), line.getParameters().get(2));
+            case ROTATE:
+                return new FxAnimRotateAction(line.getParameters().get(0),
+                        line.getParameters().get(1), line.getParameters().get(2),
+                        line.getParameters().get(3), line.getParameters().get(4));
             default:
                 throw new ParserException("Unexpected token '" + secondaryToken.name() + "' for 'fxanim' command!", line.getLineNumber());
         }

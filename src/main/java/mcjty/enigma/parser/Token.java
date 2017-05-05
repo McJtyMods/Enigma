@@ -21,7 +21,8 @@ public enum Token {
     SETUP(0),           // on setup
     ACTIVATE(0),        // on activate
     DEACTIVATE(0),      // on deactivate
-    MOVE(3);            // fxanim move <ticks> <start> <end>
+    MOVE(3),            // fxanim move <ticks> <start> <end>
+    ROTATE(5);          // fxanim rotate <ticks> <startyaw> <startpitch> <endyaw> <endpitch>
 
     private static final Map<String, Token> MAP = new HashMap<>();
     private final int parameters;

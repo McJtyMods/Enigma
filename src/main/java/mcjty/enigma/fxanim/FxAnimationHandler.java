@@ -2,6 +2,7 @@ package mcjty.enigma.fxanim;
 
 import io.netty.buffer.ByteBuf;
 import mcjty.enigma.fxanim.animations.MoveAnimation;
+import mcjty.enigma.fxanim.animations.RotateAnimation;
 import mcjty.enigma.network.EnigmaMessages;
 import mcjty.enigma.network.PacketStartFxAnimation;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import static mcjty.enigma.fxanim.animations.MoveAnimation.FXANIM_MOVE;
+import static mcjty.enigma.fxanim.animations.RotateAnimation.FXANIM_ROTATE;
 
 public class FxAnimationHandler {
 
@@ -47,5 +49,6 @@ public class FxAnimationHandler {
 
     public static void init() {
         registerAnimationFactory(FXANIM_MOVE, MoveAnimation::new);
+        registerAnimationFactory(FXANIM_ROTATE, RotateAnimation::new);
     }
 }

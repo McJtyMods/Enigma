@@ -43,10 +43,10 @@ public class LookAtAction extends Action {
         double d2 = lookat.getZ() + .5 - player.posZ;
 
         double d3 = Math.sqrt(d0 * d0 + d2 * d2);
-        float raw = (float) (Math.atan2(d2, d0) * (180D / Math.PI)) - 90.0F;
+        float yaw = (float) (Math.atan2(d2, d0) * (180D / Math.PI)) - 90.0F;
         float pitch = (float) (-(Math.atan2(d1, d3) * (180D / Math.PI)));
         player.rotationPitch = this.updateRotation(player.rotationPitch, pitch);
-        player.rotationYaw = this.updateRotation(player.rotationYaw, raw);
+        player.rotationYaw = this.updateRotation(player.rotationYaw, yaw);
     }
 
     private float updateRotation(float angle, float targetAngle) {
