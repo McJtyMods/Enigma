@@ -8,9 +8,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.common.util.Constants;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 import static mcjty.enigma.varia.StringRegister.STRINGS;
@@ -20,8 +18,8 @@ public class PlayerProgress {
     private static final NBTData<Integer, Object> VARIABLE_SERIALIZER = new VariableSerializer();
     private static final NBTData<Integer, Integer> STATE_SERIALIZER = new StateSerializer();
 
-    private final Map<Integer, Integer> states = new HashMap<>();
-    private final Map<Integer, Object> namedVariables = new HashMap<>();
+    private final InternedKeyMap<Integer> states = new InternedKeyMap<>();
+    private final InternedKeyMap<Object> namedVariables = new InternedKeyMap<>();
     private final Set<ScopeID> initializedScopes = new HashSet<>();
 
     public void setScopeInitialized(Integer scope) {
@@ -49,19 +47,11 @@ public class PlayerProgress {
     }
 
     public void addNamedVariable(String name, Object value) {
-        namedVariables.put(STRINGS.get(name), value);
-    }
-
-    public Object getNamedVariable(String name) {
-        return namedVariables.get(STRINGS.get(name));
+        namedVariables.put(name, value);
     }
 
     public Object getNamedVariable(Integer name) {
         return namedVariables.get(name);
-    }
-
-    public boolean isNamedVariable(String name) {
-        return namedVariables.containsKey(STRINGS.get(name));
     }
 
     public boolean isNamedVariable(Integer name) {
@@ -69,39 +59,19 @@ public class PlayerProgress {
     }
 
     public Object getNamedVariable(Object o) {
-        if (o instanceof Integer) {
-            return getNamedVariable((Integer) o);
-        } else if (o instanceof String) {
-            return getNamedVariable((String) o);
-        } else {
-            return null;
-        }
+        return namedVariables.getChecked(o);
     }
 
-    public Map<Integer, Integer> getStates() {
+    public InternedKeyMap<Integer> getStates() {
         return states;
     }
 
     public void setState(String state, String value) {
-        states.put(STRINGS.get(state), STRINGS.get(value));
-    }
-
-    public Integer getState(String state) {
-        return states.get(STRINGS.get(state));
-    }
-
-    public Integer getState(Integer state) {
-        return states.get(state);
+        states.put(state, STRINGS.get(value));
     }
 
     public Integer getState(Object o) {
-        if (o instanceof Integer) {
-            return states.get(o);
-        } else if (o instanceof String) {
-            return states.get(STRINGS.get((String)o));
-        } else {
-            return null;
-        }
+        return states.getChecked(o);
     }
 
     public void readFromNBT(NBTTagCompound nbt) {

@@ -28,15 +28,19 @@ public class Progress {
     private static final NBTData<Integer, IBlockState> NAMEDBLOCK_SERIALIZER = new NamedBlockSerializer();
     private static final NBTData<Integer, ItemStack> ITEMSTACK_SERIALIZER = new ItemStackSerializer();
 
-    private final Map<Integer, Integer> states = new HashMap<>();
-    private final Map<Integer, BlockPosDim> namedPositions = new HashMap<>();
-    private final Map<BlockPosDim, Integer> positionsToName = new HashMap<>();
     private final Map<UUID, PlayerProgress> playerProgress = new HashMap<>();
-    private final Map<Integer, ItemStack> namedItemStacks = new HashMap<>();
-    private final Map<Integer, IBlockState> namedBlocks = new HashMap<>();
+    private final InternedKeyMap<Integer> states = new InternedKeyMap<>();
+    private final InternedKeyMap<ItemStack> namedItemStacks = new InternedKeyMap<>();
+    private final InternedKeyMap<Object> namedVariables = new InternedKeyMap<>();
+    private final InternedKeyMap<ParticleConfig> namedParticleConfigs = new InternedKeyMap<>();
+
+    private final InternedKeyMap<BlockPosDim> namedPositions = new InternedKeyMap<>();
+    private final Map<BlockPosDim, Integer> positionsToName = new HashMap<>();
+
+    private final InternedKeyMap<IBlockState> namedBlocks = new InternedKeyMap<>();
     private final Map<Pair<String,Integer>, Integer> blocksToName = new HashMap<>();
-    private final Map<Integer, Object> namedVariables = new HashMap<>();
-    private final Map<Integer, ParticleConfig> namedParticleConfigs = new HashMap<>();
+
+
     private final Set<ScopeID> initializedScopes = new HashSet<>();
 
     private boolean rootActivated = false;
@@ -54,24 +58,16 @@ public class Progress {
         initializedScopes.clear();
     }
 
-    public Map<Integer, Integer> getStates() {
+    public InternedKeyMap<Integer> getStates() {
         return states;
     }
 
     public void addNamedVariable(String name, Object value) {
-        namedVariables.put(STRINGS.get(name), value);
-    }
-
-    public Object getNamedVariable(String name) {
-        return namedVariables.get(STRINGS.get(name));
+        namedVariables.put(name, value);
     }
 
     public Object getNamedVariable(Integer name) {
         return namedVariables.get(name);
-    }
-
-    public boolean isNamedVariable(String name) {
-        return namedVariables.containsKey(STRINGS.get(name));
     }
 
     public boolean isNamedVariable(Integer name) {
@@ -79,35 +75,15 @@ public class Progress {
     }
 
     public Object getNamedVariable(Object o) {
-        if (o instanceof Integer) {
-            return getNamedVariable((Integer) o);
-        } else if (o instanceof String) {
-            return getNamedVariable((String) o);
-        } else {
-            return null;
-        }
+        return namedVariables.getChecked(o);
     }
 
     public void addNamedParticleConfig(String name, @Nonnull ParticleConfig config) {
-        namedParticleConfigs.put(STRINGS.get(name), config);
-    }
-
-    public ParticleConfig getNamedParticleConfig(String name) {
-        return namedParticleConfigs.get(STRINGS.get(name));
-    }
-
-    public ParticleConfig getNamedParticleConfig(Integer name) {
-        return namedParticleConfigs.get(name);
+        namedParticleConfigs.put(name, config);
     }
 
     public ParticleConfig getNamedParticleConfig(Object o) {
-        if (o instanceof Integer) {
-            return getNamedParticleConfig((Integer) o);
-        } else if (o instanceof String) {
-            return getNamedParticleConfig((String) o);
-        } else {
-            return null;
-        }
+        return namedParticleConfigs.getChecked(o);
     }
 
     public void setScopeInitialized(Integer scope) {
@@ -135,25 +111,11 @@ public class Progress {
     }
 
     public void setState(String state, String value) {
-        states.put(STRINGS.get(state), STRINGS.get(value));
-    }
-
-    public Integer getState(String state) {
-        return states.get(STRINGS.get(state));
-    }
-
-    public Integer getState(Integer state) {
-        return states.get(state);
+        states.put(state, STRINGS.get(value));
     }
 
     public Integer getState(Object o) {
-        if (o instanceof Integer) {
-            return states.get(o);
-        } else if (o instanceof String) {
-            return states.get(STRINGS.get((String)o));
-        } else {
-            return null;
-        }
+        return states.getChecked(o);
     }
 
     public boolean isRootActivated() {
@@ -169,23 +131,15 @@ public class Progress {
     }
 
     public void addNamedPosition(String name, @Nonnull BlockPosDim pos) {
-        namedPositions.put(STRINGS.get(name), pos);
+        namedPositions.put(name, pos);
         positionsToName.put(pos, STRINGS.get(name));
-    }
-
-    public BlockPosDim getNamedPosition(String name) {
-        return namedPositions.get(STRINGS.get(name));
-    }
-
-    public BlockPosDim getNamedPosition(Integer name) {
-        return namedPositions.get(name);
     }
 
     public BlockPosDim getNamedPosition(Object o) {
         if (o instanceof Integer) {
-            return getNamedPosition((Integer) o);
+            return namedPositions.get(o);
         } else if (o instanceof String) {
-            return getNamedPosition((String) o);
+            return namedPositions.get((String) o);
         } else if (o instanceof BlockPosDim) {
             return (BlockPosDim) o;
         } else {
@@ -198,7 +152,7 @@ public class Progress {
     }
 
     public void addNamedBlock(String name, IBlockState state) {
-        namedBlocks.put(STRINGS.get(name), state);
+        namedBlocks.put(name, state);
         blocksToName.put(Pair.of(state.getBlock().getRegistryName().toString(), state.getBlock().getMetaFromState(state)), STRINGS.get(name));
     }
 
@@ -206,41 +160,19 @@ public class Progress {
         return blocksToName.get(Pair.of(state.getBlock().getRegistryName().toString(), state.getBlock().getMetaFromState(state)));
     }
 
-    public IBlockState getNamedBlock(String name) {
-        return namedBlocks.get(STRINGS.get(name));
-    }
-
-    public IBlockState getNamedBlock(Integer name) {
-        return namedBlocks.get(name);
-    }
-
     public IBlockState getNamedBlock(Object name) {
-        if (name instanceof Integer) {
-            return namedBlocks.get(name);
-        } else if (name instanceof String) {
-            return namedBlocks.get(STRINGS.get((String) name));
-        } else {
-            return null;
-        }
+        return namedBlocks.getChecked(name);
     }
 
     public void addNamedItemStack(String name, ItemStack stack) {
-        namedItemStacks.put(STRINGS.get(name), stack);
-    }
-
-    public ItemStack getNamedItemStack(String name) {
-        return namedItemStacks.get(STRINGS.get(name));
-    }
-
-    public ItemStack getNamedItemStack(Integer name) {
-        return namedItemStacks.get(name);
+        namedItemStacks.put(name, stack);
     }
 
     public ItemStack getNamedItemStack(Object name) {
         if (name instanceof Integer) {
             return namedItemStacks.get(name);
         } else if (name instanceof String) {
-            return namedItemStacks.get(STRINGS.get((String) name));
+            return namedItemStacks.get((String) name);
         } else {
             return ItemStackTools.getEmptyStack();
         }
