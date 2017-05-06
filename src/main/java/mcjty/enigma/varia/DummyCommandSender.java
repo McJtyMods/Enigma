@@ -3,6 +3,7 @@ package mcjty.enigma.varia;
 import net.minecraft.command.CommandResultStats;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -15,9 +16,11 @@ import javax.annotation.Nullable;
 public class DummyCommandSender implements ICommandSender {
 
     private final World world;
+    private final EntityPlayer player;
 
-    public DummyCommandSender(World world) {
+    public DummyCommandSender(World world, EntityPlayer player) {
         this.world = world;
+        this.player = player;
     }
 
     @Override
@@ -32,7 +35,7 @@ public class DummyCommandSender implements ICommandSender {
 
     @Override
     public void sendMessage(ITextComponent component) {
-
+        System.out.println(component.getFormattedText());
     }
 
     @Override
@@ -58,7 +61,7 @@ public class DummyCommandSender implements ICommandSender {
     @Nullable
     @Override
     public Entity getCommandSenderEntity() {
-        return null;
+        return player;
     }
 
     @Override

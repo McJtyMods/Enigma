@@ -24,8 +24,6 @@ public class RestoreAction extends Action {
 
     @Override
     public void execute(EnigmaFunctionContext context) throws ExecutionException {
-        checkPlayer(context);
-
         String fn = ObjectTools.asStringSafe(file.eval(context));
         try {
             File dataDir = new File(((WorldServer) context.getWorld()).getChunkSaveLocation(), "enigma");
