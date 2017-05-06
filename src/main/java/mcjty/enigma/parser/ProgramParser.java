@@ -433,6 +433,18 @@ public class ProgramParser {
         return new CreateBlockStateAction(name, block, meta);
     }
 
+    private static Action parseSettingState(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line) throws ParserException {
+        Token secondaryToken = line.getSecondaryToken();
+        assert secondaryToken != null;
+
+        switch (secondaryToken) {
+            case CHAT:
+                return new SettingChatAction(line.getParameters().get(0));
+            default:
+                throw new ParserException("Unexpected token '" + secondaryToken.name() + "' for 'setting' command!", line.getLineNumber());
+        }
+    }
+
     private static void parseActionBlock(ParsingContext<EnigmaFunctionContext> context, ActionBlock actionBlock) throws ParserException {
         TokenizedLine<EnigmaFunctionContext> line = context.getLine();
         if (line.getIndentation() <= context.getCurrentIndent()) {
@@ -491,6 +503,9 @@ public class ProgramParser {
                     break;
                 case SETBLOCK:
                     actionBlock.addAction(new SetBlockAction(line.getParameters().get(0), line.getParameters().get(1)));
+                    break;
+                case SETTING:
+                    actionBlock.addAction(parseSettingState(context, line));
                     break;
                 case BLOCKSTATE:
                     actionBlock.addAction(parseBlockState(context, line));

@@ -44,6 +44,7 @@ public enum MainToken {
     DESCRIPTION(false, 1, 1),  // description <string>
     SOUND(false, 2, 2),        // description <position> <sound>
     PARTICLE(false, 2, 2),     // description <position> <particlesys>
+    SETTING(true, 0, 0),       // setting <setting> ...
     CREATEPARTICLES(false,1,1),// createparticles <name>
     MOB(false, 1, 1),          // mob <name>
     SPAWN(false, 2, 2),        // spawn <position> <mob>

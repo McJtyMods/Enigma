@@ -21,5 +21,6 @@ public class EnigmaMessages {
         // Client side
         INSTANCE.registerMessage(PacketAddMessage.Handler.class, PacketAddMessage.class, nextID(), Side.CLIENT);
         INSTANCE.registerMessage(PacketStartFxAnimation.Handler.class, PacketStartFxAnimation.class, nextID(), Side.CLIENT);
+        INSTANCE.registerMessage(PacketSettingChat.Handler.class, PacketSettingChat.class, nextID(), Side.CLIENT);
     }
 }

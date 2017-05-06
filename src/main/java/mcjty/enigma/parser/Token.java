@@ -22,6 +22,7 @@ public enum Token {
     SETUP(0),           // on setup
     ACTIVATE(0),        // on activate
     DEACTIVATE(0),      // on deactivate
+    CHAT(1),            // setting chat <on/off>
     COLOR(9),           // fxanim color <ticks> <startalpha> <startr> <startg> <startb> <endalpha> <endr> <endg> <endb>
     COLORANDBACK(9),    // fxanim colorandback <ticks> <startalpha> <startr> <startg> <startb> <endalpha> <endr> <endg> <endb>
     MOVE(3),            // fxanim move <ticks> <start> <end>

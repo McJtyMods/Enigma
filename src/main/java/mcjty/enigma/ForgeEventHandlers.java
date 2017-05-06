@@ -139,11 +139,6 @@ public class ForgeEventHandlers {
     }
 
     @SubscribeEvent
-    public void onClientTickEvent(TickEvent.ClientTickEvent event) {
-        FxAnimationHandler.tick();
-    }
-
-    @SubscribeEvent
     public void onPlayerDeathEvent(LivingDeathEvent event) {
         if (!event.getEntity().getEntityWorld().isRemote && event.getEntity() instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) event.getEntity();
