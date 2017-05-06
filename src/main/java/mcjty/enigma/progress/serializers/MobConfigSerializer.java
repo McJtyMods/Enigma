@@ -22,7 +22,7 @@ public class MobConfigSerializer implements NBTData<Integer, MobConfig> {
             hp = tag.getDouble("hp");
         }
         return new MobConfig(mob, hp, getNamedItem(tag, "item"), getNamedItem(tag, "helmet"), getNamedItem(tag, "chest"),
-                getNamedItem(tag, "leggings"), getNamedItem(tag, "boots"));
+                getNamedItem(tag, "leggings"), getNamedItem(tag, "boots"), tag.getBoolean("aggressive"));
     }
 
     private ItemStack getNamedItem(NBTTagCompound tag, String tn) {
@@ -44,6 +44,7 @@ public class MobConfigSerializer implements NBTData<Integer, MobConfig> {
         writeItem(tc, "chest", value.getChestplate());
         writeItem(tc, "leggings", value.getLeggings());
         writeItem(tc, "boots", value.getBoots());
+        tc.setBoolean("aggressive", value.isAggressive());
     }
 
     private void writeItem(NBTTagCompound tc, String tn, ItemStack i) {

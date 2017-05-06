@@ -17,6 +17,8 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.function.Consumer;
+
 public class SpawnAction extends Action {
     private final Expression<EnigmaFunctionContext> position;
     private final Expression<EnigmaFunctionContext> mob;
@@ -58,50 +60,30 @@ public class SpawnAction extends Action {
         if (mobConfig.getHp() != null) {
             entity.setHealth((float)(double)mobConfig.getHp());
         }
-        if (isValid(mobConfig.getHeldItem())) {
-            ItemStack stack = progress.getNamedItemStack(mobConfig.getHeldItem());
-            if (stack != null && ItemStackTools.isValid(stack)) {
-                entity.setHeldItem(EnumHand.MAIN_HAND, stack.copy());
-            } else {
-                throw new ExecutionException("Could not find item '" + mobConfig.getHeldItem() + "'!");
-            }
-        }
-        if (isValid(mobConfig.getHelmet())) {
-            ItemStack stack = progress.getNamedItemStack(mobConfig.getHelmet());
-            if (stack != null && ItemStackTools.isValid(stack)) {
-                entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, stack.copy());
-            } else {
-                throw new ExecutionException("Could not find item '" + mobConfig.getHelmet() + "'!");
-            }
-        }
-        if (isValid(mobConfig.getChestplate())) {
-            ItemStack stack = progress.getNamedItemStack(mobConfig.getChestplate());
-            if (stack != null && ItemStackTools.isValid(stack)) {
-                entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, stack.copy());
-            } else {
-                throw new ExecutionException("Could not find item '" + mobConfig.getChestplate() + "'!");
-            }
-        }
-        if (isValid(mobConfig.getLeggings())) {
-            ItemStack stack = progress.getNamedItemStack(mobConfig.getLeggings());
-            if (stack != null && ItemStackTools.isValid(stack)) {
-                entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, stack.copy());
-            } else {
-                throw new ExecutionException("Could not find item '" + mobConfig.getLeggings() + "'!");
-            }
-        }
-        if (isValid(mobConfig.getBoots())) {
-            ItemStack stack = progress.getNamedItemStack(mobConfig.getBoots());
-            if (stack != null && ItemStackTools.isValid(stack)) {
-                entity.setItemStackToSlot(EntityEquipmentSlot.FEET, stack.copy());
-            } else {
-                throw new ExecutionException("Could not find item '" + mobConfig.getBoots() + "'!");
-            }
+        equip(mobConfig.getHeldItem(), progress, stack -> entity.setHeldItem(EnumHand.MAIN_HAND, stack));
+        equip(mobConfig.getHelmet(), progress, stack -> entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, stack));
+        equip(mobConfig.getChestplate(), progress, stack -> entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, stack));
+        equip(mobConfig.getLeggings(), progress, stack -> entity.setItemStackToSlot(EntityEquipmentSlot.LEGS, stack));
+        equip(mobConfig.getBoots(), progress, stack -> entity.setItemStackToSlot(EntityEquipmentSlot.FEET, stack));
+        if (mobConfig.isAggressive() && context.hasPlayer()) {
+            entity.setAttackTarget(context.getPlayer());
         }
         WorldTools.spawnEntity(world, entity);
     }
 
     private boolean isValid(ItemStack heldItem) {
         return heldItem != null && ItemStackTools.isValid(heldItem);
+    }
+
+
+    private void equip(ItemStack item, Progress progress, Consumer<ItemStack> consumer) throws ExecutionException {
+        if (isValid(item)) {
+            ItemStack stack = progress.getNamedItemStack(item);
+            if (stack != null && ItemStackTools.isValid(stack)) {
+                consumer.accept(stack.copy());
+            } else {
+                throw new ExecutionException("Could not find item '" + item.getDisplayName() + "'!");
+            }
+        }
     }
 }

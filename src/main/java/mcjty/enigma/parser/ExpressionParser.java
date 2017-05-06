@@ -225,6 +225,10 @@ public class ExpressionParser<T> {
                     x = new ParsedExpression<>(w -> Math.sqrt(ObjectTools.asDoubleSafe(finalX.eval(w))), false,
                             "sqrt(" + x.getDebug() + ")");
                 }
+            } else if ("true".equals(func)) {
+                x = new ParsedExpression<>(w -> true, true, "true");
+            } else if ("false".equals(func)) {
+                x = new ParsedExpression<>(w -> false, true, "false");
             } else if (context.isFunction(func)) {
                 if (!eat('(')) {
                     throw new ExpressionException("Excected '(' after a function");

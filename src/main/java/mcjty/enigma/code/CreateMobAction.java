@@ -18,6 +18,7 @@ public class CreateMobAction extends Action {
     private final Expression<EnigmaFunctionContext> chestplate;
     private final Expression<EnigmaFunctionContext> leggings;
     private final Expression<EnigmaFunctionContext> boots;
+    private final Expression<EnigmaFunctionContext> aggressive;
 
     public CreateMobAction(Expression<EnigmaFunctionContext> name,
                            Expression<EnigmaFunctionContext> mob,
@@ -26,7 +27,8 @@ public class CreateMobAction extends Action {
                            Expression<EnigmaFunctionContext> helmet,
                            Expression<EnigmaFunctionContext> chestplate,
                            Expression<EnigmaFunctionContext> leggings,
-                           Expression<EnigmaFunctionContext> boots) {
+                           Expression<EnigmaFunctionContext> boots,
+                           Expression<EnigmaFunctionContext> aggressive) {
         this.name = name;
         this.mob = mob;
         this.hp = hp;
@@ -35,6 +37,7 @@ public class CreateMobAction extends Action {
         this.chestplate = chestplate;
         this.leggings = leggings;
         this.boots = boots;
+        this.aggressive = aggressive;
     }
 
     @Override
@@ -49,13 +52,15 @@ public class CreateMobAction extends Action {
         String name = ObjectTools.asStringSafe(this.name.eval(context));
         String mobName = ObjectTools.asStringSafe(this.mob.eval(context));
         Double hp = this.hp == null ? null : ObjectTools.asDoubleSafe(this.hp.eval(context));
+        boolean aggro = ObjectTools.asBoolSafe(aggressive);
 
         progress.addNamedMobConfig(name, new MobConfig(mobName, hp,
                 getItem(context, item),
                 getItem(context, helmet),
                 getItem(context, chestplate),
                 getItem(context, leggings),
-                getItem(context, boots)));
+                getItem(context, boots),
+                aggro));
 
         ProgressHolder.save(context.getWorld());
 
