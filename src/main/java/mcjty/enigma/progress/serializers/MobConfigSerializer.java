@@ -21,7 +21,11 @@ public class MobConfigSerializer implements NBTData<Integer, MobConfig> {
         if (tag.hasKey("hp")) {
             hp = tag.getDouble("hp");
         }
-        return new MobConfig(mob, hp, getNamedItem(tag, "item"), getNamedItem(tag, "helmet"), getNamedItem(tag, "chest"),
+        Double damage = null;
+        if (tag.hasKey("damage")) {
+            hp = tag.getDouble("damage");
+        }
+        return new MobConfig(mob, hp, damage, getNamedItem(tag, "item"), getNamedItem(tag, "helmet"), getNamedItem(tag, "chest"),
                 getNamedItem(tag, "leggings"), getNamedItem(tag, "boots"), tag.getBoolean("aggressive"));
     }
 
@@ -38,6 +42,9 @@ public class MobConfigSerializer implements NBTData<Integer, MobConfig> {
         tc.setString("mob", value.getMobId());
         if (value.getHp() != null) {
             tc.setDouble("hp", value.getHp());
+        }
+        if (value.getDamage() != null) {
+            tc.setDouble("damage", value.getDamage());
         }
         writeItem(tc, "item", value.getHeldItem());
         writeItem(tc, "helmet", value.getHelmet());

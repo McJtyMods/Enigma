@@ -32,6 +32,7 @@ public enum MainToken {
     AMOUNT(false, 1, 1),       // amount <number>
     SPEED(false, 1, 1),        // speed <number>
     HP(false, 1, 1),           // hp <number>
+    DAMAGE(false, 1, 1),       // damage <number>
     ITEM(false, 1, 1),         // item <itemname>
     HELMET(false, 1, 1),       // helmet <itemname>
     CHESTPLATE(false, 1, 1),   // chestplate <itemname>

@@ -9,6 +9,8 @@ import mcjty.lib.tools.EntityTools;
 import mcjty.lib.tools.ItemStackTools;
 import mcjty.lib.tools.WorldTools;
 import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
@@ -58,7 +60,10 @@ public class SpawnAction extends Action {
         BlockPos p = namedPosition.getPos();
         entity.setLocationAndAngles(p.getX() + 0.5D, p.getY(), p.getZ() + 0.5D, 0.0F, 0.0F);
         if (mobConfig.getHp() != null) {
-            entity.setHealth((float)(double)mobConfig.getHp());
+            IAttributeInstance entityAttribute = entity.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH);
+            float hp = (float) (double) mobConfig.getHp();
+            entityAttribute.setBaseValue(hp);
+            entity.setHealth(hp);
         }
         equip(mobConfig.getHeldItem(), progress, stack -> entity.setHeldItem(EnumHand.MAIN_HAND, stack));
         equip(mobConfig.getHelmet(), progress, stack -> entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, stack));

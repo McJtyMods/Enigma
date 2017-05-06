@@ -260,6 +260,7 @@ public class ProgramParser {
 
         Expression<EnigmaFunctionContext> mob = null;
         Expression<EnigmaFunctionContext> hp = null;
+        Expression<EnigmaFunctionContext> damage = null;
         Expression<EnigmaFunctionContext> item = null;
         Expression<EnigmaFunctionContext> helmet = null;
         Expression<EnigmaFunctionContext> chestplate = null;
@@ -284,6 +285,9 @@ public class ProgramParser {
                     break;
                 case HP:
                     hp = line.getParameters().get(0);
+                    break;
+                case DAMAGE:
+                    damage = line.getParameters().get(0);
                     break;
                 case ITEM:
                     item = line.getParameters().get(0);
@@ -313,7 +317,7 @@ public class ProgramParser {
         }
 
         context.setCurrentIndent(origIndent);
-        return new CreateMobAction(name, mob, hp, item, helmet, chestplate, leggings, boots, aggressive);
+        return new CreateMobAction(name, mob, hp, damage, item, helmet, chestplate, leggings, boots, aggressive);
     }
 
     private static CreateParticleAction parseParticleConfig(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line) throws ParserException {
