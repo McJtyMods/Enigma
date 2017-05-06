@@ -139,6 +139,7 @@ public class SnapshotTools {
                 nbt.setInteger("y", pos.getY());
                 nbt.setInteger("z", pos.getZ());
                 te.readFromNBT(nbt);
+                te.markDirty();
             }
         }
 
