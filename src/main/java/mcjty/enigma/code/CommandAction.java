@@ -22,6 +22,7 @@ public class CommandAction extends Action {
     @Override
     public void execute(EnigmaFunctionContext context) throws ExecutionException {
         MinecraftServer server = context.getWorld().getMinecraftServer();
-        server.commandManager.executeCommand(new DummyCommandSender(context.getWorld(), context.getPlayer()), ObjectTools.asStringSafe(command.eval(context)));
+//        server.commandManager.executeCommand(new DummyCommandSender(context.getWorld(), context.getPlayer()), ObjectTools.asStringSafe(command.eval(context)));
+        server.commandManager.executeCommand(context.hasPlayer() ? context.getPlayer() : new DummyCommandSender(context.getWorld(), context.getPlayer()), ObjectTools.asStringSafe(command.eval(context)));
     }
 }
