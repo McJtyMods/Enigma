@@ -12,6 +12,7 @@ public enum Token {
     RIGHTCLICKITEM(1),  // on rightclickitem <item>
     LEFTCLICKBLOCK(1),  // on leftclickblock <block>
     LEFTCLICKPOSITION(1),  // on leftclickblock <position>
+    DEATH(0),           // on death
     BLOCKAT(2),         // on blockat <position> <blocktype>
     DELAY(1),           // on delay <time>
     REPEAT(1),          // on repeat <time>

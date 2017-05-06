@@ -6,6 +6,7 @@ import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.varia.InventoryHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -31,6 +32,7 @@ public class Scope {
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onRightClickPosition = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onLeftClickBlock = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onLeftClickPosition = new ArrayList<>();
+    private final List<ActionBlock> onDeath = new ArrayList<>();
     private final List<Scope> nestedScopes = new ArrayList<>();
     private final List<Scope> nestedPlayerScopes = new ArrayList<>();
 
@@ -130,6 +132,12 @@ public class Scope {
         }
     }
 
+    public void onPlayerDeath(LivingDeathEvent event, EnigmaFunctionContext context) {
+        for (ActionBlock block : onDeath) {
+            block.execute(context);
+        }
+    }
+
     public void onLogin(EnigmaFunctionContext context) {
         for (ActionBlock actionBlock : onLogin) {
             actionBlock.execute(context);
@@ -202,6 +210,10 @@ public class Scope {
 
     public void addOnLeftClickBlock(ActionBlock actionBlock, Expression<EnigmaFunctionContext> block) {
         onLeftClickBlock.add(Pair.of(actionBlock, block));
+    }
+
+    public void addOnDeath(ActionBlock actionBlock) {
+        onDeath.add(actionBlock);
     }
 
     public void addScope(Scope scope) {

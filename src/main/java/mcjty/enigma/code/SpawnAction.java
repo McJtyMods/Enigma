@@ -65,6 +65,11 @@ public class SpawnAction extends Action {
             entityAttribute.setBaseValue(hp);
             entity.setHealth(hp);
         }
+        if (mobConfig.getDamage() != null) {
+            IAttributeInstance entityAttribute = entity.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE);
+            float damage = (float) (double) mobConfig.getDamage();
+            entityAttribute.setBaseValue(damage);
+        }
         equip(mobConfig.getHeldItem(), progress, stack -> entity.setHeldItem(EnumHand.MAIN_HAND, stack));
         equip(mobConfig.getHelmet(), progress, stack -> entity.setItemStackToSlot(EntityEquipmentSlot.HEAD, stack));
         equip(mobConfig.getChestplate(), progress, stack -> entity.setItemStackToSlot(EntityEquipmentSlot.CHEST, stack));
@@ -72,6 +77,7 @@ public class SpawnAction extends Action {
         equip(mobConfig.getBoots(), progress, stack -> entity.setItemStackToSlot(EntityEquipmentSlot.FEET, stack));
         if (mobConfig.isAggressive() && context.hasPlayer()) {
             entity.setAttackTarget(context.getPlayer());
+            entity.setLastAttacker(context.getPlayer());
         }
         WorldTools.spawnEntity(world, entity);
     }

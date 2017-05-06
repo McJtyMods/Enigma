@@ -14,6 +14,8 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -140,4 +142,18 @@ public class ForgeEventHandlers {
     public void onClientTickEvent(TickEvent.ClientTickEvent event) {
         FxAnimationHandler.tick();
     }
+
+    @SubscribeEvent
+    public void onPlayerDeathEvent(LivingDeathEvent event) {
+        if (!event.getEntity().getEntityWorld().isRemote && event.getEntity() instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) event.getEntity();
+            World world = player.getEntityWorld();
+            EnigmaFunctionContext context = new EnigmaFunctionContext(world, player);
+            RootScope.getRootInstance(world).forActiveScopes(context, (ctxt, scope) -> scope.onPlayerDeath(event, ctxt));
+            if (context.isCanceled()) {
+                event.setCanceled(true);
+            }
+        }
+    }
+
 }

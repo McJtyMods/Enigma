@@ -95,6 +95,9 @@ public class ProgramParser {
             case LEFTCLICKBLOCK:
                 scope.addOnLeftClickBlock(actionBlock, line.getParameters().get(0));
                 break;
+            case DEATH:
+                scope.addOnDeath(actionBlock);
+                break;
             case BLOCKAT:
                 break;
             case DELAY:
