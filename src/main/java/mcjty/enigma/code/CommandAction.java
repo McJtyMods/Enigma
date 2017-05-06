@@ -2,6 +2,7 @@ package mcjty.enigma.code;
 
 import mcjty.enigma.parser.Expression;
 import mcjty.enigma.parser.ObjectTools;
+import mcjty.enigma.varia.DummyCommandSender;
 import net.minecraft.server.MinecraftServer;
 import org.apache.commons.lang3.StringUtils;
 
@@ -21,6 +22,6 @@ public class CommandAction extends Action {
     @Override
     public void execute(EnigmaFunctionContext context) throws ExecutionException {
         MinecraftServer server = context.getWorld().getMinecraftServer();
-        server.commandManager.executeCommand(context.getPlayer() != null ? context.getPlayer() : server, ObjectTools.asStringSafe(command.eval(context)));
+        server.commandManager.executeCommand(new DummyCommandSender(context.getWorld()), ObjectTools.asStringSafe(command.eval(context)));
     }
 }
