@@ -509,6 +509,9 @@ public class ProgramParser {
                             line.getParameters().get(3),
                             line.getParameters().get(4)));
                     break;
+                case HP:
+                    actionBlock.addAction(new SetHpAction(line.getParameters().get(0)));
+                    break;
                 case MESSAGE:
                     actionBlock.addAction(new MessageAction(line.getParameters().get(0), line.getParameters()));
                     break;
