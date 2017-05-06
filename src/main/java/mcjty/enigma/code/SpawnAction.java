@@ -21,6 +21,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.function.Consumer;
 
+import static mcjty.enigma.varia.StringRegister.STRINGS;
+
 public class SpawnAction extends Action {
     private final Expression<EnigmaFunctionContext> position;
     private final Expression<EnigmaFunctionContext> mob;
@@ -79,6 +81,9 @@ public class SpawnAction extends Action {
             entity.setAttackTarget(context.getPlayer());
             entity.setLastAttacker(context.getPlayer());
         }
+
+        String tag = "enigma:" + (m instanceof String ? (String) m : STRINGS.get((Integer) m));
+        entity.addTag(tag);
         WorldTools.spawnEntity(world, entity);
     }
 

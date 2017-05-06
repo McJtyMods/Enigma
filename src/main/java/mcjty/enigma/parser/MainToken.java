@@ -48,6 +48,7 @@ public enum MainToken {
     CREATEPARTICLES(false,1,1),// createparticles <name>
     MOB(false, 1, 1),          // mob <name>
     SPAWN(false, 2, 2),        // spawn <position> <mob>
+    KILL(false, 1, 1),         // kill <mob>
     FXANIM(true, 0, 0),        // fxanim <animname> ...
     AGGRESSIVE(false, 1, 1),   // aggressive <boolean>
     DELAY(false, 1, 1),        // delay <time>

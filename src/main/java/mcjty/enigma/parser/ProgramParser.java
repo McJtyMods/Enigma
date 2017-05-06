@@ -557,6 +557,9 @@ public class ProgramParser {
                 case SPAWN:
                     actionBlock.addAction(new SpawnAction(line.getParameters().get(0), line.getParameters().get(1)));
                     break;
+                case KILL:
+                    actionBlock.addAction(new KillAction(line.getParameters().get(0)));
+                    break;
                 case PARTICLE:
                     actionBlock.addAction(new ParticleAction(line.getParameters().get(0), line.getParameters().get(1)));
                     break;
