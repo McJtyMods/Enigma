@@ -4,6 +4,7 @@ import net.minecraft.item.ItemStack;
 
 public class MobConfig {
     private final String mobId;
+    private final String tag;
     private final Double hp;
     private final Double damage;
     private final ItemStack heldItem;
@@ -13,8 +14,9 @@ public class MobConfig {
     private final ItemStack boots;
     private final boolean aggressive;
 
-    public MobConfig(String mobId, Double hp, Double damage, ItemStack heldItem, ItemStack helmet, ItemStack chestplate, ItemStack leggings, ItemStack boots, boolean aggressive) {
+    public MobConfig(String mobId, String tag, Double hp, Double damage, ItemStack heldItem, ItemStack helmet, ItemStack chestplate, ItemStack leggings, ItemStack boots, boolean aggressive) {
         this.mobId = mobId;
+        this.tag = tag;
         this.hp = hp;
         this.damage = damage;
         this.heldItem = heldItem;
@@ -27,6 +29,10 @@ public class MobConfig {
 
     public String getMobId() {
         return mobId;
+    }
+
+    public String getTag() {
+        return tag;
     }
 
     public Double getHp() {

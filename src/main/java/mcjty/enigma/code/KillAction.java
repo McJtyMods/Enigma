@@ -1,6 +1,7 @@
 package mcjty.enigma.code;
 
 import mcjty.enigma.parser.Expression;
+import mcjty.enigma.parser.ObjectTools;
 import net.minecraft.entity.Entity;
 import org.apache.commons.lang3.StringUtils;
 
@@ -24,8 +25,9 @@ public class KillAction extends Action {
     @Override
     public void execute(EnigmaFunctionContext context) throws ExecutionException {
         Object m = mobconfig.eval(context);
+        String t2 = ObjectTools.asStringSafe(m);
         String tag = "enigma:" + (m instanceof String ? (String) m : STRINGS.get((Integer) m));
-        List<Entity> entities = context.getWorld().getEntities(Entity.class, input -> input.getTags().contains(tag));
+        List<Entity> entities = context.getWorld().getEntities(Entity.class, input -> (input.getTags().contains(tag) || input.getTags().contains(t2)));
         for (Entity e : entities) {
             context.getWorld().removeEntity(e);
         }

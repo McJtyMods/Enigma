@@ -15,18 +15,22 @@ public class MobConfigSerializer implements NBTData<Integer, MobConfig> {
     }
 
     @Override
-    public MobConfig getValue(NBTTagCompound tag) {
-        String mob = tag.getString("mob");
+    public MobConfig getValue(NBTTagCompound nbt) {
+        String mob = nbt.getString("mob");
         Double hp = null;
-        if (tag.hasKey("hp")) {
-            hp = tag.getDouble("hp");
+        if (nbt.hasKey("hp")) {
+            hp = nbt.getDouble("hp");
         }
         Double damage = null;
-        if (tag.hasKey("damage")) {
-            hp = tag.getDouble("damage");
+        if (nbt.hasKey("damage")) {
+            hp = nbt.getDouble("damage");
         }
-        return new MobConfig(mob, hp, damage, getNamedItem(tag, "item"), getNamedItem(tag, "helmet"), getNamedItem(tag, "chest"),
-                getNamedItem(tag, "leggings"), getNamedItem(tag, "boots"), tag.getBoolean("aggressive"));
+        String tag = null;
+        if (nbt.hasKey("tag")) {
+            tag = nbt.getString("tag");
+        }
+        return new MobConfig(mob, tag, hp, damage, getNamedItem(nbt, "item"), getNamedItem(nbt, "helmet"), getNamedItem(nbt, "chest"),
+                getNamedItem(nbt, "leggings"), getNamedItem(nbt, "boots"), nbt.getBoolean("aggressive"));
     }
 
     private ItemStack getNamedItem(NBTTagCompound tag, String tn) {
@@ -45,6 +49,9 @@ public class MobConfigSerializer implements NBTData<Integer, MobConfig> {
         }
         if (value.getDamage() != null) {
             tc.setDouble("damage", value.getDamage());
+        }
+        if (value.getTag() != null) {
+            tc.setString("tag", value.getTag());
         }
         writeItem(tc, "item", value.getHeldItem());
         writeItem(tc, "helmet", value.getHelmet());

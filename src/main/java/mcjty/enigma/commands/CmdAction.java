@@ -1,10 +1,7 @@
 package mcjty.enigma.commands;
 
 import mcjty.enigma.code.*;
-import mcjty.enigma.parser.MainToken;
-import mcjty.enigma.parser.ParserException;
-import mcjty.enigma.parser.RuleParser;
-import mcjty.enigma.parser.TokenizedLine;
+import mcjty.enigma.parser.*;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import mcjty.lib.compat.CompatCommandBase;
@@ -38,7 +35,7 @@ public class CmdAction extends CompatCommandBase {
         Progress progress = ProgressHolder.getProgress(server.getEntityWorld());
         String line = StringUtils.join(args, ' ');
         try {
-            TokenizedLine<EnigmaFunctionContext> tokenizedLine = RuleParser.getTokenizedLine(line, 0, new EnigmaExpressionContext(progress));
+            TokenizedLine<EnigmaFunctionContext> tokenizedLine = RuleParser.getTokenizedLine(line, 0,  new EnigmaExpressionContext(progress));
             MainToken token = tokenizedLine.getMainToken();
             EnigmaFunctionContext context = new EnigmaFunctionContext(server.getEntityWorld(), (EntityPlayer) sender);
             switch (token) {
@@ -56,6 +53,12 @@ public class CmdAction extends CompatCommandBase {
                     break;
                 case GIVE:
                     new GiveAction(tokenizedLine.getParameters().get(0)).execute(context);
+                    break;
+                case SETTING:
+                    ProgramParser.parseSettingAction(tokenizedLine).execute(context);
+                    break;
+                case KILL:
+                    new KillAction(tokenizedLine.getParameters().get(0)).execute(context);
                     break;
                 default:
                     ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Unknown action!"));

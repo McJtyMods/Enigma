@@ -262,6 +262,7 @@ public class ProgramParser {
         context.setCurrentIndent(line.getIndentation());
 
         Expression<EnigmaFunctionContext> mob = null;
+        Expression<EnigmaFunctionContext> tag = null;
         Expression<EnigmaFunctionContext> hp = null;
         Expression<EnigmaFunctionContext> damage = null;
         Expression<EnigmaFunctionContext> item = null;
@@ -285,6 +286,9 @@ public class ProgramParser {
             switch (line.getMainToken()) {
                 case NAME:
                     mob = line.getParameters().get(0);
+                    break;
+                case TAG:
+                    tag = line.getParameters().get(0);
                     break;
                 case HP:
                     hp = line.getParameters().get(0);
@@ -320,7 +324,7 @@ public class ProgramParser {
         }
 
         context.setCurrentIndent(origIndent);
-        return new CreateMobAction(name, mob, hp, damage, item, helmet, chestplate, leggings, boots, aggressive);
+        return new CreateMobAction(name, mob, tag, hp, damage, item, helmet, chestplate, leggings, boots, aggressive);
     }
 
     private static CreateParticleAction parseParticleConfig(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line) throws ParserException {
@@ -433,7 +437,7 @@ public class ProgramParser {
         return new CreateBlockStateAction(name, block, meta);
     }
 
-    private static Action parseSettingState(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line) throws ParserException {
+    public static Action parseSettingAction(TokenizedLine<EnigmaFunctionContext> line) throws ParserException {
         Token secondaryToken = line.getSecondaryToken();
         assert secondaryToken != null;
 
@@ -505,7 +509,7 @@ public class ProgramParser {
                     actionBlock.addAction(new SetBlockAction(line.getParameters().get(0), line.getParameters().get(1)));
                     break;
                 case SETTING:
-                    actionBlock.addAction(parseSettingState(context, line));
+                    actionBlock.addAction(parseSettingAction(line));
                     break;
                 case BLOCKSTATE:
                     actionBlock.addAction(parseBlockState(context, line));
@@ -562,8 +566,6 @@ public class ProgramParser {
                     break;
                 case PARTICLE:
                     actionBlock.addAction(new ParticleAction(line.getParameters().get(0), line.getParameters().get(1)));
-                    break;
-                case TAG:
                     break;
                 default:
                     throw new ParserException("Unexpected command '" + line.getMainToken().name() + "' for action block!", linenumber);
