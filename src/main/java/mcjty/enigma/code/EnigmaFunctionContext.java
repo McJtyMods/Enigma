@@ -15,6 +15,7 @@ public class EnigmaFunctionContext {
     @Nullable private final EntityPlayer player;
     private boolean canceled = false;
     @Nonnull private final Map<Integer, Object> localVariables = new HashMap<>();
+    @Nullable private ScopeInstance scopeInstance = null;
 
     public static final EnigmaFunctionContext EMPTY = new EnigmaFunctionContext(null, null);
 
@@ -65,5 +66,14 @@ public class EnigmaFunctionContext {
 
     public void setCanceled(boolean canceled) {
         this.canceled = canceled;
+    }
+
+    public void setScopeInstance(@Nullable ScopeInstance scopeInstance) {
+        this.scopeInstance = scopeInstance;
+    }
+
+    @Nullable
+    public ScopeInstance getScopeInstance() {
+        return scopeInstance;
     }
 }

@@ -34,13 +34,15 @@ public class RootScope {
                 root = new Scope(new ScopeID(STRINGS.get("root")));
             }
             rootInstance = new ScopeInstance(getRoot());
-            root.onInit(new EnigmaFunctionContext(world, null));
+            EnigmaFunctionContext context = new EnigmaFunctionContext(world, null);
+            context.setScopeInstance(rootInstance);
+            root.onInit(context);
 
             Progress progress = ProgressHolder.getProgress(world);
             if (!progress.isRootActivated()) {
                 // We set scope activity to false because the root has not been activated yet
                 RootScope.getRootInstance(world).setActive(false);
-                root.onSetup(new EnigmaFunctionContext(world, null));
+                root.onSetup(context);
                 progress.setRootActivated(true);
                 ProgressHolder.save(world);
             }

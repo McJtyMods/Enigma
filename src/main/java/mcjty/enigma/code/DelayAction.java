@@ -23,7 +23,10 @@ public class DelayAction extends Action {
 
     @Override
     public void execute(EnigmaFunctionContext context) throws ExecutionException {
-        ScopeInstance root = RootScope.getRootInstance(context.getWorld());
-        root.addTimedAction(new ScopeInstance.TimedAction(actionBlock, ticks, root.getTicker() + ObjectTools.asIntSafe(ticks.eval(context)), false));
+        ScopeInstance scope = context.getScopeInstance();
+        if (scope == null) {
+            scope = RootScope.getRootInstance(context.getWorld());
+        }
+        scope.addTimedAction(new ScopeInstance.TimedAction(actionBlock, ticks, scope.getTicker() + ObjectTools.asIntSafe(ticks.eval(context)), false));
     }
 }

@@ -61,6 +61,7 @@ public class ScopeInstance {
     }
 
     public void forActiveScopes(EnigmaFunctionContext context, BiConsumer<EnigmaFunctionContext, Scope> consumer) {
+        context.setScopeInstance(this);
         consumer.accept(context, scope);
 
         for (ScopeInstance scopeInstance : nestedScopeInstances.values()) {
@@ -106,6 +107,7 @@ public class ScopeInstance {
         if (active != null) {
             // If we didn't know our state then we don't call 'start' because then we are just loading
             // from start
+            context.setScopeInstance(this);
             scope.onActivate(context);
             System.out.println("Scope.activate");
         }
@@ -173,6 +175,7 @@ public class ScopeInstance {
         if (active != null) {
             // If we didn't know our state then we don't call 'stop' because then we are just loading
             // from start
+            context.setScopeInstance(this);
             scope.onDeactivate(context);
             System.out.println("Scope.deactivate");
         }
@@ -201,6 +204,7 @@ public class ScopeInstance {
             List<TimedAction> newActions = new ArrayList<>(timedActions.size());
             for (TimedAction action : timedActions) {
                 if (t >= action.getStopTime()) {
+                    context.setScopeInstance(this);
                     action.getActionBlock().execute(context);
                     if (action.isRepeating()) {
                         int ms = ObjectTools.asIntSafe(action.getDelay().eval(context));
@@ -222,6 +226,7 @@ public class ScopeInstance {
         ScopeInstance scopeInstance = nestedScopeInstances.get(child.getId());
         if (scopeInstance == null) {
             scopeInstance = new ScopeInstance(child);
+            context.setScopeInstance(scopeInstance);
             child.onInit(context);
             Progress progress = ProgressHolder.getProgress(context.getWorld());
             if (!progress.isScopeInitialized(child.getId())) {
@@ -239,6 +244,7 @@ public class ScopeInstance {
         ScopeInstance scopeInstance = nestedPlayerScopeInstances.get(Pair.of(uuid, child.getId()));
         if (scopeInstance == null) {
             scopeInstance = new ScopeInstance(child);
+            context.setScopeInstance(scopeInstance);
             child.onInit(context);
             Progress progress = ProgressHolder.getProgress(context.getWorld());
             PlayerProgress playerProgress = progress.getPlayerProgress(uuid);
