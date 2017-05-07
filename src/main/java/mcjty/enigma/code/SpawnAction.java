@@ -84,6 +84,9 @@ public class SpawnAction extends Action {
 
         String tag = "enigma:" + (m instanceof String ? (String) m : STRINGS.get((Integer) m));
         entity.addTag(tag);
+        if (mobConfig.getTag() != null) {
+            entity.addTag(mobConfig.getTag());
+        }
         WorldTools.spawnEntity(world, entity);
     }
 
