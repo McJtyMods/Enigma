@@ -13,13 +13,16 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static mcjty.enigma.varia.StringRegister.STRINGS;
 
 public class Scope {
 
     private final ScopeID id;
+    private Scope parent;
 
     private final List<ActionBlock> onActivate = new ArrayList<>();
     private final List<ActionBlock> onDeactivate = new ArrayList<>();
@@ -35,6 +38,7 @@ public class Scope {
     private final List<ActionBlock> onDeath = new ArrayList<>();
     private final List<Scope> nestedScopes = new ArrayList<>();
     private final List<Scope> nestedPlayerScopes = new ArrayList<>();
+    private final Map<String, ActionBlock> namedActionBlocks = new HashMap<>();
 
     public static class DelayedAction {
         private final ActionBlock actionBlock;
@@ -69,6 +73,23 @@ public class Scope {
     public ScopeID getId() {
         return id;
     }
+
+    public void addNamedActionBlock(String name, ActionBlock actionBlock) {
+        namedActionBlocks.put(name, actionBlock);
+    }
+
+    public ActionBlock findNamedBlock(String name) {
+        Scope other = this;
+        while (true) {
+            ActionBlock block = other.namedActionBlocks.get(name);
+            if (block == null && other.parent != null) {
+                other = other.parent;
+                continue;
+            }
+            return block;
+        }
+    }
+
 
     public boolean isScopeConditionTrue(EnigmaFunctionContext context) {
         return condition == null || ObjectTools.asBoolSafe(condition.eval(context));
@@ -216,12 +237,18 @@ public class Scope {
         onDeath.add(actionBlock);
     }
 
+    public void setParentScope(Scope parent) {
+        this.parent = parent;
+    }
+
     public void addScope(Scope scope) {
         nestedScopes.add(scope);
+        scope.setParentScope(this);
     }
 
     public void addPlayerScope(Scope scope) {
         nestedPlayerScopes.add(scope);
+        scope.setParentScope(this);
     }
 
     public void dump(int indent) {

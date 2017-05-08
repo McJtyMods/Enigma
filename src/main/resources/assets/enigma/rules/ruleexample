@@ -54,6 +54,11 @@ on setup:
         meta 0
         description "A Golden Coin"
 
+block common:
+    message "This is common code"
+    log "And this too"
+
+
 on init:
     log "root.init"
 

@@ -11,6 +11,8 @@ public enum MainToken {
     LOCAL(false, 2, 2),        // var <varname> <value>
     RESTORE(false, 1, 1),      // restore <snapshotname>
     ON(true, 0, 0),
+    BLOCK(false, 1, 1),        // block <name>:
+    CALL(false, 1, 1),         // call <name>
     POSITION(false, 5, 5),     // position <name>, <x>, <y>, <z>, <dim>
     LOOKAT(false, 1, 1),       // lookat <position>
     COMMAND(false, 1, 1),      // command <command>

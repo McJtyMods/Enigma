@@ -14,9 +14,9 @@ public class ProgramParser {
         return root;
     }
 
-    private static void parseScope(ParsingContext context, Scope scope) throws ParserException {
+    private static void parseScope(ParsingContext<EnigmaFunctionContext> context, Scope scope) throws ParserException {
         while (context.hasLines()) {
-            TokenizedLine line = context.getLine();
+            TokenizedLine<EnigmaFunctionContext> line = context.getLine();
             int linenumber = line.getLineNumber();
 
             if (line.getIndentation() > context.getCurrentIndent()) {
@@ -34,6 +34,14 @@ public class ProgramParser {
                 scope.addScope(parseScope(context, line));
             } else if (line.getMainToken() == MainToken.PSCOPE) {
                 scope.addPlayerScope(parseScope(context, line));
+            } else if (line.getMainToken() == MainToken.BLOCK) {
+                if (!line.isEndsWithColon()) {
+                    throw new ParserException("Expected ':' after 'SCOPE' statement", line.getLineNumber());
+                }
+                String name = ObjectTools.asStringSafe(line.getParameters().get(0).eval(EnigmaFunctionContext.EMPTY));
+                ActionBlock block = new ActionBlock();
+                parseActionBlock(context, block);
+                scope.addNamedActionBlock(name, block);
             } else {
                 throw new ParserException("Unexpected command '" + line.getMainToken().name() + "' for a scope", linenumber);
             }
@@ -156,7 +164,7 @@ public class ProgramParser {
         }
     }
 
-    private static IfAction parseIf(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line) throws ParserException {
+    private static Action parseIf(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line) throws ParserException {
         if (!line.isEndsWithColon()) {
             throw new ParserException("Expected ':' after 'IF' statement", line.getLineNumber());
         }
@@ -489,6 +497,9 @@ public class ProgramParser {
                     break;
                 case FXANIM:
                     actionBlock.addAction(parseFxAnim(context, line));
+                    break;
+                case CALL:
+                    actionBlock.addAction(new CallAction(line.getParameters().get(0)));
                     break;
                 case IF:
                     actionBlock.addAction(parseIf(context, line));
