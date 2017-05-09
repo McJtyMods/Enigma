@@ -57,10 +57,7 @@ public class MimicTESR extends TileEntitySpecialRenderer<MimicTE> {
 
                 for (BlockPos pos : fakeWorld.getPositions()) {
                     tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-                    int dx = te.getPos().getX() - pos.getX();
-                    int dy = te.getPos().getY() - pos.getY();
-                    int dz = te.getPos().getZ() - pos.getZ();
-                    tessellator.getBuffer().setTranslation(x - pos.getX() - dx, y - pos.getY() - dy, z - pos.getZ() - dz);
+                    tessellator.getBuffer().setTranslation(x - pos.getX(), y - pos.getY(), z - pos.getZ());
                     renderBlock(dispatcher, mimicState, pos, fakeWorld, tessellator.getBuffer());
                     tessellator.draw();
                 }
