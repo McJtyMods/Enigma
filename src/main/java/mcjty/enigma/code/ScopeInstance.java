@@ -200,21 +200,23 @@ public class ScopeInstance {
                     }
                 }
             }
-            int t = ticker;
-            List<TimedAction> newActions = new ArrayList<>(timedActions.size());
-            for (TimedAction action : timedActions) {
-                if (t >= action.getStopTime()) {
-                    context.setScopeInstance(this);
-                    action.getActionBlock().execute(context);
-                    if (action.isRepeating()) {
-                        int ms = ObjectTools.asIntSafe(action.getDelay().eval(context));
-                        newActions.add(new TimedAction(action.getActionBlock(), action.getDelay(), t + ms, action.isRepeating()));
+            if (!timedActions.isEmpty()) {
+                int t = ticker;
+                List<TimedAction> origActions = new ArrayList<>(timedActions);
+                timedActions.clear();
+                for (TimedAction action : origActions) {
+                    if (t >= action.getStopTime()) {
+                        context.setScopeInstance(this);
+                        action.getActionBlock().execute(context);
+                        if (action.isRepeating()) {
+                            int ms = ObjectTools.asIntSafe(action.getDelay().eval(context));
+                            timedActions.add(new TimedAction(action.getActionBlock(), action.getDelay(), t + ms, action.isRepeating()));
+                        }
+                    } else {
+                        timedActions.add(action);
                     }
-                } else {
-                    newActions.add(action);
                 }
             }
-            timedActions = newActions;
 
         } else {
             deactivate(context);

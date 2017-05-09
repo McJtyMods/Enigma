@@ -6,5 +6,8 @@ item.enigma_key3.name=Black Key
 item.enigma_coin0.name=Gold Coin
 item.enigma_coin1.name=Silver Coin
 
+# Blocks
+tile.enigma.mimic.name=Mimic
+
 # Creative Tabs
 itemGroup.Enigma=Enigma

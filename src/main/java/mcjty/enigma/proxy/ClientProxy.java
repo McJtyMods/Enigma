@@ -2,6 +2,7 @@ package mcjty.enigma.proxy;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import mcjty.enigma.ForgeClientEventHandlers;
+import mcjty.enigma.blocks.ModBlocks;
 import mcjty.enigma.items.ModItems;
 import mcjty.lib.tools.MinecraftTools;
 import net.minecraft.client.Minecraft;
@@ -20,6 +21,7 @@ public class ClientProxy extends CommonProxy {
     public void preInit(FMLPreInitializationEvent e) {
         super.preInit(e);
         ModItems.initModels();
+        ModBlocks.initModels();
 //        ModBlocks.initModels();
     }
 

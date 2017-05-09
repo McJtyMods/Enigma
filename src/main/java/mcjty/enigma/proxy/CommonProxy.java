@@ -2,6 +2,7 @@ package mcjty.enigma.proxy;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import mcjty.enigma.ForgeEventHandlers;
+import mcjty.enigma.blocks.ModBlocks;
 import mcjty.enigma.code.RootScope;
 import mcjty.enigma.fxanim.FxAnimationHandler;
 import mcjty.enigma.items.ModItems;
@@ -33,6 +34,7 @@ public abstract class CommonProxy {
         EnigmaMessages.registerMessages("enigma");
 
         ModItems.init();
+        ModBlocks.init();
         FxAnimationHandler.init();
     }
 
