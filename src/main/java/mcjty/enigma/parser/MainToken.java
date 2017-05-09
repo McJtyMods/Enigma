@@ -30,6 +30,7 @@ public enum MainToken {
     ITEMSTACK(false, 1, 1),    // itemstack <name>
     BLOCKSTATE(false,1, 1),    // blockstate <name>
     SETBLOCK(false, 2, 2),     // setblock <position> <block>
+    SETMIMIC(false, 2, 2),     // setmimic <position> <block>
     NAME(false, 1, 1),         // name <name>
     AMOUNT(false, 1, 1),       // amount <number>
     SPEED(false, 1, 1),        // speed <number>

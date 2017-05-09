@@ -519,6 +519,9 @@ public class ProgramParser {
                 case SETBLOCK:
                     actionBlock.addAction(new SetBlockAction(line.getParameters().get(0), line.getParameters().get(1)));
                     break;
+                case SETMIMIC:
+                    actionBlock.addAction(new SetMimicAction(line.getParameters().get(0), line.getParameters().get(1)));
+                    break;
                 case SETTING:
                     actionBlock.addAction(parseSettingAction(line));
                     break;

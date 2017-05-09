@@ -9,6 +9,7 @@ on setup:
     position changeblock 808 4 1900 0
     position tppos 820 4 1900 0
     position startblock 804 4 1900 0
+    position mimicpos 810 4 1910 0
 
     itemstack sword:
         name "minecraft:diamond_sword"
@@ -33,6 +34,9 @@ on setup:
         name "minecraft:gold_block"
     blockstate air:
         name "minecraft:air"
+    blockstate planks:
+        name "minecraft:planks"
+
     var score 0
 
     createparticles smoke:
@@ -74,6 +78,7 @@ pscope "weirdcolors" true:
 
     on repeat 200:
         fxanim colorandback 40  0 1 0 0   1 0 0 1
+        setmimic mimicpos planks
 
 
 pscope "player" true:
