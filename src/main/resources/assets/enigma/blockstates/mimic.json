@@ -1,0 +1,10 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "enigma:empty_model"
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}]
+  }
+}

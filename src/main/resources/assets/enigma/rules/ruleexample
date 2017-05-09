@@ -54,7 +54,7 @@ on setup:
         meta 0
         description "A Golden Coin"
 
-block common:
+block dotell:
     message "This is common code"
     log "And this too"
 
@@ -85,6 +85,7 @@ scope "diamond" state(changeblock) == diamond:
     on activate:
         log "diamond.activate"
     on rightclickposition changeblock:
+        call dotell
         fxanim color 20 1 1 0 0 0 1 0 0
         log "diamond.rightclickblock"
         setblock changeblock emerald
@@ -96,6 +97,7 @@ scope "emerald" state(changeblock) == emerald:
     on activate:
         log "emerald.activate"
     on rightclickposition changeblock:
+        call dotell
         log "emerald.rightclickblock"
         setblock changeblock diamond
         state changeblock diamond

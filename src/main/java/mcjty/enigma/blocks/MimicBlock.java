@@ -2,22 +2,27 @@ package mcjty.enigma.blocks;
 
 import mcjty.enigma.Enigma;
 import mcjty.lib.compat.CompatBlock;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class MimicBlock extends CompatBlock {
+import javax.annotation.Nullable;
+
+public class MimicBlock extends CompatBlock implements ITileEntityProvider {
 
     public MimicBlock() {
         super(Material.ROCK);
@@ -31,6 +36,18 @@ public class MimicBlock extends CompatBlock {
         GameRegistry.register(this);
         GameRegistry.register(new ItemBlock(this), getRegistryName());
         GameRegistry.registerTileEntity(MimicTE.class, Enigma.MODID + "_mimic");
+    }
+
+    @Nullable
+    @Override
+    public TileEntity createNewTileEntity(World worldIn, int meta) {
+        return new MimicTE();
+    }
+
+    @Nullable
+    @Override
+    public TileEntity createTileEntity(World world, IBlockState state) {
+        return new MimicTE();
     }
 
     @Override
