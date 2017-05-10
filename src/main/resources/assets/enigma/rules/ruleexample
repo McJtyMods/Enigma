@@ -76,10 +76,16 @@ on repeat 1000:
 
 pscope "weirdcolors" true:
 
-    on repeat 200:
+    on repeat 400:
         fxanim colorandback 40  0 1 0 0   1 0 0 1
-        setmimic mimicpos planks
 
+    on repeat 100:
+        setmimic mimicpos planks
+        setblock up(mimicpos,1) air
+        fxanim moveblock 20 mimicpos 0 1 0
+        delay 20:
+            setblock mimicpos air
+            setmimic up(mimicpos,1) planks
 
 pscope "player" true:
     on repeat 50:

@@ -3,6 +3,7 @@ package mcjty.enigma.fxanim;
 import io.netty.buffer.ByteBuf;
 import mcjty.enigma.fxanim.animations.ColorAnimation;
 import mcjty.enigma.fxanim.animations.MoveAnimation;
+import mcjty.enigma.fxanim.animations.MoveBlockAnimation;
 import mcjty.enigma.fxanim.animations.RotateAnimation;
 import mcjty.enigma.network.EnigmaMessages;
 import mcjty.enigma.network.PacketStartFxAnimation;
@@ -15,6 +16,7 @@ import java.util.Map;
 
 import static mcjty.enigma.fxanim.animations.ColorAnimation.FXANIM_COLOR;
 import static mcjty.enigma.fxanim.animations.MoveAnimation.FXANIM_MOVE;
+import static mcjty.enigma.fxanim.animations.MoveBlockAnimation.FXANIM_MOVEBLOCK;
 import static mcjty.enigma.fxanim.animations.RotateAnimation.FXANIM_ROTATE;
 
 public class FxAnimationHandler {
@@ -53,5 +55,6 @@ public class FxAnimationHandler {
         registerAnimationFactory(FXANIM_MOVE, MoveAnimation::new);
         registerAnimationFactory(FXANIM_ROTATE, RotateAnimation::new);
         registerAnimationFactory(FXANIM_COLOR, ColorAnimation::new);
+        registerAnimationFactory(FXANIM_MOVEBLOCK, MoveBlockAnimation::new);
     }
 }

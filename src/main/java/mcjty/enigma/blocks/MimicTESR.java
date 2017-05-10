@@ -30,6 +30,10 @@ public class MimicTESR extends TileEntitySpecialRenderer<MimicTE> {
 
     @Override
     public void renderTileEntityAt(MimicTE te, double x, double y, double z, float partialTicks, int destroyStage) {
+        IBlockState mimicState = te.getToMimic();
+        if (mimicState == null) {
+            return;
+        }
 
         GlStateManager.pushMatrix();
 
@@ -45,7 +49,6 @@ public class MimicTESR extends TileEntitySpecialRenderer<MimicTE> {
         BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
         BlockRenderLayer origLayer = MinecraftForgeClient.getRenderLayer();
 
-        IBlockState mimicState = Blocks.DIAMOND_BLOCK.getDefaultState();
         fakeWorld.setState(mimicState, Collections.singleton(te.getPos()));
 
         for (BlockRenderLayer layer : LAYERS) {
@@ -57,8 +60,7 @@ public class MimicTESR extends TileEntitySpecialRenderer<MimicTE> {
 
                 for (BlockPos pos : fakeWorld.getPositions()) {
                     tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-                    tessellator.getBuffer().setTranslation(x - te.getPos().getX(), y - te.getPos().getY(), z - te.getPos().getZ());
-//                    tessellator.getBuffer().setTranslation(x, y, z);
+                    tessellator.getBuffer().setTranslation(x - te.getPos().getX() + te.getDx(), y - te.getPos().getY() + te.getDy(), z - te.getPos().getZ() + te.getDz());
                     renderBlock(dispatcher, mimicState, pos, fakeWorld, tessellator.getBuffer());
                     tessellator.draw();
                 }
