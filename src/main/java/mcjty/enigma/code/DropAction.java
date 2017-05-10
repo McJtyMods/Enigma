@@ -10,7 +10,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.DimensionManager;
 import org.apache.commons.lang3.StringUtils;
 
 public class DropAction extends Action {
@@ -41,10 +40,7 @@ public class DropAction extends Action {
         }
 
         if (stack != null && ItemStackTools.isValid(stack)) {
-            WorldServer world = DimensionManager.getWorld(namedPosition.getDimension());
-            if (world == null) {
-                world = world.getMinecraftServer().worldServerForDimension(namedPosition.getDimension());
-            }
+            WorldServer world = namedPosition.getWorld();
             BlockPos p = namedPosition.getPos();
             EntityItem entityItem = new EntityItem(world, p.getX(), p.getY(), p.getZ(), stack.copy());
             WorldTools.spawnEntity(world, entityItem);

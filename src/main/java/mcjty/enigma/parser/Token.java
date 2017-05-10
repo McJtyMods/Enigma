@@ -27,6 +27,7 @@ public enum Token {
     COLORANDBACK(9),    // fxanim colorandback <ticks> <startalpha> <startr> <startg> <startb> <endalpha> <endr> <endg> <endb>
     MOVE(3),            // fxanim move <ticks> <start> <end>
     MOVEBLOCK(5),       // fxanim moveblock <ticks> <start> <dx> <dy> <dz>
+    COLORBLOCK(8),      // fxanim colorblock <ticks> <position> <startr> <startg> <startb> <endr> <endg> <endb>
     ROTATE(5);          // fxanim rotate <ticks> <startyaw> <startpitch> <endyaw> <endpitch>
 
     private static final Map<String, Token> MAP = new HashMap<>();

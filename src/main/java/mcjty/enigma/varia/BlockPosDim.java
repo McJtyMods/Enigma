@@ -2,11 +2,15 @@ package mcjty.enigma.varia;
 
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 
 import javax.annotation.Nonnull;
 
 public class BlockPosDim {
-    @Nonnull private final BlockPos pos;
+    @Nonnull
+    private final BlockPos pos;
     private final int dimension;
 
     public BlockPosDim(@Nonnull BlockPos pos, int dimension) {
@@ -50,4 +54,11 @@ public class BlockPosDim {
         return d0 * d0 + d1 * d1 + d2 * d2;
     }
 
+    public WorldServer getWorld() {
+        WorldServer world = DimensionManager.getWorld(getDimension());
+        if (world == null) {
+            world = DimensionManager.getWorld(0).getMinecraftServer().worldServerForDimension(getDimension());
+        }
+        return world;
+    }
 }

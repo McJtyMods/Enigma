@@ -1,5 +1,6 @@
 package mcjty.enigma.blocks;
 
+import mcjty.enigma.Enigma;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,10 +16,17 @@ public class MimicTE extends TileEntity {
 
     private IBlockState toMimic = null;
 
-    // Client side data
+    // Client side: to make sure our first readFromNBT() gets the info from the server but not anymore after that
+    boolean firstSyncHappened = false;
+
     double dx = 0;
     double dy = 0;
     double dz = 0;
+
+    boolean blendColor = false;
+    double red = 1.0f;
+    double green = 1.0f;
+    double blue = 1.0f;
 
     public IBlockState getToMimic() {
         return toMimic;
@@ -40,6 +48,29 @@ public class MimicTE extends TileEntity {
         this.dx = dx;
         this.dy = dy;
         this.dz = dz;
+    }
+
+    public boolean isBlendColor() {
+        return blendColor;
+    }
+
+    public double getRed() {
+        return red;
+    }
+
+    public double getGreen() {
+        return green;
+    }
+
+    public double getBlue() {
+        return blue;
+    }
+
+    public void setBlendColor(double r, double g, double b) {
+        red = r;
+        green = g;
+        blue = b;
+        blendColor = Math.abs(r-1) > .0001 || Math.abs(g-1) > .0001 || Math.abs(b-1) > .0001;
     }
 
     @Override
@@ -81,6 +112,16 @@ public class MimicTE extends TileEntity {
                 toMimic = block.getStateFromMeta(meta);
             }
         }
+        if ((!Enigma.proxy.isClient()) || !firstSyncHappened) {
+            firstSyncHappened = true;
+            dx = compound.getDouble("dx");
+            dy = compound.getDouble("dy");
+            dz = compound.getDouble("dz");
+            double r = compound.getDouble("r");
+            double g = compound.getDouble("g");
+            double b = compound.getDouble("b");
+            setBlendColor(r, g, b);
+        }
     }
 
     @Override
@@ -90,6 +131,12 @@ public class MimicTE extends TileEntity {
             compound.setString("mimic", toMimic.getBlock().getRegistryName().toString());
             compound.setInteger("meta", toMimic.getBlock().getMetaFromState(toMimic));
         }
+        compound.setDouble("dx", dx);
+        compound.setDouble("dy", dy);
+        compound.setDouble("dz", dz);
+        compound.setDouble("r", red);
+        compound.setDouble("g", green);
+        compound.setDouble("b", blue);
         return compound;
     }
 }

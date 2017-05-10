@@ -80,4 +80,7 @@ public abstract class CommonProxy {
         throw new IllegalStateException("This should only be called from client side");
     }
 
+    public boolean isClient() {
+        return false;
+    }
 }

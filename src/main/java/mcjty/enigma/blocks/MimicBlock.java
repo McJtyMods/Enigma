@@ -11,6 +11,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -23,6 +24,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import javax.annotation.Nullable;
 
 public class MimicBlock extends CompatBlock implements ITileEntityProvider {
+
+    public static final AxisAlignedBB EMPTY = new AxisAlignedBB(0, 0, 0, 0, 0, 0);
 
     public MimicBlock() {
         super(Material.ROCK);
@@ -37,6 +40,13 @@ public class MimicBlock extends CompatBlock implements ITileEntityProvider {
         GameRegistry.register(new ItemBlock(this), getRegistryName());
         GameRegistry.registerTileEntity(MimicTE.class, Enigma.MODID + "_mimic");
     }
+
+    @Override
+    @SideOnly(Side.CLIENT)
+    public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World worldIn, BlockPos pos) {
+        return EMPTY;
+    }
+
 
     @Nullable
     @Override

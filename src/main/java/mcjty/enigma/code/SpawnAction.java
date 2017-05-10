@@ -16,7 +16,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.DimensionManager;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.function.Consumer;
@@ -51,10 +50,7 @@ public class SpawnAction extends Action {
             throw new ExecutionException("Cannot find named mob '" + m + "'!");
         }
 
-        WorldServer world = DimensionManager.getWorld(namedPosition.getDimension());
-        if (world == null) {
-            world = world.getMinecraftServer().worldServerForDimension(namedPosition.getDimension());
-        }
+        WorldServer world = namedPosition.getWorld();
         EntityLiving entity = EntityTools.createEntity(world, mobConfig.getMobId());
         if (entity == null) {
             throw new ExecutionException("Could not spawn entity with id '" + mobConfig.getMobId() + "'!");

@@ -56,4 +56,9 @@ public class ClientProxy extends CommonProxy {
     public ListenableFuture<Object> addScheduledTaskClient(Runnable runnableToSchedule) {
         return Minecraft.getMinecraft().addScheduledTask(runnableToSchedule);
     }
+
+    @Override
+    public boolean isClient() {
+        return true;
+    }
 }

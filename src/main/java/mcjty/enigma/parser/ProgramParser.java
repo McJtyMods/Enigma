@@ -144,6 +144,10 @@ public class ProgramParser {
             case MOVEBLOCK:
                 return new FxAnimMoveBlockAction(line.getParameters().get(0), line.getParameters().get(1),
                         line.getParameters().get(2), line.getParameters().get(3), line.getParameters().get(4));
+            case COLORBLOCK:
+                return new FxAnimColorBlockAction(line.getParameters().get(0), line.getParameters().get(1),
+                        line.getParameters().get(2), line.getParameters().get(3), line.getParameters().get(4),
+                        line.getParameters().get(5), line.getParameters().get(6), line.getParameters().get(7));
             case MOVE:
                 return new FxAnimMoveAction(line.getParameters().get(0), line.getParameters().get(1), line.getParameters().get(2));
             case ROTATE:

@@ -7,7 +7,6 @@ import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.varia.BlockPosDim;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.DimensionManager;
 import org.apache.commons.lang3.StringUtils;
 
 public class ParticleAction extends Action {
@@ -38,10 +37,7 @@ public class ParticleAction extends Action {
             throw new ExecutionException("Cannot find particle '" + particlename + "'!");
         }
         BlockPos p = namedPosition.getPos();
-        WorldServer world = DimensionManager.getWorld(namedPosition.getDimension());
-        if (world == null) {
-            world = world.getMinecraftServer().worldServerForDimension(namedPosition.getDimension());
-        }
+        WorldServer world = namedPosition.getWorld();
         world.spawnParticle(config.getParticles(), p.getX()+.5, p.getY()+.5, p.getZ()+.5,
                 config.getAmount(), config.getOffsetX(), config.getOffsetY(), config.getOffsetZ(), config.getSpeed());
     }

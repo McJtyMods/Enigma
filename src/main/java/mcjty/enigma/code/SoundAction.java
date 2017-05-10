@@ -9,7 +9,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.DimensionManager;
 import org.apache.commons.lang3.StringUtils;
 
 public class SoundAction extends Action {
@@ -36,10 +35,7 @@ public class SoundAction extends Action {
         }
         String soundname = ObjectTools.asStringSafe(sound.eval(context));
         SoundEvent sound = new SoundEvent(new ResourceLocation(soundname));
-        WorldServer world = DimensionManager.getWorld(namedPosition.getDimension());
-        if (world == null) {
-            world = world.getMinecraftServer().worldServerForDimension(namedPosition.getDimension());
-        }
+        WorldServer world = namedPosition.getWorld();
         world.playSound(null, namedPosition.getPos(), sound, SoundCategory.BLOCKS, 1.0f, 1.0f);
     }
 }

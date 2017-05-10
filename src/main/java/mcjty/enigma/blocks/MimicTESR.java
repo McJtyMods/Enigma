@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.ReportedException;
@@ -19,6 +18,7 @@ import net.minecraft.world.WorldType;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.util.Collections;
 
@@ -57,6 +57,11 @@ public class MimicTESR extends TileEntitySpecialRenderer<MimicTE> {
                 if (layer == BlockRenderLayer.TRANSLUCENT) {
                     GlStateManager.enableBlend();
                 }
+                if (te.isBlendColor()) {
+                    GlStateManager.enableBlend();
+                    GlStateManager.blendFunc(GL11.GL_CONSTANT_COLOR, GL11.GL_ONE_MINUS_CONSTANT_COLOR);
+                    GL14.glBlendColor((float) te.getRed(), (float) te.getGreen(), (float) te.getBlue(), 0.0f);
+                }
 
                 for (BlockPos pos : fakeWorld.getPositions()) {
                     tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
@@ -65,6 +70,11 @@ public class MimicTESR extends TileEntitySpecialRenderer<MimicTE> {
                     tessellator.draw();
                 }
 
+                if (te.isBlendColor()) {
+                    GlStateManager.disableBlend();
+                    GL14.glBlendColor(1, 1, 1, 1);
+                    GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                }
                 if (layer == BlockRenderLayer.TRANSLUCENT) {
                     GlStateManager.disableBlend();
                 }
