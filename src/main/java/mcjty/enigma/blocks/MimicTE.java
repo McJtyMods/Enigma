@@ -17,12 +17,12 @@ public class MimicTE extends TileEntity {
     private IBlockState toMimic = null;
 
     // Client side: to make sure our first readFromNBT() gets the info from the server but not anymore after that
-    boolean firstSyncHappened = false;
-
+    boolean offsetSyncHappened = false;
     double dx = 0;
     double dy = 0;
     double dz = 0;
 
+    boolean colorSyncHappened = false;
     boolean blendColor = false;
     double red = 1.0f;
     double green = 1.0f;
@@ -45,6 +45,7 @@ public class MimicTE extends TileEntity {
     }
 
     public void setOffset(double dx, double dy, double dz) {
+        offsetSyncHappened = true;
         this.dx = dx;
         this.dy = dy;
         this.dz = dz;
@@ -67,6 +68,7 @@ public class MimicTE extends TileEntity {
     }
 
     public void setBlendColor(double r, double g, double b) {
+        colorSyncHappened = true;
         red = r;
         green = g;
         blue = b;
@@ -112,11 +114,14 @@ public class MimicTE extends TileEntity {
                 toMimic = block.getStateFromMeta(meta);
             }
         }
-        if ((!Enigma.proxy.isClient()) || !firstSyncHappened) {
-            firstSyncHappened = true;
+        if ((!Enigma.proxy.isClient()) || !offsetSyncHappened) {
+            offsetSyncHappened = true;
             dx = compound.getDouble("dx");
             dy = compound.getDouble("dy");
             dz = compound.getDouble("dz");
+        }
+        if ((!Enigma.proxy.isClient()) || !colorSyncHappened) {
+            colorSyncHappened = true;
             double r = compound.getDouble("r");
             double g = compound.getDouble("g");
             double b = compound.getDouble("b");
