@@ -530,6 +530,9 @@ public class ProgramParser {
                 case COPYBLOCKS:
                     actionBlock.addAction(new CopyBlocksAction(line.getParameters().get(0), line.getParameters().get(1)));
                     break;
+                case MOVEBLOCKS:
+                    actionBlock.addAction(new MoveBlocksAction(line.getParameters().get(0), line.getParameters().get(1)));
+                    break;
                 case SETMIMIC:
                     actionBlock.addAction(new SetMimicAction(line.getParameters().get(0), line.getParameters().get(1)));
                     break;

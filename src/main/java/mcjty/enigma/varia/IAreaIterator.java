@@ -5,7 +5,11 @@ import net.minecraft.world.World;
 
 public interface IAreaIterator {
 
-    BlockPos getCorner();
+    void restart();
+
+    BlockPos getBottomLeft();
+
+    BlockPos getTopRight();
 
     boolean advance();
 

@@ -15,8 +15,18 @@ public class AreaIterator implements IAreaIterator {
     }
 
     @Override
-    public BlockPos getCorner() {
+    public void restart() {
+        mp = null;
+    }
+
+    @Override
+    public BlockPos getBottomLeft() {
         return area.getPos1();
+    }
+
+    @Override
+    public BlockPos getTopRight() {
+        return area.getPos2();
     }
 
     @Override

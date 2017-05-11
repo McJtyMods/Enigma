@@ -17,19 +17,32 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import org.apache.commons.lang3.StringUtils;
 
-public class CopyBlocksAction extends Action {
+import java.util.ArrayList;
+import java.util.List;
+
+public class MoveBlocksAction extends Action {
     private final Expression<EnigmaFunctionContext> area;
     private final Expression<EnigmaFunctionContext> destination;
 
-    public CopyBlocksAction(Expression<EnigmaFunctionContext> area, Expression<EnigmaFunctionContext> destination) {
+    public MoveBlocksAction(Expression<EnigmaFunctionContext> area, Expression<EnigmaFunctionContext> destination) {
         this.area = area;
         this.destination = destination;
     }
 
     @Override
     public void dump(int indent) {
-        System.out.println(StringUtils.repeat(' ', indent) + "CopyBlocks: " + area + " to " + destination);
+        System.out.println(StringUtils.repeat(' ', indent) + "MoveBlocks: " + area + " to " + destination);
 
+    }
+
+    private static class Remembered {
+        IBlockState state;
+        NBTTagCompound tc;
+
+        public Remembered(IBlockState state, NBTTagCompound tc) {
+            this.state = state;
+            this.tc = tc;
+        }
     }
 
     @Override
@@ -45,15 +58,14 @@ public class CopyBlocksAction extends Action {
             throw new ExecutionException("Cannot find named position '" + destination + "'!");
         }
 
+        int xdim = iterator.getTopRight().getX() - iterator.getBottomLeft().getX() + 1;
+        int ydim = iterator.getTopRight().getY() - iterator.getBottomLeft().getY() + 1;
+        int zdim = iterator.getTopRight().getZ() - iterator.getBottomLeft().getZ() + 1;
+        List<Remembered> remembered = new ArrayList<>(xdim * ydim * zdim);
+
         World wsrc = iterator.getWorld();
-        WorldServer wdest = namedPosition.getWorld();
-        int dx = namedPosition.getPos().getX() - iterator.getBottomLeft().getX();
-        int dy = namedPosition.getPos().getY() - iterator.getBottomLeft().getY();
-        int dz = namedPosition.getPos().getZ() - iterator.getBottomLeft().getZ();
-        BlockPos.MutableBlockPos dest = new BlockPos.MutableBlockPos();
         while (iterator.advance()) {
             BlockPos current = iterator.current();
-            dest.setPos(current.getX() + dx, current.getY() + dy, current.getZ() + dz);
             IBlockState blockState = wsrc.getBlockState(current);
 
             TileEntity tileEntity = wsrc.getTileEntity(current);
@@ -65,18 +77,32 @@ public class CopyBlocksAction extends Action {
                 tc.removeTag("y");
                 tc.removeTag("z");
             }
+            remembered.add(new Remembered(blockState, tc));
+            wsrc.setBlockToAir(current);
+        }
 
-            wdest.setBlockState(dest, blockState, 3);
-
+        iterator.restart();
+        WorldServer wdest = namedPosition.getWorld();
+        int dx = namedPosition.getPos().getX() - iterator.getBottomLeft().getX();
+        int dy = namedPosition.getPos().getY() - iterator.getBottomLeft().getY();
+        int dz = namedPosition.getPos().getZ() - iterator.getBottomLeft().getZ();
+        BlockPos.MutableBlockPos dest = new BlockPos.MutableBlockPos();
+        int i = 0;
+        while (iterator.advance()) {
+            BlockPos current = iterator.current();
+            dest.setPos(current.getX() + dx, current.getY() + dy, current.getZ() + dz);
+            Remembered r = remembered.get(i);
+            wdest.setBlockState(dest, r.state, 3);
+            NBTTagCompound tc = r.tc;
             if (tc != null) {
                 tc.setInteger("x", dest.getX());
                 tc.setInteger("y", dest.getY());
                 tc.setInteger("z", dest.getZ());
-                tileEntity = TileEntity.create(wdest, tc);
+                TileEntity tileEntity = TileEntity.create(wdest, tc);
                 if (tileEntity != null) {
                     wdest.getChunkFromBlockCoords(dest).addTileEntity(tileEntity);
                     tileEntity.markDirty();
-                    wdest.notifyBlockUpdate(dest, blockState, blockState, 3);
+                    wdest.notifyBlockUpdate(dest, r.state, r.state, 3);
                 }
             }
         }
