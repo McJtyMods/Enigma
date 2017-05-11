@@ -14,6 +14,7 @@ public enum MainToken {
     BLOCK(false, 1, 1),        // block <name>:
     CALL(false, 1, 1),         // call <name>
     POSITION(false, 5, 5),     // position <name>, <x>, <y>, <z>, <dim>
+    AREA(false, 3, 8),         // area <name> <x1> <y1> <z1> <x2> <y2> <z2> <dim> or <name> <pos1> <pos2>
     LOOKAT(false, 1, 1),       // lookat <position>
     COMMAND(false, 1, 1),      // command <command>
     SCOPE(false, 2, 2),        // scope <id>, <expression>

@@ -2,6 +2,7 @@ package mcjty.enigma.progress;
 
 import mcjty.enigma.code.ScopeID;
 import mcjty.enigma.progress.serializers.*;
+import mcjty.enigma.varia.Area;
 import mcjty.enigma.varia.BlockPosDim;
 import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.block.state.IBlockState;
@@ -24,6 +25,7 @@ public class Progress {
     private static final NBTData<UUID, PlayerProgress> PLAYER_SERIALIZER = new PlayerSerializer();
     private static final NBTData<Integer, Integer> STATE_SERIALIZER = new StateSerializer();
     private static final NBTData<Integer, BlockPosDim> POSITION_SERIALIZER = new PositionSerializer();
+    private static final NBTData<Integer, Area> AREA_SERIALIZER = new AreaSerializer();
     private static final NBTData<Integer, ParticleConfig> PARTICLE_SERIALIZER = new ParticleSerializer();
     private static final NBTData<Integer, MobConfig> MOB_SERIALIZER = new MobConfigSerializer();
     private static final NBTData<Integer, IBlockState> NAMEDBLOCK_SERIALIZER = new NamedBlockSerializer();
@@ -35,6 +37,7 @@ public class Progress {
     private final InternedKeyMap<Object> namedVariables = new InternedKeyMap<>();
     private final InternedKeyMap<ParticleConfig> namedParticleConfigs = new InternedKeyMap<>();
     private final InternedKeyMap<MobConfig> namedMobConfigs = new InternedKeyMap<>();
+    private final InternedKeyMap<Area> namedAreas = new InternedKeyMap<>();
 
     private final InternedKeyMap<BlockPosDim> namedPositions = new InternedKeyMap<>();
     private final Map<BlockPosDim, Integer> positionsToName = new HashMap<>();
@@ -51,6 +54,7 @@ public class Progress {
         rootActivated = false;
         states.clear();
         namedPositions.clear();
+        namedAreas.clear();
         positionsToName.clear();
         playerProgress.clear();
         namedItemStacks.clear();
@@ -65,6 +69,12 @@ public class Progress {
     public InternedKeyMap<Integer> getStates() {
         return states;
     }
+
+    public void addNamedArea(String name, Area value) {
+        namedAreas.put(name, value);
+    }
+
+    public Area getNamedArea(Object o) { return namedAreas.getChecked(o); }
 
     public void addNamedVariable(String name, Object value) {
         namedVariables.put(name, value);
@@ -213,6 +223,7 @@ public class Progress {
         NBTDataSerializer.deserialize(nbt, "blocks", namedBlocks, NAMEDBLOCK_SERIALIZER);
         NBTDataSerializer.deserialize(nbt, "players", playerProgress, PLAYER_SERIALIZER);
         NBTDataSerializer.deserialize(nbt, "variables", namedVariables, VARIABLE_SERIALIZER);
+        NBTDataSerializer.deserialize(nbt, "areas", namedAreas, AREA_SERIALIZER);
         readInitializedScopes(nbt);
         rootActivated = nbt.getBoolean("rootActivated");
 
@@ -246,6 +257,7 @@ public class Progress {
         NBTDataSerializer.serialize(compound, "particles", namedParticleConfigs, PARTICLE_SERIALIZER);
         NBTDataSerializer.serialize(compound, "mobs", namedMobConfigs, MOB_SERIALIZER);
         NBTDataSerializer.serialize(compound, "variables", namedVariables, VARIABLE_SERIALIZER);
+        NBTDataSerializer.serialize(compound, "areas", namedAreas, AREA_SERIALIZER);
         writeInitializedScopes(compound);
         return compound;
     }

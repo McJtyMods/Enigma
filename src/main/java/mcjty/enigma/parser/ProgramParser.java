@@ -541,13 +541,20 @@ public class ProgramParser {
                 case LOOKAT:
                     actionBlock.addAction(new LookAtAction(line.getParameters().get(0)));
                     break;
+                case AREA:
+                    break;
                 case POSITION:
-                    actionBlock.addAction(new PositionAction(
-                            line.getParameters().get(0),
-                            line.getParameters().get(1),
-                            line.getParameters().get(2),
-                            line.getParameters().get(3),
-                            line.getParameters().get(4)));
+                    if (line.getParameters().size() >= 8) {
+                        actionBlock.addAction(new AreaAction(
+                                line.getParameters().get(0),
+                                line.getParameters().get(1), line.getParameters().get(2), line.getParameters().get(3),
+                                line.getParameters().get(4), line.getParameters().get(5), line.getParameters().get(6),
+                                line.getParameters().get(7)));
+                    } else {
+                        actionBlock.addAction(new Area2Action(
+                                line.getParameters().get(0),
+                                line.getParameters().get(1), line.getParameters().get(2)));
+                    }
                     break;
                 case HP:
                     actionBlock.addAction(new SetHpAction(line.getParameters().get(0)));

@@ -16,8 +16,7 @@ public class PositionSerializer implements NBTData<Integer, BlockPosDim> {
     @Override
     public BlockPosDim getValue(NBTTagCompound tag) {
         BlockPos p = new BlockPos(tag.getInteger("x"), tag.getInteger("y"), tag.getInteger("z"));
-        BlockPosDim pd = new BlockPosDim(p, tag.getInteger("dim"));
-        return pd;
+        return new BlockPosDim(p, tag.getInteger("dim"));
     }
 
     @Override
