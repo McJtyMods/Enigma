@@ -1,6 +1,7 @@
 package mcjty.enigma.parser;
 
 import mcjty.enigma.code.*;
+import mcjty.enigma.code.actions.*;
 
 import javax.annotation.Nonnull;
 import java.util.List;

@@ -1,6 +1,7 @@
 package mcjty.enigma.commands;
 
 import mcjty.enigma.code.*;
+import mcjty.enigma.code.actions.*;
 import mcjty.enigma.parser.*;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
