@@ -17,6 +17,10 @@ public class Area {
         this.dimension = dimension;
     }
 
+    public IAreaIterator getIterator() {
+        return new AreaIterator(this);
+    }
+
     @Nonnull
     public BlockPos getPos1() {
         return pos1;

@@ -8,47 +8,48 @@ import mcjty.enigma.code.ExecutionException;
 import mcjty.enigma.parser.Expression;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
-import mcjty.enigma.varia.BlockPosDim;
+import mcjty.enigma.varia.AreaTools;
+import mcjty.enigma.varia.IAreaIterator;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.DimensionManager;
+import net.minecraft.world.World;
 import org.apache.commons.lang3.StringUtils;
 
 public class SetMimicAction extends Action {
-    private final Expression<EnigmaFunctionContext> position;
+    private final Expression<EnigmaFunctionContext> positionOrArea;
     private final Expression<EnigmaFunctionContext> block;
 
-    public SetMimicAction(Expression<EnigmaFunctionContext> position, Expression<EnigmaFunctionContext> block) {
-        this.position = position;
+    public SetMimicAction(Expression<EnigmaFunctionContext> positionOrArea, Expression<EnigmaFunctionContext> block) {
+        this.positionOrArea = positionOrArea;
         this.block = block;
     }
 
     @Override
     public void dump(int indent) {
-        System.out.println(StringUtils.repeat(' ', indent) + "SetMimic: " + position + " to " + block);
+        System.out.println(StringUtils.repeat(' ', indent) + "SetMimic: " + positionOrArea + " to " + block);
 
     }
 
     @Override
     public void execute(EnigmaFunctionContext context) throws ExecutionException {
         Progress progress = ProgressHolder.getProgress(context.getWorld());
-        Object pos = position.eval(context);
-        BlockPosDim namedPosition = progress.getNamedPosition(pos);
-        if (namedPosition == null) {
-            throw new ExecutionException("Cannot find named position '" + pos + "'!");
-        }
         Object blockname = block.eval(context);
         IBlockState namedBlock = progress.getNamedBlock(blockname);
         if (namedBlock == null) {
             throw new ExecutionException("Cannot find named block '" + blockname + "'!");
         }
-        WorldServer world = DimensionManager.getWorld(namedPosition.getDimension());
-        world.setBlockState(namedPosition.getPos(), ModBlocks.mimic.getDefaultState(), 3);
-        TileEntity te = world.getTileEntity(namedPosition.getPos());
-        if (te instanceof MimicTE) {
-            MimicTE mimic = (MimicTE) te;
-            mimic.setToMimic(namedBlock);
+
+        Object pos = positionOrArea.eval(context);
+        IAreaIterator iterator = AreaTools.getAreaIterator(progress, pos);
+        World w = iterator.getWorld();
+        while (iterator.advance()) {
+            w.setBlockState(iterator.current(), namedBlock, 3);
+            w.setBlockState(iterator.current(), ModBlocks.mimic.getDefaultState(), 3);
+            TileEntity te = w.getTileEntity(iterator.current());
+            if (te instanceof MimicTE) {
+                MimicTE mimic = (MimicTE) te;
+                mimic.setToMimic(namedBlock);
+            }
         }
     }
 }

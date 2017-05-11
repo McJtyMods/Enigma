@@ -9,8 +9,8 @@ import net.minecraftforge.common.DimensionManager;
 import javax.annotation.Nonnull;
 
 public class BlockPosDim {
-    @Nonnull
-    private final BlockPos pos;
+
+    @Nonnull private final BlockPos pos;
     private final int dimension;
 
     public BlockPosDim(@Nonnull BlockPos pos, int dimension) {
@@ -26,6 +26,30 @@ public class BlockPosDim {
     public int getDimension() {
         return dimension;
     }
+
+    public IAreaIterator getIterator() {
+        return new IAreaIterator() {
+            private boolean first = true;
+
+            @Override
+            public boolean advance() {
+                boolean f = first;
+                first = false;
+                return f;
+            }
+
+            @Override
+            public BlockPos current() {
+                return pos;
+            }
+
+            @Override
+            public World getWorld() {
+                return BlockPosDim.this.getWorld();
+            }
+        };
+    }
+
 
     @Override
     public boolean equals(Object o) {
