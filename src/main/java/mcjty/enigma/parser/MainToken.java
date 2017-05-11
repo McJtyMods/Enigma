@@ -31,6 +31,7 @@ public enum MainToken {
     ITEMSTACK(false, 1, 1),    // itemstack <name>
     BLOCKSTATE(false,1, 1),    // blockstate <name>
     SETBLOCK(false, 2, 2),     // setblock <position/area> <block>
+    COPYBLOCKS(false, 2, 2),   // copyblocks <area> <position>
     SETMIMIC(false, 2, 2),     // setmimic <position/area> <block>
     NAME(false, 1, 1),         // name <name>
     AMOUNT(false, 1, 1),       // amount <number>

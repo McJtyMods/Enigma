@@ -32,6 +32,11 @@ public class BlockPosDim {
             private boolean first = true;
 
             @Override
+            public BlockPos getCorner() {
+                return pos;
+            }
+
+            @Override
             public boolean advance() {
                 boolean f = first;
                 first = false;

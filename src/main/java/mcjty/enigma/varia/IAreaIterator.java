@@ -5,6 +5,8 @@ import net.minecraft.world.World;
 
 public interface IAreaIterator {
 
+    BlockPos getCorner();
+
     boolean advance();
 
     BlockPos current();
