@@ -6,7 +6,7 @@ import net.minecraftforge.common.DimensionManager;
 
 import javax.annotation.Nonnull;
 
-public class Area {
+public class Area implements IPositional<Area> {
     @Nonnull private final BlockPos pos1;
     @Nonnull private final BlockPos pos2;
     private final int dimension;
@@ -15,6 +15,36 @@ public class Area {
         this.pos1 = pos1;
         this.pos2 = pos2;
         this.dimension = dimension;
+    }
+
+    @Override
+    public Area up(int amount) {
+        return new Area(pos1.up(amount), pos2.up(amount), dimension);
+    }
+
+    @Override
+    public Area down(int amount) {
+        return new Area(pos1.down(amount), pos2.down(amount), dimension);
+    }
+
+    @Override
+    public Area west(int amount) {
+        return new Area(pos1.west(amount), pos2.west(amount), dimension);
+    }
+
+    @Override
+    public Area east(int amount) {
+        return new Area(pos1.east(amount), pos2.east(amount), dimension);
+    }
+
+    @Override
+    public Area south(int amount) {
+        return new Area(pos1.south(amount), pos2.south(amount), dimension);
+    }
+
+    @Override
+    public Area north(int amount) {
+        return new Area(pos1.north(amount), pos2.north(amount), dimension);
     }
 
     public IAreaIterator getIterator() {
@@ -53,10 +83,12 @@ public class Area {
         return result;
     }
 
+    @Override
     public int getDimension() {
         return dimension;
     }
 
+    @Override
     public WorldServer getWorld() {
         WorldServer world = DimensionManager.getWorld(getDimension());
         if (world == null) {

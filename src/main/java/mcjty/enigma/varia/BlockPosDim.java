@@ -8,7 +8,7 @@ import net.minecraftforge.common.DimensionManager;
 
 import javax.annotation.Nonnull;
 
-public class BlockPosDim {
+public class BlockPosDim implements IPositional<BlockPosDim> {
 
     @Nonnull private final BlockPos pos;
     private final int dimension;
@@ -18,11 +18,42 @@ public class BlockPosDim {
         this.dimension = dimension;
     }
 
+    @Override
+    public BlockPosDim up(int amount) {
+        return new BlockPosDim(pos.up(amount), dimension);
+    }
+
+    @Override
+    public BlockPosDim down(int amount) {
+        return new BlockPosDim(pos.down(amount), dimension);
+    }
+
+    @Override
+    public BlockPosDim west(int amount) {
+        return new BlockPosDim(pos.west(amount), dimension);
+    }
+
+    @Override
+    public BlockPosDim east(int amount) {
+        return new BlockPosDim(pos.east(amount), dimension);
+    }
+
+    @Override
+    public BlockPosDim south(int amount) {
+        return new BlockPosDim(pos.south(amount), dimension);
+    }
+
+    @Override
+    public BlockPosDim north(int amount) {
+        return new BlockPosDim(pos.north(amount), dimension);
+    }
+
     @Nonnull
     public BlockPos getPos() {
         return pos;
     }
 
+    @Override
     public int getDimension() {
         return dimension;
     }
@@ -93,6 +124,7 @@ public class BlockPosDim {
         return d0 * d0 + d1 * d1 + d2 * d2;
     }
 
+    @Override
     public WorldServer getWorld() {
         WorldServer world = DimensionManager.getWorld(getDimension());
         if (world == null) {
