@@ -12,9 +12,9 @@ import java.util.List;
 import java.util.Map;
 
 import static mcjty.enigma.fxanim.animations.ColorAnimation.FXANIM_COLOR;
-import static mcjty.enigma.fxanim.animations.ColorBlockAnimation.FXANIM_COLORBLOCK;
+import static mcjty.enigma.fxanim.animations.ColorMimicAnimation.FXANIM_COLORMIMIC;
 import static mcjty.enigma.fxanim.animations.MoveAnimation.FXANIM_MOVE;
-import static mcjty.enigma.fxanim.animations.MoveBlockAnimation.FXANIM_MOVEBLOCK;
+import static mcjty.enigma.fxanim.animations.MoveMimicAnimation.FXANIM_MOVEMIMIC;
 import static mcjty.enigma.fxanim.animations.RotateAnimation.FXANIM_ROTATE;
 
 public class FxAnimationHandler {
@@ -53,7 +53,7 @@ public class FxAnimationHandler {
         registerAnimationFactory(FXANIM_MOVE, MoveAnimation::new);
         registerAnimationFactory(FXANIM_ROTATE, RotateAnimation::new);
         registerAnimationFactory(FXANIM_COLOR, ColorAnimation::new);
-        registerAnimationFactory(FXANIM_MOVEBLOCK, MoveBlockAnimation::new);
-        registerAnimationFactory(FXANIM_COLORBLOCK, ColorBlockAnimation::new);
+        registerAnimationFactory(FXANIM_MOVEMIMIC, MoveMimicAnimation::new);
+        registerAnimationFactory(FXANIM_COLORMIMIC, ColorMimicAnimation::new);
     }
 }

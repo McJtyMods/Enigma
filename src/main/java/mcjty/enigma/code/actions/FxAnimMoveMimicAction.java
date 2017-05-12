@@ -5,7 +5,7 @@ import mcjty.enigma.code.Action;
 import mcjty.enigma.code.EnigmaFunctionContext;
 import mcjty.enigma.code.ExecutionException;
 import mcjty.enigma.fxanim.FxAnimationHandler;
-import mcjty.enigma.fxanim.animations.MoveBlockAnimation;
+import mcjty.enigma.fxanim.animations.MoveMimicAnimation;
 import mcjty.enigma.parser.Expression;
 import mcjty.enigma.parser.ObjectTools;
 import mcjty.enigma.progress.Progress;
@@ -17,14 +17,14 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.apache.commons.lang3.StringUtils;
 
-public class FxAnimMoveBlockAction extends Action {
+public class FxAnimMoveMimicAction extends Action {
     private final Expression<EnigmaFunctionContext> ticks;
     private final Expression<EnigmaFunctionContext> pos;
     private final Expression<EnigmaFunctionContext> dx;
     private final Expression<EnigmaFunctionContext> dy;
     private final Expression<EnigmaFunctionContext> dz;
 
-    public FxAnimMoveBlockAction(Expression<EnigmaFunctionContext> ticks, Expression<EnigmaFunctionContext> pos,
+    public FxAnimMoveMimicAction(Expression<EnigmaFunctionContext> ticks, Expression<EnigmaFunctionContext> pos,
                                  Expression<EnigmaFunctionContext> dx,
                                  Expression<EnigmaFunctionContext> dy,
                                  Expression<EnigmaFunctionContext> dz) {
@@ -37,7 +37,7 @@ public class FxAnimMoveBlockAction extends Action {
 
     @Override
     public void dump(int indent) {
-        System.out.println(StringUtils.repeat(' ', indent) + "FxAnimMoveBlock:");
+        System.out.println(StringUtils.repeat(' ', indent) + "FxAnimMoveMimic:");
 
     }
 
@@ -66,7 +66,7 @@ public class FxAnimMoveBlockAction extends Action {
             throw new ExecutionException("Position '" + p + "' does not seem to have a mimic!");
         }
 
-        MoveBlockAnimation animation = new MoveBlockAnimation(
+        MoveMimicAnimation animation = new MoveMimicAnimation(
                 b1,
                 new Vec3d(b1.getX(), b1.getY(), b1.getZ()),
                 new Vec3d(b1.getX() + dx, b1.getY() + dy, b1.getZ() + dz), t);

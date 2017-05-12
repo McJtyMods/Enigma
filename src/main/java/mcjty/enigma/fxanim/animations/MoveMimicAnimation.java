@@ -10,9 +10,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-public class ColorBlockAnimation implements FxAnimation {
+public class MoveMimicAnimation implements FxAnimation {
 
-    public static final String FXANIM_COLORBLOCK = "colorblock";
+    public static final String FXANIM_MOVEMIMIC = "movemimic";
 
     private final BlockPos mimicPos;
     private final Vec3d start;
@@ -20,14 +20,14 @@ public class ColorBlockAnimation implements FxAnimation {
     private final int totalTicks;
     private int currentTick = 0;
 
-    public ColorBlockAnimation(BlockPos mimicPos, Vec3d start, Vec3d end, int totalTicks) {
+    public MoveMimicAnimation(BlockPos mimicPos, Vec3d start, Vec3d end, int totalTicks) {
         this.mimicPos = mimicPos;
         this.start = start;
         this.end = end;
         this.totalTicks = totalTicks;
     }
 
-    public ColorBlockAnimation(ByteBuf buf) {
+    public MoveMimicAnimation(ByteBuf buf) {
         mimicPos = NetworkTools.readPos(buf);
         start = new Vec3d(buf.readDouble(), buf.readDouble(), buf.readDouble());
         end = new Vec3d(buf.readDouble(), buf.readDouble(), buf.readDouble());
@@ -36,7 +36,7 @@ public class ColorBlockAnimation implements FxAnimation {
 
     @Override
     public String getID() {
-        return FXANIM_COLORBLOCK;
+        return FXANIM_MOVEMIMIC;
     }
 
     @Override
@@ -63,10 +63,10 @@ public class ColorBlockAnimation implements FxAnimation {
         if (te instanceof MimicTE) {
             MimicTE mimicTE = (MimicTE)te;
             double factor = ((double) currentTick) / totalTicks;
-            double x = start.xCoord + (end.xCoord - start.xCoord) * factor;
-            double y = start.yCoord + (end.yCoord - start.yCoord) * factor;
-            double z = start.zCoord + (end.zCoord - start.zCoord) * factor;
-            mimicTE.setBlendColor(x, y, z);
+            double x = (end.xCoord - start.xCoord) * factor;
+            double y = (end.yCoord - start.yCoord) * factor;
+            double z = (end.zCoord - start.zCoord) * factor;
+            mimicTE.setOffset(x, y, z);
         }
         currentTick++;
     }

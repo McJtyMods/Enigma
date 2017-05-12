@@ -5,8 +5,7 @@ import mcjty.enigma.code.Action;
 import mcjty.enigma.code.EnigmaFunctionContext;
 import mcjty.enigma.code.ExecutionException;
 import mcjty.enigma.fxanim.FxAnimationHandler;
-import mcjty.enigma.fxanim.animations.ColorBlockAnimation;
-import mcjty.enigma.fxanim.animations.MoveBlockAnimation;
+import mcjty.enigma.fxanim.animations.ColorMimicAnimation;
 import mcjty.enigma.parser.Expression;
 import mcjty.enigma.parser.ObjectTools;
 import mcjty.enigma.progress.Progress;
@@ -18,7 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import org.apache.commons.lang3.StringUtils;
 
-public class FxAnimColorBlockAction extends Action {
+public class FxAnimColorMimicAction extends Action {
     private final Expression<EnigmaFunctionContext> ticks;
     private final Expression<EnigmaFunctionContext> pos;
     private final Expression<EnigmaFunctionContext> r1;
@@ -28,7 +27,7 @@ public class FxAnimColorBlockAction extends Action {
     private final Expression<EnigmaFunctionContext> g2;
     private final Expression<EnigmaFunctionContext> b2;
 
-    public FxAnimColorBlockAction(Expression<EnigmaFunctionContext> ticks, Expression<EnigmaFunctionContext> pos,
+    public FxAnimColorMimicAction(Expression<EnigmaFunctionContext> ticks, Expression<EnigmaFunctionContext> pos,
                                   Expression<EnigmaFunctionContext> r1,
                                   Expression<EnigmaFunctionContext> g1,
                                   Expression<EnigmaFunctionContext> b1,
@@ -47,7 +46,7 @@ public class FxAnimColorBlockAction extends Action {
 
     @Override
     public void dump(int indent) {
-        System.out.println(StringUtils.repeat(' ', indent) + "FxAnimColorBlock:");
+        System.out.println(StringUtils.repeat(' ', indent) + "FxAnimColorMimic:");
 
     }
 
@@ -79,7 +78,7 @@ public class FxAnimColorBlockAction extends Action {
             throw new ExecutionException("Position '" + p + "' does not seem to have a mimic!");
         }
 
-        ColorBlockAnimation animation = new ColorBlockAnimation(
+        ColorMimicAnimation animation = new ColorMimicAnimation(
                 b,
                 new Vec3d(r1, g1, b1),
                 new Vec3d(r2, g2, b2), t);

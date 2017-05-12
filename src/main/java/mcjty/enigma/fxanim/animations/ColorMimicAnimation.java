@@ -5,15 +5,14 @@ import mcjty.enigma.Enigma;
 import mcjty.enigma.blocks.MimicTE;
 import mcjty.enigma.fxanim.FxAnimation;
 import mcjty.enigma.varia.NetworkTools;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-public class MoveBlockAnimation implements FxAnimation {
+public class ColorMimicAnimation implements FxAnimation {
 
-    public static final String FXANIM_MOVEBLOCK = "moveblock";
+    public static final String FXANIM_COLORMIMIC = "colormimic";
 
     private final BlockPos mimicPos;
     private final Vec3d start;
@@ -21,14 +20,14 @@ public class MoveBlockAnimation implements FxAnimation {
     private final int totalTicks;
     private int currentTick = 0;
 
-    public MoveBlockAnimation(BlockPos mimicPos, Vec3d start, Vec3d end, int totalTicks) {
+    public ColorMimicAnimation(BlockPos mimicPos, Vec3d start, Vec3d end, int totalTicks) {
         this.mimicPos = mimicPos;
         this.start = start;
         this.end = end;
         this.totalTicks = totalTicks;
     }
 
-    public MoveBlockAnimation(ByteBuf buf) {
+    public ColorMimicAnimation(ByteBuf buf) {
         mimicPos = NetworkTools.readPos(buf);
         start = new Vec3d(buf.readDouble(), buf.readDouble(), buf.readDouble());
         end = new Vec3d(buf.readDouble(), buf.readDouble(), buf.readDouble());
@@ -37,7 +36,7 @@ public class MoveBlockAnimation implements FxAnimation {
 
     @Override
     public String getID() {
-        return FXANIM_MOVEBLOCK;
+        return FXANIM_COLORMIMIC;
     }
 
     @Override
@@ -64,10 +63,10 @@ public class MoveBlockAnimation implements FxAnimation {
         if (te instanceof MimicTE) {
             MimicTE mimicTE = (MimicTE)te;
             double factor = ((double) currentTick) / totalTicks;
-            double x = (end.xCoord - start.xCoord) * factor;
-            double y = (end.yCoord - start.yCoord) * factor;
-            double z = (end.zCoord - start.zCoord) * factor;
-            mimicTE.setOffset(x, y, z);
+            double x = start.xCoord + (end.xCoord - start.xCoord) * factor;
+            double y = start.yCoord + (end.yCoord - start.yCoord) * factor;
+            double z = start.zCoord + (end.zCoord - start.zCoord) * factor;
+            mimicTE.setBlendColor(x, y, z);
         }
         currentTick++;
     }
