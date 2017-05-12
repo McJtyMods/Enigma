@@ -10,11 +10,14 @@ import mcjty.enigma.parser.Expression;
 import mcjty.enigma.parser.ObjectTools;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
+import mcjty.enigma.varia.AreaTools;
 import mcjty.enigma.varia.BlockPosDim;
+import mcjty.enigma.varia.IAreaIterator;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 import org.apache.commons.lang3.StringUtils;
 
 public class FxAnimMoveMimicAction extends Action {
@@ -49,28 +52,31 @@ public class FxAnimMoveMimicAction extends Action {
 
         Progress progress = ProgressHolder.getProgress(context.getWorld());
         Object p = pos.eval(context);
-        BlockPosDim namedPosition = progress.getNamedPosition(p);
-        if (namedPosition == null) {
-            throw new ExecutionException("Cannot find named position '" + p + "'!");
-        }
+        IAreaIterator iterator = AreaTools.getAreaIterator(progress, p);
+
         double dx = ObjectTools.asDoubleSafe(this.dx.eval(context));
         double dy = ObjectTools.asDoubleSafe(this.dy.eval(context));
         double dz = ObjectTools.asDoubleSafe(this.dz.eval(context));
-        BlockPos b1 = namedPosition.getPos();
 
-        TileEntity te = namedPosition.getWorld().getTileEntity(b1);
-        if (te instanceof MimicTE) {
-            MimicTE mimicTE = (MimicTE) te;
-            mimicTE.setOffset(dx, dy, dz);
-        } else {
-            throw new ExecutionException("Position '" + p + "' does not seem to have a mimic!");
+        World world = iterator.getWorld();
+
+        while (iterator.advance()) {
+            BlockPos b1 = iterator.current();
+
+            TileEntity te = world.getTileEntity(b1);
+            if (te instanceof MimicTE) {
+                MimicTE mimicTE = (MimicTE) te;
+                mimicTE.setOffset(dx, dy, dz);
+            } else {
+                throw new ExecutionException("Position '" + p + "' does not seem to have a mimic!");
+            }
+
+            MoveMimicAnimation animation = new MoveMimicAnimation(
+                    b1,
+                    new Vec3d(b1.getX(), b1.getY(), b1.getZ()),
+                    new Vec3d(b1.getX() + dx, b1.getY() + dy, b1.getZ() + dz), t);
+            FxAnimationHandler.startAnimationServer((EntityPlayerMP) context.getPlayer(), animation);
         }
-
-        MoveMimicAnimation animation = new MoveMimicAnimation(
-                b1,
-                new Vec3d(b1.getX(), b1.getY(), b1.getZ()),
-                new Vec3d(b1.getX() + dx, b1.getY() + dy, b1.getZ() + dz), t);
-        FxAnimationHandler.startAnimationServer((EntityPlayerMP)context.getPlayer(), animation);
     }
 
 }

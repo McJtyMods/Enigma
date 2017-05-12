@@ -1,9 +1,5 @@
 package mcjty.enigma.code;
 
-import mcjty.enigma.network.EnigmaMessages;
-import mcjty.enigma.network.PacketAddMessage;
-import net.minecraft.util.text.TextFormatting;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,20 +16,17 @@ public class ActionBlock {
         }
     }
 
-    public void execute(EnigmaFunctionContext context) {
+    public void execute(EnigmaFunctionContext context) throws ExecutionException {
         try {
             for (Action action : actions) {
                 action.execute(context);
             }
         } catch (IndexOutOfBoundsException e) {
-            EnigmaMessages.INSTANCE.sendToAll(new PacketAddMessage(TextFormatting.RED + "Out of bounds exception!", 400));
+            throw new ExecutionException("Index Out of Bounds exception", e);
         } catch (NumberFormatException e) {
-            EnigmaMessages.INSTANCE.sendToAll(new PacketAddMessage(TextFormatting.RED + "Number format exception!", 400));
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-            EnigmaMessages.INSTANCE.sendToAll(new PacketAddMessage(TextFormatting.RED + e.getMessage(), 400));
+            throw new ExecutionException("Number Format exception", e);
         } catch(Exception e) {
-            EnigmaMessages.INSTANCE.sendToAll(new PacketAddMessage(TextFormatting.RED + "Exception: " + e.getMessage(), 400));
+            throw new ExecutionException("General exception: " + e.getMessage(), e);
         }
     }
 }

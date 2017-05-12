@@ -39,7 +39,12 @@ public class ProgramParser {
                 if (!line.isEndsWithColon()) {
                     throw new ParserException("Expected ':' after 'SCOPE' statement", line.getLineNumber());
                 }
-                String name = ObjectTools.asStringSafe(line.getParameters().get(0).eval(EnigmaFunctionContext.EMPTY));
+                String name = null;
+                try {
+                    name = ObjectTools.asStringSafe(line.getParameters().get(0).eval(EnigmaFunctionContext.EMPTY));
+                } catch (ExecutionException e) {
+                    throw new ParserException(e.getMessage(), linenumber);
+                }
                 ActionBlock block = new ActionBlock();
                 parseActionBlock(context, block);
                 scope.addNamedActionBlock(name, block);
@@ -54,7 +59,12 @@ public class ProgramParser {
             throw new ParserException("Expected ':' after 'SCOPE' statement", line.getLineNumber());
         }
 
-        ScopeID id = new ScopeID((String) line.getParameters().get(0).eval(EnigmaFunctionContext.EMPTY));
+        ScopeID id = null;
+        try {
+            id = new ScopeID((String) line.getParameters().get(0).eval(EnigmaFunctionContext.EMPTY));
+        } catch (ExecutionException e) {
+            throw new ParserException(e.getMessage(), line.getLineNumber());
+        }
         Scope newscope = new Scope(id);
         newscope.setCondition(line.getParameters().get(1));
 

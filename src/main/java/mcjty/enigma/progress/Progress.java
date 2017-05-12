@@ -74,7 +74,17 @@ public class Progress {
         namedAreas.put(name, value);
     }
 
-    public Area getNamedArea(Object o) { return namedAreas.getChecked(o); }
+    public Area getNamedArea(Object o) {
+        if (o instanceof Integer) {
+            return namedAreas.get(o);
+        } else if (o instanceof String) {
+            return namedAreas.get((String) o);
+        } else if (o instanceof Area) {
+            return (Area) o;
+        } else {
+            return null;
+        }
+    }
 
     public void addNamedVariable(String name, Object value) {
         namedVariables.put(name, value);

@@ -90,7 +90,7 @@ public class ScopeInstance {
 
     // Make sure this scope is active. This does not check the condition:
     // It is assumed the condition is valid
-    private void activate(EnigmaFunctionContext context) {
+    private void activate(EnigmaFunctionContext context) throws ExecutionException {
         if (active != null && active) {
             return;
         }
@@ -182,7 +182,7 @@ public class ScopeInstance {
         active = false;
     }
 
-    public void checkActivity(EnigmaFunctionContext context) {
+    public void checkActivity(EnigmaFunctionContext context) throws ExecutionException {
         if (scope.isScopeConditionTrue(context)) {
             activate(context);
             ticker++;

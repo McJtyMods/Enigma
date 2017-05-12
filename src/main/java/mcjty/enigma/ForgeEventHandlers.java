@@ -1,8 +1,9 @@
 package mcjty.enigma;
 
 import mcjty.enigma.code.EnigmaFunctionContext;
+import mcjty.enigma.code.ExecutionException;
 import mcjty.enigma.code.RootScope;
-import mcjty.enigma.fxanim.FxAnimationHandler;
+import mcjty.enigma.code.Scope;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.varia.BlockPosDim;
@@ -15,7 +16,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -135,7 +135,11 @@ public class ForgeEventHandlers {
         }
 
         EnigmaFunctionContext context = new EnigmaFunctionContext(world, null);
-        RootScope.getRootInstance(world).checkActivity(context);
+        try {
+            RootScope.getRootInstance(world).checkActivity(context);
+        } catch (ExecutionException e) {
+            Scope.handleException(e);
+        }
     }
 
     @SubscribeEvent

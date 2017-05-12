@@ -1,5 +1,6 @@
 package mcjty.enigma.parser;
 
+import mcjty.enigma.code.ExecutionException;
 import org.apache.commons.lang3.text.StrBuilder;
 
 public class ExpressionParser<T> {
@@ -161,8 +162,12 @@ public class ExpressionParser<T> {
             ParsedExpression<T> aexp = parseFactor();
             Expression<T> a = aexp.getExpression();
             if (aexp.isConstant()) {
-                Object eval = ObjectTools.sub(0, a.eval(null));
-                return new ParsedExpression<>(w -> eval, true, eval.toString());
+                try {
+                    Object eval = ObjectTools.sub(0, a.eval(null));
+                    return new ParsedExpression<>(w -> eval, true, eval.toString());
+                } catch (ExecutionException e) {
+                    throw new ExpressionException(e.getMessage());
+                }
             } else {
                 return new ParsedExpression<>(w -> ObjectTools.sub(0, a.eval(w)), false, "-" + aexp.getDebug());
             }
@@ -219,8 +224,12 @@ public class ExpressionParser<T> {
                 x = parseExpression();
                 Expression<T> finalX = x.getExpression();
                 if (x.isConstant()) {
-                    double result = Math.sqrt(ObjectTools.asDoubleSafe(finalX.eval(null)));
-                    x = new ParsedExpression<>(w -> result, true, Double.toString(result));
+                    try {
+                        double result = Math.sqrt(ObjectTools.asDoubleSafe(finalX.eval(null)));
+                        x = new ParsedExpression<>(w -> result, true, Double.toString(result));
+                    } catch (ExecutionException e) {
+                        throw new ExpressionException(e.getMessage());
+                    }
                 } else {
                     x = new ParsedExpression<>(w -> Math.sqrt(ObjectTools.asDoubleSafe(finalX.eval(w))), false,
                             "sqrt(" + x.getDebug() + ")");
@@ -291,10 +300,14 @@ public class ExpressionParser<T> {
         return ch == '_' || (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9');
     }
 
-    private ParsedExpression<T> optimizeBinaryOperator(Expression<T> operation, ParsedExpression<T> p1, ParsedExpression<T> p2, String op) {
+    private ParsedExpression<T> optimizeBinaryOperator(Expression<T> operation, ParsedExpression<T> p1, ParsedExpression<T> p2, String op) throws ExpressionException {
         if (p1.isConstant() && p2.isConstant()) {
-            Object rc = operation.eval(null);
-            return new ParsedExpression<>(w -> rc, true, rc.toString());
+            try {
+                Object rc = operation.eval(null);
+                return new ParsedExpression<>(w -> rc, true, rc.toString());
+            } catch (ExecutionException e) {
+                throw new ExpressionException(e.getMessage());
+            }
         } else {
             return new ParsedExpression<>(operation, false, p1.getDebug() + op + p2.getDebug());
         }

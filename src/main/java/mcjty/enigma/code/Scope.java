@@ -1,11 +1,14 @@
 package mcjty.enigma.code;
 
+import mcjty.enigma.network.EnigmaMessages;
+import mcjty.enigma.network.PacketAddMessage;
 import mcjty.enigma.parser.Expression;
 import mcjty.enigma.parser.ObjectTools;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.varia.InventoryHelper;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import org.apache.commons.lang3.StringUtils;
@@ -91,7 +94,7 @@ public class Scope {
     }
 
 
-    public boolean isScopeConditionTrue(EnigmaFunctionContext context) {
+    public boolean isScopeConditionTrue(EnigmaFunctionContext context) throws ExecutionException {
         return condition == null || ObjectTools.asBoolSafe(condition.eval(context));
     }
 
@@ -112,81 +115,99 @@ public class Scope {
     }
 
     public void onRightClickItem(PlayerInteractEvent.RightClickItem event, EnigmaFunctionContext context, @Nonnull ItemStack stack) {
-        for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onRightClickItem) {
-            Object nameditem = pair.getValue().eval(context);
-            Progress progress = ProgressHolder.getProgress(context.getWorld());
-            ItemStack namedItemStack = progress.getNamedItemStack(nameditem);
-            if (InventoryHelper.stackEqualExact(stack, namedItemStack))
-                pair.getKey().execute(context);
+        try {
+            for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onRightClickItem) {
+                Object nameditem = pair.getValue().eval(context);
+                Progress progress = ProgressHolder.getProgress(context.getWorld());
+                ItemStack namedItemStack = progress.getNamedItemStack(nameditem);
+                if (InventoryHelper.stackEqualExact(stack, namedItemStack))
+                    pair.getKey().execute(context);
+            }
+        } catch (ExecutionException e) {
+            handleException(e);
         }
     }
 
     public void onRightClickPosition(PlayerInteractEvent.RightClickBlock event, EnigmaFunctionContext context, @Nonnull Integer position) {
-        for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onRightClickPosition) {
-            if (ObjectTools.equals(position, pair.getValue().eval(context))) {
-                pair.getKey().execute(context);
+        try {
+            for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onRightClickPosition) {
+                if (ObjectTools.equals(position, pair.getValue().eval(context))) {
+                    pair.getKey().execute(context);
+                }
             }
+        } catch (ExecutionException e) {
+            handleException(e);
         }
     }
 
     public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event, EnigmaFunctionContext context, @Nonnull Integer blockName) {
-        for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onRightClickBlock) {
-            if (ObjectTools.equals(blockName, pair.getValue().eval(context))) {
-                pair.getKey().execute(context);
+        try {
+            for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onRightClickBlock) {
+                if (ObjectTools.equals(blockName, pair.getValue().eval(context))) {
+                    pair.getKey().execute(context);
+                }
             }
+        } catch (ExecutionException e) {
+            handleException(e);
         }
     }
 
     public void onLeftClickPosition(PlayerInteractEvent.LeftClickBlock event, EnigmaFunctionContext context, @Nonnull Integer position) {
-        for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onLeftClickPosition) {
-            if (ObjectTools.equals(position, pair.getValue().eval(context))) {
-                pair.getKey().execute(context);
+        try {
+            for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onLeftClickPosition) {
+                if (ObjectTools.equals(position, pair.getValue().eval(context))) {
+                    pair.getKey().execute(context);
+                }
             }
+        } catch (ExecutionException e) {
+            handleException(e);
         }
     }
 
     public void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event, EnigmaFunctionContext context, @Nonnull Integer blockName) {
-        for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onLeftClickBlock) {
-            if (ObjectTools.equals(blockName, pair.getValue().eval(context))) {
-                pair.getKey().execute(context);
+        try {
+            for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onLeftClickBlock) {
+                if (ObjectTools.equals(blockName, pair.getValue().eval(context))) {
+                    pair.getKey().execute(context);
+                }
             }
+        } catch (ExecutionException e) {
+            handleException(e);
+        }
+    }
+
+    private void performActions(EnigmaFunctionContext context, List<ActionBlock> actions) {
+        try {
+            for (ActionBlock block : actions) {
+                block.execute(context);
+            }
+        } catch (ExecutionException e) {
+            handleException(e);
         }
     }
 
     public void onPlayerDeath(LivingDeathEvent event, EnigmaFunctionContext context) {
-        for (ActionBlock block : onDeath) {
-            block.execute(context);
-        }
+        performActions(context, onDeath);
     }
 
     public void onLogin(EnigmaFunctionContext context) {
-        for (ActionBlock actionBlock : onLogin) {
-            actionBlock.execute(context);
-        }
+        performActions(context, onLogin);
     }
 
     public void onActivate(EnigmaFunctionContext context) {
-        for (ActionBlock actionBlock : onActivate) {
-            actionBlock.execute(context);
-        }
+        performActions(context, onActivate);
     }
 
     public void onInit(EnigmaFunctionContext context) {
-        for (ActionBlock actionBlock : onInit) {
-            actionBlock.execute(context);
-        }
+        performActions(context, onInit);
     }
 
     public void onSetup(EnigmaFunctionContext context) {
-        for (ActionBlock actionBlock : onSetup) {
-            actionBlock.execute(context);
-        }
+        performActions(context, onSetup);
     }
 
     public void onDeactivate(EnigmaFunctionContext context) {
-        for (ActionBlock actionBlock : onDeactivate) {
-            actionBlock.execute(context);
-        }
+        performActions(context, onDeactivate);
     }
 
     public void addOnActivate(ActionBlock actionBlock) {
@@ -295,5 +316,13 @@ public class Scope {
         for (Scope scope : nestedPlayerScopes) {
             scope.dump(indent+4);
         }
+    }
+
+    public static void handleException(ExecutionException e) {
+        e.printStackTrace();
+        if (e.getCause() != null) {
+            e.getCause().printStackTrace();
+        }
+        EnigmaMessages.INSTANCE.sendToAll(new PacketAddMessage(TextFormatting.RED + e.getMessage(), 400));
     }
 }

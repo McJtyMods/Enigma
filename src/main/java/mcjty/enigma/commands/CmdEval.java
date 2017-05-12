@@ -2,6 +2,7 @@ package mcjty.enigma.commands;
 
 import mcjty.enigma.code.EnigmaExpressionContext;
 import mcjty.enigma.code.EnigmaFunctionContext;
+import mcjty.enigma.code.ExecutionException;
 import mcjty.enigma.parser.ExpressionException;
 import mcjty.enigma.parser.ExpressionParser;
 import mcjty.enigma.parser.ParsedExpression;
@@ -42,7 +43,9 @@ public class CmdEval extends CompatCommandBase {
             Object result = parsed.getExpression().eval(new EnigmaFunctionContext(server.getEntityWorld(), (EntityPlayer) sender));
             ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.GREEN + "Result: " + result));
         } catch (ExpressionException e) {
-            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Error: " + e.getMessage()));
+            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Parse Error: " + e.getMessage()));
+        } catch (ExecutionException e) {
+            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Exec Error: " + e.getMessage()));
         }
     }
 }

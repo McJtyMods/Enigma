@@ -114,13 +114,13 @@ public class MimicTE extends TileEntity {
                 toMimic = block.getStateFromMeta(meta);
             }
         }
-        if ((!Enigma.proxy.isClient()) && !offsetSyncHappened) {
+        if ((!Enigma.proxy.isClient()) || !offsetSyncHappened) {
             offsetSyncHappened = true;
             dx = compound.getDouble("dx");
             dy = compound.getDouble("dy");
             dz = compound.getDouble("dz");
         }
-        if ((!Enigma.proxy.isClient()) && !colorSyncHappened) {
+        if ((!Enigma.proxy.isClient()) || !colorSyncHappened) {
             colorSyncHappened = true;
             double r = compound.getDouble("r");
             double g = compound.getDouble("g");

@@ -7,8 +7,8 @@ import mcjty.enigma.parser.Expression;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.varia.AreaTools;
-import mcjty.enigma.varia.BlockPosDim;
 import mcjty.enigma.varia.IAreaIterator;
+import mcjty.enigma.varia.IPositional;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -36,20 +36,14 @@ public class CopyBlocksAction extends Action {
     public void execute(EnigmaFunctionContext context) throws ExecutionException {
         Progress progress = ProgressHolder.getProgress(context.getWorld());
 
-        Object area = this.area.eval(context);
-        IAreaIterator iterator = AreaTools.getAreaIterator(progress, area);
-
-        Object destination = this.destination.eval(context);
-        BlockPosDim namedPosition = progress.getNamedPosition(destination);
-        if (namedPosition == null) {
-            throw new ExecutionException("Cannot find named position '" + destination + "'!");
-        }
+        IAreaIterator iterator = AreaTools.getAreaIterator(progress, this.area.eval(context));
+        IPositional destination = AreaTools.getPositional(progress, this.destination.eval(context));
 
         World wsrc = iterator.getWorld();
-        WorldServer wdest = namedPosition.getWorld();
-        int dx = namedPosition.getPos().getX() - iterator.getBottomLeft().getX();
-        int dy = namedPosition.getPos().getY() - iterator.getBottomLeft().getY();
-        int dz = namedPosition.getPos().getZ() - iterator.getBottomLeft().getZ();
+        WorldServer wdest = destination.getWorld();
+        int dx = destination.getPos().getX() - iterator.getBottomLeft().getX();
+        int dy = destination.getPos().getY() - iterator.getBottomLeft().getY();
+        int dz = destination.getPos().getZ() - iterator.getBottomLeft().getZ();
         BlockPos.MutableBlockPos dest = new BlockPos.MutableBlockPos();
         while (iterator.advance()) {
             BlockPos current = iterator.current();

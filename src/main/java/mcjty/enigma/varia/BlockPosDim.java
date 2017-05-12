@@ -48,6 +48,7 @@ public class BlockPosDim implements IPositional<BlockPosDim> {
         return new BlockPosDim(pos.north(amount), dimension);
     }
 
+    @Override
     @Nonnull
     public BlockPos getPos() {
         return pos;

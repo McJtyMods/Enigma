@@ -1,5 +1,6 @@
 package mcjty.enigma.varia;
 
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 
 public interface IPositional<T extends IPositional> {
@@ -15,6 +16,8 @@ public interface IPositional<T extends IPositional> {
     T south(int amount);
 
     T north(int amount);
+
+    BlockPos getPos();
 
     int getDimension();
 

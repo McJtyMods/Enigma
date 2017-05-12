@@ -18,6 +18,11 @@ public class Area implements IPositional<Area> {
     }
 
     @Override
+    public BlockPos getPos() {
+        return pos1;
+    }
+
+    @Override
     public Area up(int amount) {
         return new Area(pos1.up(amount), pos2.up(amount), dimension);
     }

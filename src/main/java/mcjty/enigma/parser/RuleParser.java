@@ -2,6 +2,7 @@ package mcjty.enigma.parser;
 
 import mcjty.enigma.Enigma;
 import mcjty.enigma.code.EnigmaExpressionContext;
+import mcjty.enigma.code.ExecutionException;
 import mcjty.enigma.code.Scope;
 import org.apache.logging.log4j.Level;
 
@@ -68,6 +69,8 @@ public class RuleParser<T> {
             token = ObjectTools.asStringSafe(ExpressionParser.eval(str, new EmptyExpressionContext()).getExpression().eval(null));
         } catch (ExpressionException e) {
             throw new ParserException("Error parsing token: " + e.getMessage(), linenumber);
+        } catch (ExecutionException e) {
+            throw new ParserException("Error parsing token: " + e.getMessage(), linenumber);
         }
 
         int minParameters = 0;
@@ -85,6 +88,8 @@ public class RuleParser<T> {
             try {
                 token = ObjectTools.asStringSafe(ExpressionParser.eval(str, new EmptyExpressionContext()).getExpression().eval(null));
             } catch (ExpressionException e) {
+                throw new ParserException("Error parsing token: " + e.getMessage(), linenumber);
+            } catch (ExecutionException e) {
                 throw new ParserException("Error parsing token: " + e.getMessage(), linenumber);
             }
             secondaryToken = Token.getTokenByName(token);
@@ -177,6 +182,8 @@ public class RuleParser<T> {
             System.out.println("result = " + ExpressionParser.eval(str, context).getExpression().eval(null));
             System.out.println("result = " + ExpressionParser.eval(str, context).getExpression().eval(null));
         } catch (ExpressionException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
             e.printStackTrace();
         }
     }

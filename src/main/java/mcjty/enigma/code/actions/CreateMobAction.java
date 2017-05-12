@@ -78,7 +78,7 @@ public class CreateMobAction extends Action {
 
     }
 
-    private ItemStack getItem(EnigmaFunctionContext context, Expression<EnigmaFunctionContext> i) {
+    private ItemStack getItem(EnigmaFunctionContext context, Expression<EnigmaFunctionContext> i) throws ExecutionException {
         Object itemval = i == null ? ItemStackTools.getEmptyStack() : i.eval(context);
         Progress progress = ProgressHolder.getProgress(context.getWorld());
         return progress.getNamedItemStack(itemval);

@@ -92,6 +92,7 @@ public class MoveBlocksAction extends Action {
             BlockPos current = iterator.current();
             dest.setPos(current.getX() + dx, current.getY() + dy, current.getZ() + dz);
             Remembered r = remembered.get(i);
+            i++;
             wdest.setBlockState(dest, r.state, 3);
             NBTTagCompound tc = r.tc;
             if (tc != null) {
