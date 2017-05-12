@@ -11,6 +11,9 @@ on setup:
     position startblock 804 4 1900 0
     position mimicpos 810 4 1910 0
 
+    area cube 817 4 1907 819 6 1909 0
+    position destcube 817 4 1903 0
+
     itemstack sword:
         name "minecraft:diamond_sword"
 
@@ -78,6 +81,9 @@ pscope "weirdcolors" true:
 
     on repeat 400:
         fxanim colorandback 40  0 1 0 0   1 0 0 1
+
+    on repeat 100:
+        mimicarea cube destcube
 
     on repeat 160:
         setmimic mimicpos planks

@@ -37,15 +37,15 @@ public class AreaIterator implements IAreaIterator {
             mp = new BlockPos.MutableBlockPos(pos1);
             return true;
         }
-        if (mp.getX() < pos2.getX() - 1) {
+        if (mp.getX() < pos2.getX()) {
             mp.setPos(mp.getX() + 1, mp.getY(), mp.getZ());
             return true;
         }
-        if (mp.getY() < pos2.getY() - 1) {
+        if (mp.getY() < pos2.getY()) {
             mp.setPos(pos1.getX(), mp.getY() + 1, mp.getZ());
             return true;
         }
-        if (mp.getZ() < pos2.getZ() - 1) {
+        if (mp.getZ() < pos2.getZ()) {
             mp.setPos(pos1.getX(), pos1.getY(), mp.getZ() + 1);
             return true;
         }
