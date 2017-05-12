@@ -43,7 +43,6 @@ public class SetMimicAction extends Action {
         IAreaIterator iterator = AreaTools.getAreaIterator(progress, pos);
         World w = iterator.getWorld();
         while (iterator.advance()) {
-            w.setBlockState(iterator.current(), namedBlock, 3);
             w.setBlockState(iterator.current(), ModBlocks.mimic.getDefaultState(), 3);
             TileEntity te = w.getTileEntity(iterator.current());
             if (te instanceof MimicTE) {

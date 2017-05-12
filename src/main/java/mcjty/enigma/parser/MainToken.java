@@ -33,6 +33,7 @@ public enum MainToken {
     SETBLOCK(false, 2, 2),     // setblock <position/area> <block>
     COPYBLOCKS(false, 2, 2),   // copyblocks <area> <position>
     MOVEBLOCKS(false, 2, 2),   // moveblocks <area> <position>
+    MIMICAREA(false, 2, 2),    // mimicarea <area> <position>
     SETMIMIC(false, 2, 2),     // setmimic <position/area> <block>
     NAME(false, 1, 1),         // name <name>
     AMOUNT(false, 1, 1),       // amount <number>

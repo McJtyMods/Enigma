@@ -49,6 +49,7 @@ public class MimicTESR extends TileEntitySpecialRenderer<MimicTE> {
         BlockRendererDispatcher dispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
         BlockRenderLayer origLayer = MinecraftForgeClient.getRenderLayer();
 
+        // @todo optimize
         fakeWorld.setState(mimicState, Collections.singleton(te.getPos()));
 
         for (BlockRenderLayer layer : LAYERS) {
