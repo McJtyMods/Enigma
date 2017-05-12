@@ -159,6 +159,8 @@ public class ProgramParser {
                 return new FxAnimColorMimicAction(line.getParameters().get(0), line.getParameters().get(1),
                         line.getParameters().get(2), line.getParameters().get(3), line.getParameters().get(4),
                         line.getParameters().get(5), line.getParameters().get(6), line.getParameters().get(7));
+            case RESETMIMIC:
+                return new FxAnimResetMimicAction(line.getParameters().get(0));
             case MOVE:
                 return new FxAnimMoveAction(line.getParameters().get(0), line.getParameters().get(1), line.getParameters().get(2));
             case ROTATE:

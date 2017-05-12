@@ -96,6 +96,10 @@ public class MimicTE extends TileEntity {
 
     public void setToMimic(IBlockState toMimic) {
         this.toMimic = toMimic;
+        markDirtyClient();
+    }
+
+    public void markDirtyClient() {
         markDirty();
         if (getWorld() != null) {
             IBlockState state = getWorld().getBlockState(getPos());

@@ -27,6 +27,7 @@ public enum Token {
     COLORANDBACK(9),    // fxanim colorandback <ticks> <startalpha> <startr> <startg> <startb> <endalpha> <endr> <endg> <endb>
     MOVE(3),            // fxanim move <ticks> <start> <end>
     MOVEMIMIC(5),       // fxanim movemimic <ticks> <start> <dx> <dy> <dz>
+    RESETMIMIC(1),      // fxanim resetmimic <area>
     COLORMIMIC(8),      // fxanim colormimic <ticks> <position> <startr> <startg> <startb> <endr> <endg> <endb>
     ROTATE(5);          // fxanim rotate <ticks> <startyaw> <startpitch> <endyaw> <endpitch>
 

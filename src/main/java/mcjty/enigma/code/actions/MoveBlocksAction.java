@@ -9,6 +9,7 @@ import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.varia.AreaTools;
 import mcjty.enigma.varia.BlockPosDim;
 import mcjty.enigma.varia.IAreaIterator;
+import mcjty.enigma.varia.IPositional;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -49,14 +50,8 @@ public class MoveBlocksAction extends Action {
     public void execute(EnigmaFunctionContext context) throws ExecutionException {
         Progress progress = ProgressHolder.getProgress(context.getWorld());
 
-        Object area = this.area.eval(context);
-        IAreaIterator iterator = AreaTools.getAreaIterator(progress, area);
-
-        Object destination = this.destination.eval(context);
-        BlockPosDim namedPosition = progress.getNamedPosition(destination);
-        if (namedPosition == null) {
-            throw new ExecutionException("Cannot find named position '" + destination + "'!");
-        }
+        IAreaIterator iterator = AreaTools.getAreaIterator(progress, this.area.eval(context));
+        IPositional destination = AreaTools.getPositional(progress, this.destination.eval(context));
 
         int xdim = iterator.getTopRight().getX() - iterator.getBottomLeft().getX() + 1;
         int ydim = iterator.getTopRight().getY() - iterator.getBottomLeft().getY() + 1;
@@ -67,7 +62,6 @@ public class MoveBlocksAction extends Action {
         while (iterator.advance()) {
             BlockPos current = iterator.current();
             IBlockState blockState = wsrc.getBlockState(current);
-
             TileEntity tileEntity = wsrc.getTileEntity(current);
             NBTTagCompound tc = null;
             if (tileEntity != null) {
@@ -82,10 +76,10 @@ public class MoveBlocksAction extends Action {
         }
 
         iterator.restart();
-        WorldServer wdest = namedPosition.getWorld();
-        int dx = namedPosition.getPos().getX() - iterator.getBottomLeft().getX();
-        int dy = namedPosition.getPos().getY() - iterator.getBottomLeft().getY();
-        int dz = namedPosition.getPos().getZ() - iterator.getBottomLeft().getZ();
+        WorldServer wdest = destination.getWorld();
+        int dx = destination.getPos().getX() - iterator.getBottomLeft().getX();
+        int dy = destination.getPos().getY() - iterator.getBottomLeft().getY();
+        int dz = destination.getPos().getZ() - iterator.getBottomLeft().getZ();
         BlockPos.MutableBlockPos dest = new BlockPos.MutableBlockPos();
         int i = 0;
         while (iterator.advance()) {
@@ -93,6 +87,7 @@ public class MoveBlocksAction extends Action {
             dest.setPos(current.getX() + dx, current.getY() + dy, current.getZ() + dz);
             Remembered r = remembered.get(i);
             i++;
+            wdest.setBlockToAir(dest);
             wdest.setBlockState(dest, r.state, 3);
             NBTTagCompound tc = r.tc;
             if (tc != null) {

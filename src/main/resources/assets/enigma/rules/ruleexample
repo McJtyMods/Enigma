@@ -83,11 +83,12 @@ pscope "weirdcolors" true:
         fxanim colorandback 40  0 1 0 0   1 0 0 1
 
     on repeat 200:
-        setblock up(destcube,1) air
+        setblock up(destcube,2) air
         mimicarea cube destcube
-        fxanim movemimic 20 destcube 0 1 0
-        delay 20:
-            moveblocks destcube up(mincorner(destcube),1)
+        fxanim movemimic 40 destcube 0 2 0
+        delay 80:
+            moveblocks destcube up(mincorner(destcube),2)
+            fxanim resetmimic up(destcube,2)
 
 
     on repeat 160:
