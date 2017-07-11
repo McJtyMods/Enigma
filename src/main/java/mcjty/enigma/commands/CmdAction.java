@@ -58,6 +58,9 @@ public class CmdAction extends CompatCommandBase {
                 case SETTING:
                     ProgramParser.parseSettingAction(tokenizedLine).execute(context);
                     break;
+                case SETBLOCK:
+                    new SetBlockAction(tokenizedLine.getParameters().get(0), tokenizedLine.getParameters().get(1)).execute(context);
+                    break;
                 case KILL:
                     new KillAction(tokenizedLine.getParameters().get(0)).execute(context);
                     break;
