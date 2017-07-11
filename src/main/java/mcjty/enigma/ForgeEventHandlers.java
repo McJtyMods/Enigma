@@ -6,6 +6,7 @@ import mcjty.enigma.code.RootScope;
 import mcjty.enigma.code.Scope;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
+import mcjty.enigma.proxy.CommonProxy;
 import mcjty.enigma.varia.BlockPosDim;
 import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.block.state.IBlockState;
@@ -35,7 +36,16 @@ public class ForgeEventHandlers {
             dataDir.mkdirs();
             File file = new File(dataDir, "autostart.esc");
             if (file.exists()) {
-                Enigma.logger.log(Level.INFO, "Reading script from 'autostart.esc'!");
+                Enigma.logger.log(Level.INFO, "Reading script from '<world>/autostart.esc'!");
+                try {
+                    RootScope.setRoot(RootScope.readRules(event.getWorld(), file));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            file = new File(CommonProxy.modConfigDir.getPath(), "autostart.esc");
+            if (file.exists()) {
+                Enigma.logger.log(Level.INFO, "Reading script from '<config>/autostart.esc'!");
                 try {
                     RootScope.setRoot(RootScope.readRules(event.getWorld(), file));
                 } catch (IOException e) {

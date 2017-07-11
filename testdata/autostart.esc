@@ -1,0 +1,190 @@
+# In game it is possible to tag items and objects using the 'tagger'
+
+on setup:
+    log "root.setup"
+    position startpos 170 96 164 0
+    position keypos 180 96 164 0
+    position zombiepos 185 96 185 0
+    position zombietriggerpos 170 96 187 0
+    position zombietrappos 164 96 178 0
+    position doorpos 167 96 175 0
+
+    position turnonlightspos 174 90 168 0
+    position light1 176 90 170 0
+    position light2 171 90 170 0
+    position light3 176 90 174 0
+    position light4 171 90 174 0
+    position blocked1 173 90 174 0
+    position blocked2 174 90 174 0
+
+    blockstate air:
+        name "minecraft:air"
+    blockstate gold:
+        name "minecraft:gold_block"
+    blockstate redstone:
+        name "minecraft:redstone_torch"
+    blockstate torch:
+        name "minecraft:torch"
+    blockstate chest:
+        name "minecraft:chest"
+    blockstate skull:
+        name "minecraft:skull"
+    blockstate wall:
+        name "minecraft:cobblestone_wall"
+    blockstate doorunder:
+        name "minecraft:iron_door"
+    blockstate doorup:
+        name "minecraft:iron_door"
+        meta 8
+
+    area topdoor 167 96 162 167 98 165 0
+
+    setblock keypos chest
+
+    mob enemy:
+        name "minecraft:zombie"
+        item sword
+        helmet itemstack("minecraft:diamond_helmet")
+        chestplate itemstack("minecraft:diamond_chestplate")
+        leggings itemstack("minecraft:diamond_leggings")
+        boots itemstack("minecraft:diamond_boots")
+        hp 100
+
+
+    createparticles smoke:
+        name "smoke"
+        amount 100
+        offset 0 0 0
+        speed .20
+
+    itemstack mysteriouskey:
+        name "enigma:key"
+        meta 1
+        description "Mysterious key"
+
+
+
+# Handle player startup/death
+pscope "player" true:
+
+    on setup:
+        pstate playerstate start
+
+    on death:
+        hp 10
+        pstate playerstate start
+
+pscope "start" pstate(playerstate) == start:
+    on activate:
+        kill enemy
+        setblock topdoor gold
+        setblock zombietrappos skull
+        setblock down(doorpos,2) air
+        setblock light1 air
+        setblock light2 air
+        setblock light3 air
+        setblock light4 air
+        setblock blocked1 wall
+        setblock blocked2 wall
+        setblock up(blocked1,1) wall
+        setblock up(blocked2,1) wall
+        setblock up(blocked1,2) wall
+        setblock up(blocked2,2) wall
+        setblock doorpos doorunder
+        setblock up(doorpos,1) doorup
+        teleport startpos
+        command "/clear"
+        command "/gamemode adventure"
+        command "/time set day"
+        pstate playerstate firstroom
+
+pscope "firstroom" pstate(playerstate) == firstroom:
+    on rightclickposition keypos:
+        if hasitem(mysteriouskey):
+            message "Nothing else can be found!"
+        else:
+            message fmt_green() + fmt_bold() + "You find a mysterious key in the chest" 60
+            give mysteriouskey
+        cancel
+
+    on rightclickposition doorpos:
+        message "This door will not open!" 60
+        cancel
+
+    on rightclickposition up(doorpos,1):
+        message "This door will not open!" 60
+        cancel
+
+    on rightclickblock skull:
+        message "This does not seem to harm you" 60
+        cancel
+
+    on rightclickblock gold:
+        if hasitem(mysteriouskey):
+            message "The door simply disappears!" 60
+            setmimic topdoor gold
+            fxanim colormimic 40 topdoor 1 1 1 0 0 0
+            sound playerpos() "enigma:locking"
+            take mysteriouskey
+            delay 42:
+                setblock topdoor air
+        else:
+            message "You need a key!"
+        cancel
+
+    on repeat 50:
+        if distance(zombietriggerpos) < 9:
+            message fmt_red() + fmt_bold() + "Beware of the zombie!" 60
+            spawn zombiepos enemy
+            pstate playerstate zombiechase
+
+pscope "zombiechase" pstate(playerstate) == zombiechase:
+    on rightclickblock skull:
+        message "Would this kill the zombie?" 60
+        cancel
+
+    on rightclickposition doorpos:
+        message "This door will not open!" 60
+        cancel
+
+    on rightclickposition up(doorpos,1):
+        message "This door will not open!" 60
+        cancel
+
+    on repeat 10:
+        if distance(pos(enemy),zombietrappos) <= 2:
+            message "This appears to be bad for the zombie" 100
+            message "Maybe I can now leave this room?" 100
+            kill enemy
+            pstate playerstate tosecondroom
+
+pscope "tosecondroom" pstate(playerstate) == tosecondroom:
+
+    on rightclickposition doorpos:
+        message "The door opens!" 60
+        setblock down(doorpos,2) redstone
+        pstate playerstate secondroom
+        cancel
+
+    on rightclickposition up(doorpos,1):
+        message "The door opens!" 60
+        setblock down(doorpos,2) redstone
+        pstate playerstate secondroom_init
+        cancel
+
+pscope "secondroom_init" pstate(playerstate) == secondroom_init:
+
+    on repeat 5:
+        if distance(turnonlightspos) < 6:
+            setblock light1 torch
+            setblock light2 torch
+            setblock light3 torch
+            setblock light4 torch
+            pstate playerstate secondroom
+
+pscope "secondroom" pstate(playerstate) == secondroom:
+
+    on rightclickblock wall:
+        message "This is blocked and will remain blocked because"
+        message "the story is not finished"
+

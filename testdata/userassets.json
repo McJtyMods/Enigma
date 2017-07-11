@@ -1,0 +1,798 @@
+[
+  {
+    "type": "citystyle",
+    "name": "nodamagestyle",
+    "style": "standard",
+    "inherit": "citystyle_common",
+    "explosionchance": 0.0
+  },
+
+
+  {
+    "type": "part",
+    "name": "escape00_4",
+    "xsize": 16,
+    "zsize": 16,
+    "palette": [
+      {
+        "char": "V",
+        "block": "minecraft:gold_block"
+      }
+    ],
+    "slices": [
+      [
+        "################",
+        "#SSSSSSSSSSSSSSS",
+        "#SSSSSSSSSSSSSSS",
+        "#SS#############",
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#QQQQQQQQQ  Q",
+        "#SS#QQQQQQQQQ  Q",
+        "#SS#QQQQQQQQQ  Q",
+        "#SS#QQQQQQQQQ  Q",
+        "#SS#QQQQQQQQQ))Q",
+        "#SS#QQQQQQQQQQQQ"
+      ],
+      [
+        "aa#aaaa#aaaa#aaa",
+        "a      #        ",
+        "#      V        ",
+        "a      V        ",
+        "a      V        ",
+        "a      V        ",
+        "a      #        ",
+        "#      #########",
+        "a      #        ",
+        "a      #     )) ",
+        "a      #    w  w",
+        "a      #    w  w",
+        "#      #    w  w",
+        "a      #    w  w",
+        "a      #    w  w",
+        "a      #        "
+      ],
+      [
+        "aa#aaaa#aaaa#aaa",
+        "a      #        ",
+        "#      V        ",
+        "a      V        ",
+        "a      V        ",
+        "a      V        ",
+        "a      #        ",
+        "#      #########",
+        "a      #        ",
+        "a      #        ",
+        "a      #    :)):",
+        "a      #    :  :",
+        "#      #    :  :",
+        "a      #    :  :",
+        "a      #    :  :",
+        "a      #        "
+      ],
+      [
+        "aa#aaaa#aaaa#aaa",
+        "a      #        ",
+        "#      V        ",
+        "a      V        ",
+        "a      V        ",
+        "a      V        ",
+        "a      #        ",
+        "#      #########",
+        "a      #        ",
+        "a      #        ",
+        "a      #    :  :",
+        "a      #    :)):",
+        "#      #    :  :",
+        "a      #    :  :",
+        "a      #    :  :",
+        "a      #        "
+      ],
+      [
+        "################",
+        "#      # %      ",
+        "#      #        ",
+        "#      #        ",
+        "#      #        ",
+        "#      #        ",
+        "#      #        ",
+        "#      #########",
+        "#      #        ",
+        "#      #        ",
+        "#      #   %:  :",
+        "#      #    :  :",
+        "#      #    :)):",
+        "#      #   %:  :",
+        "#      #    :  :",
+        "#      #        "
+      ],
+      [
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "#############  #",
+        "#############  #",
+        "#############  #",
+        "#############))#",
+        "#############  #",
+        "################"
+      ]
+    ]
+  },
+  {
+    "type": "part",
+    "name": "escape00",
+    "xsize": 16,
+    "zsize": 16,
+    "slices": [
+      [
+        "################",
+        "#SSSSSSSSSSSSSSS",
+        "#SSSSSSSSSSSSSSS",
+        "#SS#############",
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#QQQQQQQQQ  Q",
+        "#SS#QQQQQQQQQ  Q",
+        "#SS#QQQQQQQQQ  Q",
+        "#SS#QQQQQQQQQ  Q",
+        "#SS#QQQQQQQQQ))Q",
+        "#SS#QQQQQQQQQQQQ"
+      ],
+      [
+        "aa#aaaa#aaaa#aaa",
+        "a      #        ",
+        "#      #        ",
+        "a      #        ",
+        "a      #        ",
+        "a      #        ",
+        "a      #        ",
+        "#      #########",
+        "a      #        ",
+        "a      #     )) ",
+        "a      #    w  w",
+        "a      #    w  w",
+        "#      #    w  w",
+        "a      #    w  w",
+        "a      #    w  w",
+        "a      #        "
+      ],
+      [
+        "aa#aaaa#aaaa#aaa",
+        "a      #        ",
+        "#      #        ",
+        "a      #        ",
+        "a      #        ",
+        "a      #        ",
+        "a      #        ",
+        "#      #########",
+        "a      #        ",
+        "a      #        ",
+        "a      #    :)):",
+        "a      #    :  :",
+        "#      #    :  :",
+        "a      #    :  :",
+        "a      #    :  :",
+        "a      #        "
+      ],
+      [
+        "aa#aaaa#aaaa#aaa",
+        "a      #        ",
+        "#      #        ",
+        "a      #        ",
+        "a      #        ",
+        "a      #        ",
+        "a      #        ",
+        "#      #########",
+        "a      #        ",
+        "a      #        ",
+        "a      #    :  :",
+        "a      #    :)):",
+        "#      #    :  :",
+        "a      #    :  :",
+        "a      #    :  :",
+        "a      #        "
+      ],
+      [
+        "################",
+        "#      # %      ",
+        "#      #        ",
+        "#      #        ",
+        "#      #        ",
+        "#      #        ",
+        "#      #        ",
+        "#      #########",
+        "#      #        ",
+        "#      #        ",
+        "#      #   %:  :",
+        "#      #    :  :",
+        "#      #    :)):",
+        "#      #   %:  :",
+        "#      #    :  :",
+        "#      #        "
+      ],
+      [
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "#############  #",
+        "#############  #",
+        "#############  #",
+        "#############))#",
+        "#############  #",
+        "################"
+      ]
+    ]
+  },
+  {
+    "type": "part",
+    "name": "escape11",
+    "xsize": 16,
+    "zsize": 16,
+    "slices": [
+      [
+        "QQQQQQQQQQQQ#SS#",
+        "QQQQQQQQQQQQ#SS#",
+        "QQQQQQQQQQQQ#SS#",
+        "QQQQQQQQQQQQ#SS#",
+        "QQQQQQQQQQQQ#SS#",
+        "QQQQQQQQQQQQ#SS#",
+        "QQQQQQQQQQQQ#SS#",
+        "QQQQQQQQQQQQ#SS#",
+        "QQQQQQQQQQQQ#SS#",
+        "QQQQQQQQQQQQ#SS#",
+        "QQQQQQQQQQQQ#SS#",
+        "QQQQQQQQQQQQ#SS#",
+        "#############SS#",
+        "SSSSSSSSSSSSSSS#",
+        "SSSSSSSSSSSSSSS#",
+        "################"
+      ],
+      [
+        "        #      a",
+        "        #      a",
+        "        #      a",
+        "        #      #",
+        "        #      a",
+        "        #      a",
+        "        #      a",
+        "        #      a",
+        "#########      #",
+        "               a",
+        "               a",
+        "               a",
+        "               a",
+        "               #",
+        "               a",
+        "aaa#aaaa#aaaa#aa"
+      ],
+      [
+        "        #      a",
+        "        #      a",
+        "        #      a",
+        "        #      #",
+        "        #      a",
+        "        #      a",
+        "        #      a",
+        "        #      a",
+        "#########      #",
+        "               a",
+        "               a",
+        "               a",
+        "               a",
+        "               #",
+        "               a",
+        "aaa#aaaa#aaaa#aa"
+      ],
+      [
+        "        #      a",
+        "        #      a",
+        "        #      a",
+        "        #      #",
+        "        #      a",
+        "        #      a",
+        "        #      a",
+        "        #      a",
+        "#########      #",
+        "               a",
+        "               a",
+        "               a",
+        "               a",
+        "               #",
+        "               a",
+        "aaa#aaaa#aaaa#aa"
+      ],
+      [
+        "        #      #",
+        "        #      #",
+        "        #      #",
+        "        #      #",
+        "        #      #",
+        "        #      #",
+        "        #      #",
+        "        #      #",
+        "#########      #",
+        "               #",
+        "               #",
+        "               #",
+        "               #",
+        "               #",
+        "               #",
+        "################"
+      ],
+      [
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################"
+      ]
+    ]
+  },
+  {
+    "type": "part",
+    "name": "escape01",
+    "xsize": 16,
+    "zsize": 16,
+    "slices": [
+      [
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#QQQQQQQQQQQQ",
+        "#SS#############",
+        "#SSSSSSSSSSSSSSS",
+        "#SSSSSSSSSSSSSSS",
+        "################"
+      ],
+      [
+        "a      #        ",
+        "a      #        ",
+        "a      #        ",
+        "#      #        ",
+        "a      #        ",
+        "a      #        ",
+        "a      #        ",
+        "a      #        ",
+        "#      #########",
+        "a               ",
+        "a               ",
+        "a               ",
+        "a               ",
+        "#               ",
+        "a               ",
+        "aa#aaaa#aaaa#aaa"
+      ],
+      [
+        "a      #        ",
+        "a      #        ",
+        "a      #        ",
+        "#      #        ",
+        "a      #        ",
+        "a      #        ",
+        "a      #        ",
+        "a      #        ",
+        "#      #########",
+        "a               ",
+        "a               ",
+        "a               ",
+        "a               ",
+        "#               ",
+        "a               ",
+        "aa#aaaa#aaaa#aaa"
+      ],
+      [
+        "a      #        ",
+        "a      #        ",
+        "a      #        ",
+        "#      #        ",
+        "a      #        ",
+        "a      #        ",
+        "a      #        ",
+        "a      #        ",
+        "#      #########",
+        "a               ",
+        "a               ",
+        "a               ",
+        "a               ",
+        "#               ",
+        "a               ",
+        "aa#aaaa#aaaa#aaa"
+      ],
+      [
+        "#      #        ",
+        "#      #        ",
+        "#      #        ",
+        "#      #        ",
+        "#      #        ",
+        "#      #        ",
+        "#      #        ",
+        "#      #        ",
+        "#      #########",
+        "#               ",
+        "#               ",
+        "#               ",
+        "#               ",
+        "#               ",
+        "#               ",
+        "################"
+      ],
+      [
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################"
+      ]
+    ]
+  },
+  {
+    "type": "part",
+    "name": "escape10",
+    "xsize": 16,
+    "zsize": 16,
+    "slices": [
+      [
+        "################",
+        "SSSSSSSSSSSSSSS#",
+        "SSSSSSSSSSSSSSS#",
+        "#############SS#",
+        "QQQQQQQQQQQQ#SS#",
+        "QQQQQQQQQQQQ#SS#",
+        "QQQQQQQQQQQQ#SS#",
+        "QQQQQQQQQQQQ#SS#",
+        "QQQQQQQQQQQQ#SS#",
+        "QQQQQQQQQQQQ#SS#",
+        "QQQQQQQQQQQQ#SS#",
+        "QQQQQQQQQQQQ#SS#",
+        "QQQQQQQQQQQQ#SS#",
+        "QQQQQQQQQQQQ#SS#",
+        "QQQQQQQQQQQQ#SS#",
+        "QQQQQQQQQQQQ#SS#"
+      ],
+      [
+        "aaa#aaaa#aaaa#aa",
+        "        #      a",
+        "        #      #",
+        "        #      a",
+        "        #      a",
+        "        #      a",
+        "        #      a",
+        "#########      #",
+        "        #      a",
+        "        #      a",
+        "        #      a",
+        "        #      a",
+        "        #      #",
+        "        #      a",
+        "        #      a",
+        "        #      a"
+      ],
+      [
+        "aaa#aaaa#aaaa#aa",
+        "        #      a",
+        "        #      #",
+        "        #      a",
+        "        #      a",
+        "        #      a",
+        "        #      a",
+        "#########      #",
+        "        #      a",
+        "        #      a",
+        "        #      a",
+        "        #      a",
+        "        #      #",
+        "        #      a",
+        "        #      a",
+        "        #      a"
+      ],
+      [
+        "aaa#aaaa#aaaa#aa",
+        "        #      a",
+        "        #      #",
+        "        #      a",
+        "        #      a",
+        "        #      a",
+        "        #      a",
+        "#########      #",
+        "        #      a",
+        "        #      a",
+        "        #      a",
+        "        #      a",
+        "        #      #",
+        "        #      a",
+        "        #      a",
+        "        #      a"
+      ],
+      [
+        "################",
+        "        #      #",
+        "        #      #",
+        "        #      #",
+        "        #      #",
+        "        #      #",
+        "        #      #",
+        "#########      #",
+        "        #      #",
+        "        #      #",
+        "        #      #",
+        "        #      #",
+        "        #      #",
+        "        #      #",
+        "        #      #",
+        "        #      #"
+      ],
+      [
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################",
+        "################"
+      ]
+    ]
+  },
+
+
+  {
+    "type": "building",
+    "name": "escape00",
+    "filler": "#",
+    "minfloors": 5,
+    "maxfloors": 5,
+    "maxcellars": 0,
+    "parts": [
+      {
+        "top": false,
+        "range": "0,3",
+        "part": "escape00"
+      },
+      {
+        "top": false,
+        "floor": 4,
+        "part": "escape00_4"
+      },
+      {
+        "top": true,
+        "part": "top_library00_1"
+      },
+      {
+        "top": true,
+        "part": "top_library00_2"
+      }
+    ]
+  },
+  {
+    "type": "building",
+    "name": "escape11",
+    "filler": "#",
+    "minfloors": 5,
+    "maxfloors": 5,
+    "parts": [
+      {
+        "top": false,
+        "part": "escape11"
+      },
+      {
+        "top": true,
+        "part": "top_library_1"
+      },
+      {
+        "top": true,
+        "part": "top_library_2"
+      },
+      {
+        "top": true,
+        "part": "top_library_3"
+      },
+      {
+        "top": true,
+        "part": "top_library_4"
+      }
+    ]
+  },
+  {
+    "type": "building",
+    "name": "escape10",
+    "filler": "#",
+    "minfloors": 5,
+    "maxfloors": 5,
+    "parts": [
+      {
+        "top": false,
+        "part": "escape10"
+      },
+      {
+        "top": true,
+        "part": "top_library_1"
+      },
+      {
+        "top": true,
+        "part": "top_library_2"
+      },
+      {
+        "top": true,
+        "part": "top_library_3"
+      },
+      {
+        "top": true,
+        "part": "top_library_4"
+      }
+    ]
+  },
+  {
+    "type": "building",
+    "name": "escape01",
+    "filler": "#",
+    "minfloors": 5,
+    "maxfloors": 5,
+    "parts": [
+      {
+        "top": false,
+        "part": "escape01"
+      },
+      {
+        "top": true,
+        "part": "top_library_1"
+      },
+      {
+        "top": true,
+        "part": "top_library_2"
+      },
+      {
+        "top": true,
+        "part": "top_library_3"
+      },
+      {
+        "top": true,
+        "part": "top_library_4"
+      }
+    ]
+  },
+  {
+    "type": "multibuilding",
+    "name": "escapebuilding",
+    "dimx": 2,
+    "dimz": 2,
+    "buildings": [
+      [
+        "escape00",
+        "escape01"
+      ],
+      [
+        "escape10",
+        "escape11"
+      ]
+    ]
+  },
+  {
+    "type": "city",
+    "name": "Escape City",
+    "dimension": 0,
+    "chunkx": 10,
+    "chunkz": 10,
+    "radius": 200,
+    "citystyle": "nodamagestyle",
+    "buildings": [
+      {
+        "multibuilding": "escapebuilding",
+        "preventruins": true,
+        "chunkx": 0,
+        "chunkz": 0
+      }
+    ],
+    "streets": [
+      {
+        "chunkx": -1,
+        "chunkz": -1
+      },
+      {
+        "chunkx": 0,
+        "chunkz": -1
+      },
+      {
+        "chunkx": 1,
+        "chunkz": -1
+      },
+      {
+        "chunkx": 2,
+        "chunkz": -1
+      },
+      {
+        "chunkx": -1,
+        "chunkz": 0
+      },
+      {
+        "chunkx": 2,
+        "chunkz": 0
+      },
+      {
+        "chunkx": -1,
+        "chunkz": 1
+      },
+      {
+        "chunkx": 2,
+        "chunkz": 1
+      },
+      {
+        "chunkx": -1,
+        "chunkz": 2
+      },
+      {
+        "chunkx": 0,
+        "chunkz": 2
+      },
+      {
+        "chunkx": 1,
+        "chunkz": 2
+      },
+      {
+        "chunkx": 2,
+        "chunkz": 2
+      }
+    ]
+  }
+]
+

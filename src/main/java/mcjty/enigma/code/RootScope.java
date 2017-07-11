@@ -81,7 +81,7 @@ public class RootScope {
             List<TokenizedLine> lines = RuleParser.parse(new BufferedReader(new InputStreamReader(inputstream)), new EnigmaExpressionContext(progress));
             return ProgramParser.parse(lines);
         } catch (ParserException e) {
-            Enigma.logger.log(Level.ERROR, "ERROR: " + e.getMessage() + " at line " + (e.getLinenumber()+1), e);
+            Enigma.logger.log(Level.ERROR, "ERROR: " + e.getMessage() + " at line " + (e.getLinenumber()+1) + " (" + file.getName() + ")", e);
             throw new RuntimeException(e);
         }
     }

@@ -4,6 +4,7 @@ import mcjty.enigma.parser.Expression;
 import mcjty.enigma.parser.ExpressionContext;
 import mcjty.enigma.parser.ExpressionFunction;
 import mcjty.enigma.parser.ObjectTools;
+import mcjty.enigma.progress.MobConfig;
 import mcjty.enigma.progress.PlayerProgress;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
@@ -12,6 +13,7 @@ import mcjty.lib.tools.InventoryTools;
 import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -73,7 +75,16 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
                 Progress progress = ProgressHolder.getProgress(context.getWorld());
                 BlockPosDim namedPosition = progress.getNamedPosition(o[0]);
                 if (namedPosition == null) {
-                    throw new ExecutionException("Cannot find position " + o[0] + "!");
+                    MobConfig mobConfig = progress.getNamedMobConfig(o[0]);
+                    if (mobConfig == null) {
+                        throw new ExecutionException("Cannot find position or mob " + o[0] + "!");
+                    }
+                    String tag = "enigma:" + (o[0] instanceof String ? (String) o[0] : STRINGS.get((Integer) o[0]));
+                    String t2 = ObjectTools.asStringSafe(o[0]);
+                    List<Entity> entities = context.getWorld().getEntities(Entity.class, input -> (input.getTags().contains(tag) || input.getTags().contains(t2)));
+                    for (Entity e : entities) {
+                        return new BlockPosDim(e.getPosition(), e.dimension);
+                    }
                 }
                 return namedPosition;
             } else if (o.length > 3) {
