@@ -15,20 +15,15 @@ import org.apache.logging.log4j.Logger;
 
 @Mod(modid = Enigma.MODID, name = Enigma.MODNAME,
         dependencies =
-                        "required-after:compatlayer@[" + Enigma.COMPATLAYER_VER + ",);" +
-                        "after:Forge@[" + Enigma.MIN_FORGE10_VER + ",);" +
                         "after:forge@[" + Enigma.MIN_FORGE11_VER + ",)",
-        version = Enigma.MODVERSION,
-        acceptedMinecraftVersions = "[1.10,1.12)")
+        version = Enigma.MODVERSION)
 public class Enigma {
 
     public static final String MODID = "enigma";
     public static final String MODNAME = "Enigma";
     public static final String MODVERSION = "0.0.1";
 
-    public static final String MIN_FORGE10_VER = "12.18.2.2116";
     public static final String MIN_FORGE11_VER = "13.19.0.2176";
-    public static final String COMPATLAYER_VER = "0.2.5";
 
     public static final String SHIFT_MESSAGE = "<Press Shift>";
 
