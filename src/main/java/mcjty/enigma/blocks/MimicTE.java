@@ -148,4 +148,9 @@ public class MimicTE extends TileEntity {
         compound.setDouble("b", blue);
         return compound;
     }
+
+    @Override
+    public boolean shouldRenderInPass(int pass) {
+        return pass == 1;
+    }
 }

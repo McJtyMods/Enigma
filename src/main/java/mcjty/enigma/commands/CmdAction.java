@@ -1,6 +1,8 @@
 package mcjty.enigma.commands;
 
-import mcjty.enigma.code.*;
+import mcjty.enigma.code.EnigmaExpressionContext;
+import mcjty.enigma.code.EnigmaFunctionContext;
+import mcjty.enigma.code.ExecutionException;
 import mcjty.enigma.code.actions.*;
 import mcjty.enigma.parser.*;
 import mcjty.enigma.progress.Progress;
@@ -63,6 +65,9 @@ public class CmdAction extends CompatCommandBase {
                     break;
                 case KILL:
                     new KillAction(tokenizedLine.getParameters().get(0)).execute(context);
+                    break;
+                case TELEPORT:
+                    new TeleportAction(tokenizedLine.getParameters().get(0)).execute(context);
                     break;
                 default:
                     ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Unknown action!"));

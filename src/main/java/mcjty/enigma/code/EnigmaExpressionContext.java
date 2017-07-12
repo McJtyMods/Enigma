@@ -339,6 +339,28 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
             PlayerProgress playerProgress = progress.getPlayerProgress(context.getPlayer().getPersistentID());
             return playerProgress.getState(o[0]);
         });
+        FUNCTIONS.put("blockname", (context, o) -> {
+            Progress progress = ProgressHolder.getProgress(context.getWorld());
+            BlockPosDim namedPosition = progress.getNamedPosition(o[0]);
+            if (namedPosition == null) {
+                throw new ExecutionException("Cannot find position " + o[0] + "!");
+            }
+            IBlockState state = DimensionManager.getWorld(namedPosition.getDimension()).getBlockState(namedPosition.getPos());
+            if (state == null) {
+                return "";  // Not a named block
+            }
+            return STRINGS.get(progress.getNamedBlock(state));
+        });
+        FUNCTIONS.put("substring", (context, o) -> {
+            String s = ObjectTools.asStringSafe(o[0]);
+            int idx1 = ObjectTools.asIntSafe(o[1]);
+            if (o.length > 2) {
+                int idx2 = ObjectTools.asIntSafe(o[2]);
+                return s.substring(idx1, idx2);
+            } else {
+                return s.substring(idx1);
+            }
+        });
         FUNCTIONS.put("isblock", (context, o) -> {
             Progress progress = ProgressHolder.getProgress(context.getWorld());
             BlockPosDim namedPosition = progress.getNamedPosition(o[0]);

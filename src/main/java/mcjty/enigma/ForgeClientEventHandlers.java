@@ -13,6 +13,7 @@ public class ForgeClientEventHandlers {
     @SubscribeEvent
     public void onClientTickEvent(TickEvent.ClientTickEvent event) {
         FxAnimationHandler.tick();
+        OverlayRenderer.tickMessages();
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)

@@ -9,8 +9,11 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 
 public class OverlayRenderer {
 
-    public static void renderOverlays() {
+    public static void tickMessages() {
         TimedMessages.tick();
+    }
+
+    public static void renderOverlays() {
         int y = 30;
         for (TimedMessage message : TimedMessages.getMessages()) {
             RenderHelper.renderText(Minecraft.getMinecraft(), 30, y, message.getMessage(), 1.5);
