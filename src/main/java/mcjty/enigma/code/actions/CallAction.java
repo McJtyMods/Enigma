@@ -6,7 +6,6 @@ import mcjty.enigma.parser.ObjectTools;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 public class CallAction extends Action {
     @Nonnull Expression<EnigmaFunctionContext> actionBlockName;

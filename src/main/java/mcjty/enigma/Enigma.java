@@ -4,10 +4,9 @@ package mcjty.enigma;
 import mcjty.enigma.commands.*;
 import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.proxy.CommonProxy;
-import mcjty.lib.compat.CompatCreativeTabs;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -42,10 +41,10 @@ public class Enigma {
 
     public static boolean lostcities = false;
 
-    public static CreativeTabs tabEnigma = new CompatCreativeTabs("Enigma") {
+    public static CreativeTabs tabEnigma = new CreativeTabs("Enigma") {
         @Override
-        protected Item getItem() {
-            return Items.ENCHANTED_BOOK;
+        public ItemStack getTabIconItem() {
+            return new ItemStack(Items.ENCHANTED_BOOK);
         }
     };
 

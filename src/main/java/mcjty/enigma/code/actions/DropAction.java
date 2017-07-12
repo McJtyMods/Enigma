@@ -7,8 +7,6 @@ import mcjty.enigma.parser.Expression;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.varia.BlockPosDim;
-import mcjty.lib.tools.ItemStackTools;
-import mcjty.lib.tools.WorldTools;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -42,11 +40,11 @@ public class DropAction extends Action {
             throw new ExecutionException("Cannot find named position '" + pos + "'!");
         }
 
-        if (stack != null && ItemStackTools.isValid(stack)) {
+        if (stack != null && !stack.isEmpty()) {
             WorldServer world = namedPosition.getWorld();
             BlockPos p = namedPosition.getPos();
             EntityItem entityItem = new EntityItem(world, p.getX(), p.getY(), p.getZ(), stack.copy());
-            WorldTools.spawnEntity(world, entityItem);
+            world.spawnEntity(entityItem);
         } else {
             throw new ExecutionException("Cannot find item '" + st + "'!");
         }

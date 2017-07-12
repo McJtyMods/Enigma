@@ -7,7 +7,6 @@ import mcjty.enigma.parser.Expression;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.varia.AreaTools;
-import mcjty.enigma.varia.BlockPosDim;
 import mcjty.enigma.varia.IAreaIterator;
 import mcjty.enigma.varia.IPositional;
 import net.minecraft.block.state.IBlockState;

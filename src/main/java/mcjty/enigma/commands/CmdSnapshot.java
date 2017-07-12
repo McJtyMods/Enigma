@@ -4,12 +4,13 @@ import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.snapshot.SnapshotTools;
 import mcjty.enigma.varia.BlockPosDim;
-import mcjty.lib.compat.CompatCommandBase;
-import mcjty.lib.tools.ChatTools;
+import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.ChunkPos;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -25,7 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class CmdSnapshot extends CompatCommandBase {
+public class CmdSnapshot extends CommandBase {
     @Override
     public String getName() {
         return "e_snapshot";
@@ -39,7 +40,12 @@ public class CmdSnapshot extends CompatCommandBase {
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (args.length < 1) {
-            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "File missing!"));
+            ITextComponent component = new TextComponentString(TextFormatting.RED + "File missing!");
+            if (sender instanceof EntityPlayer) {
+                ((EntityPlayer) sender).sendStatusMessage(component, false);
+            } else {
+                sender.sendMessage(component);
+            }
             return;
         }
         String fn = args[0];
@@ -59,9 +65,9 @@ public class CmdSnapshot extends CompatCommandBase {
         for (Pair<Integer, ChunkPos> pair : chunkPosSet) {
             World w = DimensionManager.getWorld(pair.getKey());
             if (w == null) {
-                w = world.getMinecraftServer().worldServerForDimension(pair.getKey());
+                w = world.getMinecraftServer().getWorld(pair.getKey());
             }
-            Chunk chunk = w.getChunkFromChunkCoords(pair.getRight().chunkXPos, pair.getRight().chunkZPos);
+            Chunk chunk = w.getChunkFromChunkCoords(pair.getRight().x, pair.getRight().z);
             if (chunk != null) {
                 chunks.add(chunk);
             }
@@ -72,9 +78,19 @@ public class CmdSnapshot extends CompatCommandBase {
             dataDir.mkdirs();
             File file = new File(dataDir, fn);
             SnapshotTools.makeChunkSnapshot(world, chunks, file);
-            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.GREEN + "Made a snapshot in '" + fn + "' for " + chunks.size() + " chunks"));
+            ITextComponent component = new TextComponentString(TextFormatting.GREEN + "Made a snapshot in '" + fn + "' for " + chunks.size() + " chunks");
+            if (sender instanceof EntityPlayer) {
+                ((EntityPlayer) sender).sendStatusMessage(component, false);
+            } else {
+                sender.sendMessage(component);
+            }
         } catch (IOException e) {
-            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Error writing snapshot to '" + fn + "'!"));
+            ITextComponent component = new TextComponentString(TextFormatting.RED + "Error writing snapshot to '" + fn + "'!");
+            if (sender instanceof EntityPlayer) {
+                ((EntityPlayer) sender).sendStatusMessage(component, false);
+            } else {
+                sender.sendMessage(component);
+            }
         }
     }
 }

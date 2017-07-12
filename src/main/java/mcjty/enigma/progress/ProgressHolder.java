@@ -1,9 +1,8 @@
 package mcjty.enigma.progress;
 
-import mcjty.lib.tools.WorldTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldSavedData;
+import net.minecraft.world.storage.WorldSavedData;
 
 public class ProgressHolder extends WorldSavedData {
 
@@ -18,7 +17,7 @@ public class ProgressHolder extends WorldSavedData {
 
     public static void save(World world) {
         ProgressHolder progressHolder = getProgressHolder(world);
-        WorldTools.saveData(world, NAME, progressHolder);
+        world.setData(NAME, progressHolder);
         progressHolder.markDirty();
     }
 
@@ -35,7 +34,7 @@ public class ProgressHolder extends WorldSavedData {
         if (instance != null) {
             return instance;
         }
-        instance = WorldTools.loadData(world, ProgressHolder.class, NAME);
+        instance = (ProgressHolder) world.loadData(ProgressHolder.class, NAME);
         if (instance == null) {
             instance = new ProgressHolder(NAME);
         }

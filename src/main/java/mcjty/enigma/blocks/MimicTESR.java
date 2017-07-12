@@ -29,7 +29,7 @@ public class MimicTESR extends TileEntitySpecialRenderer<MimicTE> {
     private final FakeMimicWorld fakeWorld = new FakeMimicWorld();
 
     @Override
-    public void renderTileEntityAt(MimicTE te, double x, double y, double z, float partialTicks, int destroyStage) {
+    public void render(MimicTE te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         IBlockState mimicState = te.getToMimic();
         if (mimicState == null) {
             return;
@@ -91,14 +91,14 @@ public class MimicTESR extends TileEntitySpecialRenderer<MimicTE> {
 
 
 
-    private static boolean renderBlock(BlockRendererDispatcher dispatcher, IBlockState state, BlockPos pos, IBlockAccess blockAccess, VertexBuffer worldRendererIn) {
+    private static boolean renderBlock(BlockRendererDispatcher dispatcher, IBlockState state, BlockPos pos, IBlockAccess blockAccess, BufferBuilder worldRendererIn) {
         try {
             EnumBlockRenderType enumblockrendertype = state.getRenderType();
 
             if (enumblockrendertype == EnumBlockRenderType.INVISIBLE) {
                 return false;
             } else {
-                if (blockAccess.getWorldType() != WorldType.DEBUG_WORLD) {
+                if (blockAccess.getWorldType() != WorldType.DEBUG_ALL_BLOCK_STATES) {
                     try {
                         state = state.getActualState(blockAccess, pos);
                     } catch (Exception var8) {

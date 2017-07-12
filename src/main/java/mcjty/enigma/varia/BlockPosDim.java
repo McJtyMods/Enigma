@@ -1,7 +1,6 @@
 package mcjty.enigma.varia;
 
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
@@ -129,7 +128,7 @@ public class BlockPosDim implements IPositional<BlockPosDim> {
     public WorldServer getWorld() {
         WorldServer world = DimensionManager.getWorld(getDimension());
         if (world == null) {
-            world = DimensionManager.getWorld(0).getMinecraftServer().worldServerForDimension(getDimension());
+            world = DimensionManager.getWorld(0).getMinecraftServer().getWorld(getDimension());
         }
         return world;
     }

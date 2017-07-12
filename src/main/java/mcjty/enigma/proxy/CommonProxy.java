@@ -3,7 +3,6 @@ package mcjty.enigma.proxy;
 import com.google.common.util.concurrent.ListenableFuture;
 import mcjty.enigma.ForgeEventHandlers;
 import mcjty.enigma.blocks.ModBlocks;
-import mcjty.enigma.code.RootScope;
 import mcjty.enigma.fxanim.FxAnimationHandler;
 import mcjty.enigma.items.ModItems;
 import mcjty.enigma.network.EnigmaMessages;
@@ -17,7 +16,7 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Level;
 
-import java.io.*;
+import java.io.File;
 import java.util.concurrent.Callable;
 
 public abstract class CommonProxy {
@@ -26,6 +25,8 @@ public abstract class CommonProxy {
     private Configuration mainConfig;
 
     public void preInit(FMLPreInitializationEvent e) {
+        MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
+
         modConfigDir = e.getModConfigurationDirectory();
         mainConfig = new Configuration(new File(modConfigDir.getPath(), "enigma.cfg"));
 
@@ -55,9 +56,6 @@ public abstract class CommonProxy {
     }
 
     public void init(FMLInitializationEvent e) {
-//        NetworkRegistry.INSTANCE.registerGuiHandler(XNet.instance, new GuiProxy());
-        MinecraftForge.EVENT_BUS.register(new ForgeEventHandlers());
-//        ModRecipes.init();
     }
 
     public void postInit(FMLPostInitializationEvent e) {

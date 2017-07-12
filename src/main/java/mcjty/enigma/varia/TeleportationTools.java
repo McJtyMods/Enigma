@@ -1,6 +1,5 @@
 package mcjty.enigma.varia;
 
-import mcjty.lib.tools.WorldTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.server.MinecraftServer;
@@ -19,7 +18,7 @@ public class TeleportationTools {
 
         EntityPlayerMP entityPlayerMP = (EntityPlayerMP) player;
         MinecraftServer server = player.getEntityWorld().getMinecraftServer();
-        WorldServer worldServer = server.worldServerForDimension(dimension);
+        WorldServer worldServer = server.getWorld(dimension);
         player.addExperienceLevel(0);
 
 
@@ -28,7 +27,7 @@ public class TeleportationTools {
         if (oldDimension == 1) {
             // For some reason teleporting out of the end does weird things.
             player.setPositionAndUpdate(x, y, z);
-            WorldTools.spawnEntity(worldServer, player);
+            worldServer.spawnEntity(player);
             worldServer.updateEntityWithOptionalForce(player, false);
         }
     }

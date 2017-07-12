@@ -7,12 +7,11 @@ import mcjty.enigma.parser.Expression;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.varia.InventoryHelper;
-import mcjty.lib.tools.InventoryTools;
-import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Collections;
 import java.util.List;
 
 public class TakeAllAction extends Action {
@@ -37,13 +36,13 @@ public class TakeAllAction extends Action {
         Object st = item.eval(context);
         stack = progress.getNamedItemStack(st);
 
-        if (stack != null && ItemStackTools.isValid(stack)) {
+        if (stack != null && !stack.isEmpty()) {
             EntityPlayer player = context.getPlayer();
-            List<ItemStack> inventory = InventoryTools.getMainInventory(player);
+            List<ItemStack> inventory = Collections.unmodifiableList(player.inventory.mainInventory);
             for (int i = 0 ; i < inventory.size() ; i++) {
                 ItemStack s = inventory.get(i);
                 if (InventoryHelper.stackEqualExact(stack, s)) {
-                    player.inventory.setInventorySlotContents(i, ItemStackTools.getEmptyStack());
+                    player.inventory.setInventorySlotContents(i, ItemStack.EMPTY);
                 }
             }
             player.openContainer.detectAndSendChanges();

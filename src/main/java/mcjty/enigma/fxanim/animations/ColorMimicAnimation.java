@@ -42,12 +42,12 @@ public class ColorMimicAnimation implements FxAnimation {
     @Override
     public void writeToBuf(ByteBuf buf) {
         NetworkTools.writePos(buf, mimicPos);
-        buf.writeDouble(start.xCoord);
-        buf.writeDouble(start.yCoord);
-        buf.writeDouble(start.zCoord);
-        buf.writeDouble(end.xCoord);
-        buf.writeDouble(end.yCoord);
-        buf.writeDouble(end.zCoord);
+        buf.writeDouble(start.x);
+        buf.writeDouble(start.y);
+        buf.writeDouble(start.z);
+        buf.writeDouble(end.x);
+        buf.writeDouble(end.y);
+        buf.writeDouble(end.z);
         buf.writeInt(totalTicks);
     }
 
@@ -63,9 +63,9 @@ public class ColorMimicAnimation implements FxAnimation {
         if (te instanceof MimicTE) {
             MimicTE mimicTE = (MimicTE)te;
             double factor = ((double) currentTick) / totalTicks;
-            double x = start.xCoord + (end.xCoord - start.xCoord) * factor;
-            double y = start.yCoord + (end.yCoord - start.yCoord) * factor;
-            double z = start.zCoord + (end.zCoord - start.zCoord) * factor;
+            double x = start.x + (end.x - start.x) * factor;
+            double y = start.y + (end.y - start.y) * factor;
+            double z = start.z + (end.z - start.z) * factor;
             mimicTE.setBlendColor(x, y, z);
         }
         currentTick++;

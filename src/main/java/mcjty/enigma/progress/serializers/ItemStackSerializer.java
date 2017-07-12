@@ -1,7 +1,6 @@
 package mcjty.enigma.progress.serializers;
 
 import mcjty.enigma.progress.NBTData;
-import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -15,9 +14,9 @@ public class ItemStackSerializer implements NBTData<Integer, ItemStack> {
 
     @Override
     public ItemStack getValue(NBTTagCompound tag) {
-        ItemStack stack = ItemStackTools.getEmptyStack();
+        ItemStack stack = ItemStack.EMPTY;
         if (tag.hasKey("item")) {
-            stack = ItemStackTools.loadFromNBT(tag.getCompoundTag("item"));
+            stack = new ItemStack(tag.getCompoundTag("item"));
         }
         return stack;
     }
@@ -25,7 +24,7 @@ public class ItemStackSerializer implements NBTData<Integer, ItemStack> {
     @Override
     public void serialize(NBTTagCompound tc, Integer key, ItemStack value) {
         tc.setString("s", STRINGS.get(key));
-        if (ItemStackTools.isValid(value)) {
+        if (!value.isEmpty()) {
             NBTTagCompound itemtag = new NBTTagCompound();
             value.writeToNBT(itemtag);
             tc.setTag("item", itemtag);

@@ -6,7 +6,6 @@ import mcjty.enigma.code.ExecutionException;
 import mcjty.enigma.parser.Expression;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
-import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.StringUtils;
@@ -33,7 +32,7 @@ public class GiveAction extends Action {
         Object st = item.eval(context);
         stack = progress.getNamedItemStack(st);
 
-        if (stack != null && ItemStackTools.isValid(stack)) {
+        if (stack != null && !stack.isEmpty()) {
             EntityPlayer player = context.getPlayer();
             player.inventory.addItemStackToInventory(stack.copy());
             player.openContainer.detectAndSendChanges();

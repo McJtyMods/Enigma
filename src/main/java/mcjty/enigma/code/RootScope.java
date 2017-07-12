@@ -7,8 +7,8 @@ import mcjty.enigma.parser.RuleParser;
 import mcjty.enigma.parser.TokenizedLine;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
-import mcjty.lib.tools.ChatTools;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
@@ -61,7 +61,12 @@ public class RootScope {
 
     public static boolean reload(World world, EntityPlayer player) throws IOException {
         if (currentFile == null) {
-            ChatTools.addChatMessage(player, new TextComponentString(TextFormatting.RED + "No rules loaded!"));
+            ITextComponent component = new TextComponentString(TextFormatting.RED + "No rules loaded!");
+            if (player instanceof EntityPlayer) {
+                ((EntityPlayer) player).sendStatusMessage(component, false);
+            } else {
+                player.sendMessage(component);
+            }
             return false;
         }
         root = readRules(world, currentFile);

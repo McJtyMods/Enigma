@@ -1,8 +1,6 @@
 package mcjty.enigma.varia;
 
 import io.netty.buffer.ByteBuf;
-import mcjty.lib.tools.ItemStackTools;
-import mcjty.lib.tools.PacketBufferTools;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
@@ -16,7 +14,7 @@ public class NetworkTools {
     public static NBTTagCompound readNBT(ByteBuf dataIn) {
         PacketBuffer buf = new PacketBuffer(dataIn);
         try {
-            return PacketBufferTools.readCompoundTag(buf);
+            return buf.readCompoundTag();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -26,7 +24,7 @@ public class NetworkTools {
     public static void writeNBT(ByteBuf dataOut, NBTTagCompound nbt) {
         PacketBuffer buf = new PacketBuffer(dataOut);
         try {
-            PacketBufferTools.writeCompoundTag(buf, nbt);
+            buf.writeCompoundTag(nbt);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -37,14 +35,19 @@ public class NetworkTools {
     public static ItemStack readItemStack(ByteBuf dataIn) {
         PacketBuffer buf = new PacketBuffer(dataIn);
         try {
-            NBTTagCompound nbt = PacketBufferTools.readCompoundTag(buf);
-            ItemStack stack = ItemStackTools.loadFromNBT(nbt);
-            ItemStackTools.setStackSize(stack, buf.readInt());
+            NBTTagCompound nbt = buf.readCompoundTag();
+            ItemStack stack = new ItemStack(nbt);
+            int amount = buf.readInt();
+            if (amount <= 0) {
+                stack.setCount(0);
+            } else {
+                stack.setCount(amount);
+            }
             return stack;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return ItemStackTools.getEmptyStack();
+        return ItemStack.EMPTY;
     }
 
     /// This function supports itemstacks with more then 64 items.
@@ -53,8 +56,8 @@ public class NetworkTools {
         NBTTagCompound nbt = new NBTTagCompound();
         itemStack.writeToNBT(nbt);
         try {
-            PacketBufferTools.writeCompoundTag(buf, nbt);
-            buf.writeInt(ItemStackTools.getStackSize(itemStack));
+            buf.writeCompoundTag(nbt);
+            buf.writeInt(itemStack.getCount());
         } catch (Exception e) {
             e.printStackTrace();
         }

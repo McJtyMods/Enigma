@@ -1,28 +1,24 @@
 package mcjty.enigma.items;
 
 import mcjty.enigma.Enigma;
-import mcjty.lib.compat.CompatItem;
 import net.minecraft.client.renderer.ItemMeshDefinition;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.util.List;
-
-public class Coin extends CompatItem {
+public class Coin extends Item {
 
     public Coin() {
         setUnlocalizedName(Enigma.MODID + "_" + "coin");
         setRegistryName("coin");
         setCreativeTab(Enigma.tabEnigma);
-        GameRegistry.register(this);
         setMaxStackSize(64);
         setHasSubtypes(true);
         setMaxDamage(0);
@@ -51,11 +47,12 @@ public class Coin extends CompatItem {
     }
 
 
-
     @Override
-    protected void clGetSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
-        for (int i = 0 ; i < 2 ; i++) {
-            subItems.add(new ItemStack(this, 1, i));
+    public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+        if (this.isInCreativeTab(tab)) {
+            for (int i = 0; i < 2; i++) {
+                items.add(new ItemStack(this, 1, i));
+            }
         }
     }
 

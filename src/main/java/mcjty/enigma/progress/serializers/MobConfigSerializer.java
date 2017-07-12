@@ -2,7 +2,6 @@ package mcjty.enigma.progress.serializers;
 
 import mcjty.enigma.progress.MobConfig;
 import mcjty.enigma.progress.NBTData;
-import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -35,9 +34,9 @@ public class MobConfigSerializer implements NBTData<Integer, MobConfig> {
 
     private ItemStack getNamedItem(NBTTagCompound tag, String tn) {
         if (tag.hasKey(tn)) {
-            return ItemStackTools.loadFromNBT(tag.getCompoundTag(tn));
+            return new ItemStack(tag.getCompoundTag(tn));
         }
-        return ItemStackTools.getEmptyStack();
+        return ItemStack.EMPTY;
     }
 
     @Override
@@ -62,7 +61,7 @@ public class MobConfigSerializer implements NBTData<Integer, MobConfig> {
     }
 
     private void writeItem(NBTTagCompound tc, String tn, ItemStack i) {
-        if (i != null && ItemStackTools.isValid(i)) {
+        if (i != null && !i.isEmpty()) {
             NBTTagCompound tcitem = new NBTTagCompound();
             i.writeToNBT(tcitem);
             tc.setTag(tn, tcitem);

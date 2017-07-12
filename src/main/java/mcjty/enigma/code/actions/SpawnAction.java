@@ -8,9 +8,7 @@ import mcjty.enigma.progress.MobConfig;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.varia.BlockPosDim;
-import mcjty.lib.tools.EntityTools;
-import mcjty.lib.tools.ItemStackTools;
-import mcjty.lib.tools.WorldTools;
+import mcjty.enigma.varia.EntityTools;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
@@ -78,7 +76,7 @@ public class SpawnAction extends Action {
         equip(mobConfig.getBoots(), progress, stack -> entity.setItemStackToSlot(EntityEquipmentSlot.FEET, stack));
         if (mobConfig.isAggressive() && context.hasPlayer()) {
             entity.setAttackTarget(context.getPlayer());
-            entity.setLastAttacker(context.getPlayer());
+            entity.setLastAttackedEntity(context.getPlayer());
         }
 
         String tag = "enigma:" + (m instanceof String ? (String) m : STRINGS.get((Integer) m));
@@ -86,18 +84,18 @@ public class SpawnAction extends Action {
         if (mobConfig.getTag() != null) {
             entity.addTag(mobConfig.getTag());
         }
-        WorldTools.spawnEntity(world, entity);
+        world.spawnEntity(entity);
     }
 
     private boolean isValid(ItemStack heldItem) {
-        return heldItem != null && ItemStackTools.isValid(heldItem);
+        return heldItem != null && !heldItem.isEmpty();
     }
 
 
     private void equip(ItemStack item, Progress progress, Consumer<ItemStack> consumer) throws ExecutionException {
         if (isValid(item)) {
             ItemStack stack = progress.getNamedItemStack(item);
-            if (stack != null && ItemStackTools.isValid(stack)) {
+            if (stack != null && !stack.isEmpty()) {
                 consumer.accept(stack.copy());
             } else {
                 throw new ExecutionException("Could not find item '" + item.getDisplayName() + "'!");

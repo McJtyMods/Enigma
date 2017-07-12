@@ -1,11 +1,12 @@
 package mcjty.enigma.commands;
 
 import mcjty.enigma.code.RootScope;
-import mcjty.lib.compat.CompatCommandBase;
-import mcjty.lib.tools.ChatTools;
+import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.WorldServer;
@@ -13,7 +14,7 @@ import net.minecraft.world.WorldServer;
 import java.io.File;
 import java.io.IOException;
 
-public class CmdLoad extends CompatCommandBase {
+public class CmdLoad extends CommandBase {
     @Override
     public String getName() {
         return "e_load";
@@ -27,7 +28,12 @@ public class CmdLoad extends CompatCommandBase {
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (args.length < 1) {
-            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Script name missing!"));
+            ITextComponent component = new TextComponentString(TextFormatting.RED + "Script name missing!");
+            if (sender instanceof EntityPlayer) {
+                ((EntityPlayer) sender).sendStatusMessage(component, false);
+            } else {
+                sender.sendMessage(component);
+            }
             return;
         }
         File dataDir = new File(((WorldServer) server.getEntityWorld()).getChunkSaveLocation(), "enigma");
@@ -35,9 +41,19 @@ public class CmdLoad extends CompatCommandBase {
         File file = new File(dataDir, args[0]);
         try {
             RootScope.setRoot(RootScope.readRules(server.getEntityWorld(), file));
-            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.YELLOW + "Rules loaded!"));
+            ITextComponent component = new TextComponentString(TextFormatting.YELLOW + "Rules loaded!");
+            if (sender instanceof EntityPlayer) {
+                ((EntityPlayer) sender).sendStatusMessage(component, false);
+            } else {
+                sender.sendMessage(component);
+            }
         } catch (IOException e) {
-            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Error loading rules!"));
+            ITextComponent component = new TextComponentString(TextFormatting.RED + "Error loading rules!");
+            if (sender instanceof EntityPlayer) {
+                ((EntityPlayer) sender).sendStatusMessage(component, false);
+            } else {
+                sender.sendMessage(component);
+            }
         }
     }
 }

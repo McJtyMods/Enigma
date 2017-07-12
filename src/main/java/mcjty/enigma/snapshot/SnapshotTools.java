@@ -83,7 +83,7 @@ public class SnapshotTools {
             int id = tc.getInteger("dimension");
             World w = DimensionManager.getWorld(id);
             if (w == null) {
-                w = world.getMinecraftServer().worldServerForDimension(id);
+                w = world.getMinecraftServer().getWorld(id);
             }
             Chunk chunk = w.getChunkFromChunkCoords(x, z);
             restoreChunkSnapshotTag(world, chunk, tc.getCompoundTag("data"));
@@ -112,9 +112,9 @@ public class SnapshotTools {
             int index = uncompress(s);
             IBlockState state = differentBlocks.get(index);
             for (int i = 0 ; i < count ; i++) {
-                int x = curchunk.getPos().chunkXPos * 16 + loc.getX();
+                int x = curchunk.getPos().x * 16 + loc.getX();
                 int y = loc.getY();
-                int z = curchunk.getPos().chunkZPos * 16 + loc.getZ();
+                int z = curchunk.getPos().z * 16 + loc.getZ();
                 loc.inc();
                 BlockPos p = new BlockPos(x, y, z);
                 IBlockState curstate = curchunk.getBlockState(p);
@@ -132,7 +132,7 @@ public class SnapshotTools {
             int y = tc.getShort("y");
             int z = tc.getShort("z");
             NBTTagCompound nbt = tc.getCompoundTag("nbt");
-            BlockPos pos = new BlockPos(curchunk.getPos().chunkXPos * 16 + x, y, curchunk.getPos().chunkZPos * 16 + z);
+            BlockPos pos = new BlockPos(curchunk.getPos().x * 16 + x, y, curchunk.getPos().z * 16 + z);
             TileEntity te = world.getTileEntity(pos);
             if (te != null) {
                 nbt.setInteger("x", pos.getX());
@@ -170,8 +170,8 @@ public class SnapshotTools {
         NBTTagList list = new NBTTagList();
         for (Chunk chunk : chunks) {
             NBTTagCompound tc = new NBTTagCompound();
-            tc.setInteger("x", chunk.getPos().chunkXPos);
-            tc.setInteger("z", chunk.getPos().chunkZPos);
+            tc.setInteger("x", chunk.getPos().x);
+            tc.setInteger("z", chunk.getPos().z);
             tc.setInteger("dimension", chunk.getWorld().provider.getDimension());
             tc.setTag("data", makeChunkSnapshotTag(world, chunk));
             list.appendTag(tc);
@@ -215,7 +215,7 @@ public class SnapshotTools {
                         prev = p;
                     }
 
-                    TileEntity te = world.getTileEntity(new BlockPos(curchunk.getPos().chunkXPos * 16 + x, y, curchunk.getPos().chunkZPos * 16 + z));
+                    TileEntity te = world.getTileEntity(new BlockPos(curchunk.getPos().x * 16 + x, y, curchunk.getPos().z * 16 + z));
                     if (te != null) {
                         NBTTagCompound nbt = new NBTTagCompound();
                         te.writeToNBT(nbt);

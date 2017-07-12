@@ -8,11 +8,7 @@ import mcjty.enigma.parser.ObjectTools;
 import mcjty.enigma.progress.ParticleConfig;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumParticleTypes;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.apache.commons.lang3.StringUtils;
 
 public class CreateParticleAction extends Action {

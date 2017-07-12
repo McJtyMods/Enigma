@@ -4,7 +4,6 @@ import mcjty.enigma.code.ScopeID;
 import mcjty.enigma.progress.serializers.*;
 import mcjty.enigma.varia.Area;
 import mcjty.enigma.varia.BlockPosDim;
-import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -208,7 +207,7 @@ public class Progress {
         } else if (name instanceof ItemStack) {
             return (ItemStack) name;
         } else {
-            return ItemStackTools.getEmptyStack();
+            return ItemStack.EMPTY;
         }
     }
 

@@ -7,17 +7,17 @@ import mcjty.enigma.code.actions.*;
 import mcjty.enigma.parser.*;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
-import mcjty.lib.compat.CompatCommandBase;
-import mcjty.lib.tools.ChatTools;
+import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import org.apache.commons.lang3.StringUtils;
 
-public class CmdAction extends CompatCommandBase {
+public class CmdAction extends CommandBase {
     @Override
     public String getName() {
         return "e_action";
@@ -31,7 +31,12 @@ public class CmdAction extends CompatCommandBase {
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
         if (args.length < 1) {
-            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Action missing!"));
+            ITextComponent component = new TextComponentString(TextFormatting.RED + "Action missing!");
+            if (sender instanceof EntityPlayer) {
+                ((EntityPlayer) sender).sendStatusMessage(component, false);
+            } else {
+                sender.sendMessage(component);
+            }
             return;
         }
 
@@ -70,12 +75,27 @@ public class CmdAction extends CompatCommandBase {
                     new TeleportAction(tokenizedLine.getParameters().get(0)).execute(context);
                     break;
                 default:
-                    ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Unknown action!"));
+                    ITextComponent component = new TextComponentString(TextFormatting.RED + "Unknown action!");
+                    if (sender instanceof EntityPlayer) {
+                        ((EntityPlayer) sender).sendStatusMessage(component, false);
+                    } else {
+                        sender.sendMessage(component);
+                    }
             }
         } catch (ParserException e) {
-            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Error parsing line!"));
+            ITextComponent component = new TextComponentString(TextFormatting.RED + "Error parsing line!");
+            if (sender instanceof EntityPlayer) {
+                ((EntityPlayer) sender).sendStatusMessage(component, false);
+            } else {
+                sender.sendMessage(component);
+            }
         } catch (ExecutionException e) {
-            ChatTools.addChatMessage(sender, new TextComponentString(TextFormatting.RED + "Error executing line!"));
+            ITextComponent component = new TextComponentString(TextFormatting.RED + "Error executing line!");
+            if (sender instanceof EntityPlayer) {
+                ((EntityPlayer) sender).sendStatusMessage(component, false);
+            } else {
+                sender.sendMessage(component);
+            }
         }
     }
 }

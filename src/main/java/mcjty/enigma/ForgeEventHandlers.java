@@ -1,33 +1,54 @@
 package mcjty.enigma;
 
+import mcjty.enigma.blocks.MimicTE;
+import mcjty.enigma.blocks.ModBlocks;
 import mcjty.enigma.code.EnigmaFunctionContext;
 import mcjty.enigma.code.ExecutionException;
 import mcjty.enigma.code.RootScope;
 import mcjty.enigma.code.Scope;
+import mcjty.enigma.items.ModItems;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.proxy.CommonProxy;
 import mcjty.enigma.varia.BlockPosDim;
-import mcjty.lib.tools.ItemStackTools;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.common.registry.GameRegistry;
 import org.apache.logging.log4j.Level;
 
 import java.io.File;
 import java.io.IOException;
 
 public class ForgeEventHandlers {
+
+    @SubscribeEvent
+    public void registerBlocks(RegistryEvent.Register<Block> event) {
+        event.getRegistry().register(ModBlocks.mimic);
+        GameRegistry.registerTileEntity(MimicTE.class, Enigma.MODID + "_mimic");
+
+    }
+
+    @SubscribeEvent
+    public void registerItems(RegistryEvent.Register<Item> event) {
+        event.getRegistry().register(ModItems.key);
+        event.getRegistry().register(ModItems.coin);
+        event.getRegistry().register(new ItemBlock(ModBlocks.mimic).setRegistryName(ModBlocks.mimic.getRegistryName()));
+    }
 
     @SubscribeEvent
     public void onWorldLoad(WorldEvent.Load event) {
@@ -69,7 +90,7 @@ public class ForgeEventHandlers {
             EntityPlayer player = event.getEntityPlayer();
             World world = player.getEntityWorld();
             ItemStack stack = player.getHeldItemMainhand();
-            if (ItemStackTools.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 EnigmaFunctionContext context = new EnigmaFunctionContext(world, player);
                 RootScope.getRootInstance(world).forActiveScopes(context, (ctxt, scope) -> scope.onRightClickItem(event, ctxt, stack));
                 if (context.isCanceled()) {

@@ -11,8 +11,6 @@ import mcjty.enigma.progress.PlayerProgress;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.varia.*;
-import mcjty.lib.tools.InventoryTools;
-import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -30,10 +28,7 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 import static mcjty.enigma.varia.StringRegister.STRINGS;
 
@@ -202,7 +197,7 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
                 throw new ExecutionException("Player is needed for 'posat' function!");
             }
             Vec3d offset = player.getLookVec().normalize().scale(dist);
-            return new BlockPosDim(player.getPosition().add(offset.xCoord, offset.yCoord, offset.zCoord), player.getEntityWorld().provider.getDimension());
+            return new BlockPosDim(player.getPosition().add(offset.x, offset.y, offset.z), player.getEntityWorld().provider.getDimension());
         });
         FUNCTIONS.put("yaw", (context, o) -> {
             EntityPlayer player = context.getPlayer();
@@ -401,10 +396,10 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
         FUNCTIONS.put("hasitem", (context, o) -> {
             Progress progress = ProgressHolder.getProgress(context.getWorld());
             ItemStack stack = progress.getNamedItemStack(o[0]);
-            if (ItemStackTools.isValid(stack)) {
-                List<ItemStack> items = InventoryTools.getMainInventory(context.getPlayer());
+            if (!stack.isEmpty()) {
+                List<ItemStack> items = Collections.unmodifiableList(context.getPlayer().inventory.mainInventory);
                 for (ItemStack item : items) {
-                    if (ItemStackTools.isValid(item)) {
+                    if (!item.isEmpty()) {
                         if (InventoryHelper.stackEqualExact(item, stack)) {
                             return true;
                         }
@@ -418,7 +413,7 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
         FUNCTIONS.put("hasitemmain", (context, o) -> {
             Progress progress = ProgressHolder.getProgress(context.getWorld());
             ItemStack stack = progress.getNamedItemStack(o[0]);
-            if (ItemStackTools.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 if (InventoryHelper.stackEqualExact(stack, context.getPlayer().getHeldItem(EnumHand.MAIN_HAND))) {
                     return true;
                 }
@@ -430,7 +425,7 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
         FUNCTIONS.put("hasitemoff", (context, o) -> {
             Progress progress = ProgressHolder.getProgress(context.getWorld());
             ItemStack stack = progress.getNamedItemStack(o[0]);
-            if (ItemStackTools.isValid(stack)) {
+            if (!stack.isEmpty()) {
                 if (InventoryHelper.stackEqualExact(stack, context.getPlayer().getHeldItem(EnumHand.OFF_HAND))) {
                     return true;
                 }

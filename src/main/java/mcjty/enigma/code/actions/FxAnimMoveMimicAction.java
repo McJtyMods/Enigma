@@ -11,7 +11,6 @@ import mcjty.enigma.parser.ObjectTools;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.varia.AreaTools;
-import mcjty.enigma.varia.BlockPosDim;
 import mcjty.enigma.varia.IAreaIterator;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;

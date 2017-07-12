@@ -8,7 +8,6 @@ import mcjty.enigma.parser.ObjectTools;
 import mcjty.enigma.progress.MobConfig;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
-import mcjty.lib.tools.ItemStackTools;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.StringUtils;
 
@@ -79,7 +78,7 @@ public class CreateMobAction extends Action {
     }
 
     private ItemStack getItem(EnigmaFunctionContext context, Expression<EnigmaFunctionContext> i) throws ExecutionException {
-        Object itemval = i == null ? ItemStackTools.getEmptyStack() : i.eval(context);
+        Object itemval = i == null ? ItemStack.EMPTY : i.eval(context);
         Progress progress = ProgressHolder.getProgress(context.getWorld());
         return progress.getNamedItemStack(itemval);
     }

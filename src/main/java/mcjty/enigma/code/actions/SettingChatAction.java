@@ -4,7 +4,6 @@ import mcjty.enigma.code.Action;
 import mcjty.enigma.code.EnigmaFunctionContext;
 import mcjty.enigma.code.ExecutionException;
 import mcjty.enigma.network.EnigmaMessages;
-import mcjty.enigma.network.PacketAddMessage;
 import mcjty.enigma.network.PacketSettingChat;
 import mcjty.enigma.parser.Expression;
 import mcjty.enigma.parser.ObjectTools;

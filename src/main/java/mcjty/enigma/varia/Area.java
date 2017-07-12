@@ -97,7 +97,7 @@ public class Area implements IPositional<Area> {
     public WorldServer getWorld() {
         WorldServer world = DimensionManager.getWorld(getDimension());
         if (world == null) {
-            world = DimensionManager.getWorld(0).getMinecraftServer().worldServerForDimension(getDimension());
+            world = DimensionManager.getWorld(0).getMinecraftServer().getWorld(getDimension());
         }
         return world;
     }

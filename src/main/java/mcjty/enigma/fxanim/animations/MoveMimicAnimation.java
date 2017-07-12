@@ -42,12 +42,12 @@ public class MoveMimicAnimation implements FxAnimation {
     @Override
     public void writeToBuf(ByteBuf buf) {
         NetworkTools.writePos(buf, mimicPos);
-        buf.writeDouble(start.xCoord);
-        buf.writeDouble(start.yCoord);
-        buf.writeDouble(start.zCoord);
-        buf.writeDouble(end.xCoord);
-        buf.writeDouble(end.yCoord);
-        buf.writeDouble(end.zCoord);
+        buf.writeDouble(start.x);
+        buf.writeDouble(start.y);
+        buf.writeDouble(start.z);
+        buf.writeDouble(end.x);
+        buf.writeDouble(end.y);
+        buf.writeDouble(end.z);
         buf.writeInt(totalTicks);
     }
 
@@ -63,9 +63,9 @@ public class MoveMimicAnimation implements FxAnimation {
         if (te instanceof MimicTE) {
             MimicTE mimicTE = (MimicTE)te;
             double factor = ((double) currentTick) / totalTicks;
-            double x = (end.xCoord - start.xCoord) * factor;
-            double y = (end.yCoord - start.yCoord) * factor;
-            double z = (end.zCoord - start.zCoord) * factor;
+            double x = (end.x - start.x) * factor;
+            double y = (end.y - start.y) * factor;
+            double z = (end.z - start.z) * factor;
             mimicTE.setOffset(x, y, z);
         }
         currentTick++;
