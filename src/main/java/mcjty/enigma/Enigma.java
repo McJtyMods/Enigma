@@ -8,6 +8,7 @@ import mcjty.lib.compat.CompatCreativeTabs;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
@@ -39,6 +40,8 @@ public class Enigma {
     public static Enigma instance;
     public static Logger logger;
 
+    public static boolean lostcities = false;
+
     public static CreativeTabs tabEnigma = new CompatCreativeTabs("Enigma") {
         @Override
         protected Item getItem() {
@@ -55,6 +58,7 @@ public class Enigma {
     @Mod.EventHandler
     public void init(FMLInitializationEvent e) {
         proxy.init(e);
+        lostcities = Loader.isModLoaded("lostcities");
     }
 
     @Mod.EventHandler

@@ -2,20 +2,30 @@
 
 on setup:
     log "root.setup"
-    position startpos 170 96 164 0
-    position keypos 180 96 164 0
-    position zombiepos 185 96 185 0
-    position zombietriggerpos 170 96 187 0
-    position zombietrappos 164 96 178 0
-    position doorpos 167 96 175 0
 
-    position turnonlightspos 174 90 168 0
-    position light1 176 90 170 0
-    position light2 171 90 170 0
-    position light3 176 90 174 0
-    position light4 171 90 174 0
-    position blocked1 173 90 174 0
-    position blocked2 174 90 174 0
+    if !lc_valid():
+        message fmt_red() + fmt_bold() + "You need a Lost City world!" 320
+
+    var floor0 lc_floor0(pos(170,96,164,0))
+
+    local floor4 $floor0 + 6*4 + 1
+    position startpos 170 $floor4 164 0
+    position keypos 180 $floor4 164 0
+    position zombiepos 185 $floor4 185 0
+    position zombietriggerpos 170 $floor4 187 0
+    position zombietrappos 164 $floor4 178 0
+    position doorpos 167 $floor4 175 0
+
+    local floor3 $floor0 + 6*3 + 1
+    position turnonlightspos 174 $floor3 168 0
+    position light1 176 $floor3 170 0
+    position light2 171 $floor3 170 0
+    position light3 176 $floor3 174 0
+    position light4 171 $floor3 174 0
+    position blocked1 173 $floor3 174 0
+    position blocked2 174 $floor3 174 0
+
+    area topdoor 167 $floor4 162 167 $floor4+2 165 0
 
     blockstate air:
         name "minecraft:air"
@@ -36,8 +46,6 @@ on setup:
     blockstate doorup:
         name "minecraft:iron_door"
         meta 8
-
-    area topdoor 167 96 162 167 98 165 0
 
     setblock keypos chest
 
@@ -72,7 +80,18 @@ pscope "player" true:
 
     on death:
         hp 10
+        fxanim colorandback 20 0 0 0 0 1 1 0 0
+        pstate playerstate death
+
+pscope "death_sequence" pstate(playerstate) == death:
+
+    on delay 20:
+        fxanim color 100 0 0 0 0 1 0 0 0
+
+    on delay 120:
+        fxanim color 50 1 0 0 0 0 0 0 0
         pstate playerstate start
+
 
 pscope "start" pstate(playerstate) == start:
     on activate:
@@ -93,35 +112,56 @@ pscope "start" pstate(playerstate) == start:
         setblock doorpos doorunder
         setblock up(doorpos,1) doorup
         teleport startpos
-        command "/clear"
-        command "/gamemode adventure"
-        command "/time set day"
+        setting chat false
+        command "clear"
+        command "gamemode adventure"
+        command "time set day"
+        command "difficulty normal"
+        fxanim color 1 1 0 0 0 1 0 0 0
+        pstate playerstate intro
+
+pscope "intro" pstate(playerstate) == intro:
+
+    on activate:
+        message "You are in the darkness..." 100
+
+    on delay 140:
+        message "What is happening?" 100
+
+    on delay 280:
+        message "Slowly you start opening your eyes" 100
+
+    on delay 320:
+        teleport startpos
+        fxanim color 60 1 0 0 0 0 0 0 0
+
+    on delay 360:
         pstate playerstate firstroom
 
 pscope "firstroom" pstate(playerstate) == firstroom:
     on rightclickposition keypos:
         if hasitem(mysteriouskey):
-            message "Nothing else can be found!"
+            message "Nothing else can be found!" 100
         else:
-            message fmt_green() + fmt_bold() + "You find a mysterious key in the chest" 60
+            message fmt_green() + fmt_bold() + "You find a mysterious key in the chest" 120
             give mysteriouskey
         cancel
 
     on rightclickposition doorpos:
-        message "This door will not open!" 60
+        message "This door will not open!" 120
         cancel
 
     on rightclickposition up(doorpos,1):
-        message "This door will not open!" 60
+        message "This door will not open!" 120
         cancel
 
     on rightclickblock skull:
-        message "This does not seem to harm you" 60
+        message "This does not seem to harm you" 120
         cancel
 
     on rightclickblock gold:
         if hasitem(mysteriouskey):
-            message "The door simply disappears!" 60
+            message "The door simply disappears!" 120
             setmimic topdoor gold
             fxanim colormimic 40 topdoor 1 1 1 0 0 0
             sound playerpos() "enigma:locking"
@@ -133,41 +173,43 @@ pscope "firstroom" pstate(playerstate) == firstroom:
         cancel
 
     on repeat 50:
-        if distance(zombietriggerpos) < 9:
-            message fmt_red() + fmt_bold() + "Beware of the zombie!" 60
+        if distance(zombietriggerpos) < 12:
+            message fmt_red() + fmt_bold() + "Beware of the zombie!" 120
             spawn zombiepos enemy
             pstate playerstate zombiechase
 
 pscope "zombiechase" pstate(playerstate) == zombiechase:
     on rightclickblock skull:
-        message "Would this kill the zombie?" 60
+        message "Would this kill the zombie?" 120
         cancel
 
     on rightclickposition doorpos:
-        message "This door will not open!" 60
+        message "This door will not open!" 120
         cancel
 
     on rightclickposition up(doorpos,1):
-        message "This door will not open!" 60
+        message "This door will not open!" 120
         cancel
 
     on repeat 10:
         if distance(pos(enemy),zombietrappos) <= 2:
-            message "This appears to be bad for the zombie" 100
-            message "Maybe I can now leave this room?" 100
+            message "This appears to be bad for the zombie" 120
+            message "Maybe I can now leave this room?" 120
             kill enemy
+            fxanim rotate 20 yaw() pitch() yaw(doorpos) pitch(doorpos)
+            lookat doorpos
             pstate playerstate tosecondroom
 
 pscope "tosecondroom" pstate(playerstate) == tosecondroom:
 
     on rightclickposition doorpos:
-        message "The door opens!" 60
+        message "The door opens!" 120
         setblock down(doorpos,2) redstone
-        pstate playerstate secondroom
+        pstate playerstate secondroom_init
         cancel
 
     on rightclickposition up(doorpos,1):
-        message "The door opens!" 60
+        message "The door opens!" 120
         setblock down(doorpos,2) redstone
         pstate playerstate secondroom_init
         cancel
@@ -176,6 +218,7 @@ pscope "secondroom_init" pstate(playerstate) == secondroom_init:
 
     on repeat 5:
         if distance(turnonlightspos) < 6:
+            message "And the lights go on!"
             setblock light1 torch
             setblock light2 torch
             setblock light3 torch
@@ -185,6 +228,6 @@ pscope "secondroom_init" pstate(playerstate) == secondroom_init:
 pscope "secondroom" pstate(playerstate) == secondroom:
 
     on rightclickblock wall:
-        message "This is blocked and will remain blocked because"
-        message "the story is not finished"
+        message "This is blocked and will remain blocked because" 200
+        message "the story is not finished" 200
 

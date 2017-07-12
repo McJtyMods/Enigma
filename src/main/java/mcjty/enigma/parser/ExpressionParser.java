@@ -172,6 +172,20 @@ public class ExpressionParser<T> {
                 return new ParsedExpression<>(w -> ObjectTools.sub(0, a.eval(w)), false, "-" + aexp.getDebug());
             }
         }
+        if (eat('!')) {
+            ParsedExpression<T> aexp = parseFactor();
+            Expression<T> a = aexp.getExpression();
+            if (aexp.isConstant()) {
+                try {
+                    Object eval = ObjectTools.not(a.eval(null));
+                    return new ParsedExpression<>(w -> eval, true, eval.toString());
+                } catch (ExecutionException e) {
+                    throw new ExpressionException(e.getMessage());
+                }
+            } else {
+                return new ParsedExpression<>(w -> ObjectTools.not(a.eval(w)), false, "!" + aexp.getDebug());
+            }
+        }
 
         ParsedExpression<T> x;
         int startPos = str.index();

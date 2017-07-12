@@ -173,4 +173,15 @@ public class ObjectTools {
         }
         return false;
     }
+
+    public static boolean not(Object o1) {
+        if (o1 instanceof Integer) {
+            return asIntSafe(o1) == 0;
+        } else if (o1 instanceof Boolean) {
+            return !asBoolSafe(o1);
+        } else {
+            return false;
+        }
+    }
+
 }

@@ -1,5 +1,7 @@
 package mcjty.enigma.code;
 
+import mcjty.enigma.Enigma;
+import mcjty.enigma.compat.LostCitySupport;
 import mcjty.enigma.parser.Expression;
 import mcjty.enigma.parser.ExpressionContext;
 import mcjty.enigma.parser.ExpressionFunction;
@@ -69,6 +71,17 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
         FUNCTIONS.put("fmt_underline", (context, o) -> String.valueOf(TextFormatting.UNDERLINE));
         FUNCTIONS.put("fmt_italic", (context, o) -> String.valueOf(TextFormatting.ITALIC));
         FUNCTIONS.put("fmt_reset", (context, o) -> String.valueOf(TextFormatting.RESET));
+
+        FUNCTIONS.put("lc_valid", (context, o) -> Enigma.lostcities && LostCitySupport.isLostCity(context.getWorld()));
+        FUNCTIONS.put("lc_floor0", (context, o) -> {
+            if (Enigma.lostcities) {
+                Progress progress = ProgressHolder.getProgress(context.getWorld());
+                BlockPosDim namedPosition = progress.getNamedPosition(o[0]);
+                return LostCitySupport.getFloor0Height(context.getWorld(), namedPosition.getPos());
+            } else {
+                return -1;
+            }
+        });
 
         FUNCTIONS.put("pos", (context, o) -> {
             if (o.length == 1) {

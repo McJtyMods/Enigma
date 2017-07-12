@@ -1,0 +1,203 @@
+on setup:
+    position darkstart 23 62 71 0
+    position start 21 63 75 0
+    position irondoor 23 62 79 0
+    position irondoor_torch 23 60 79 0
+    position woodrack 25 62 77 0
+    position brokenblock 24 62 73 0
+    position below_brokenblock 24 61 73 0
+    position bed 21 62 74 0
+    position sitting_skeleton 15 62 77 0
+    position skeleton_activation 17 62 78 0
+    position haystack 24 62 81 0
+    position woodendoor 14 62 81 0
+    position woodendoor_up 14 63 81 0
+    position woodendoor_torch 14 60 81 0
+    position brokenfloortile 19 61 78 0
+
+    mob skeleton_risen:
+        name "minecraft:skeleton"
+        hp 100
+        damage 1000
+        aggressive true
+        tag enigma
+
+    itemstack coin:
+        name "enigma:coin"
+        description "A Golden Coin"
+    itemstack mysteriouskey:
+        name "enigma:key"
+        meta 1
+        description "Mysterious key"
+    itemstack largeblackkey:
+        name "enigma:key"
+        meta 3
+        description "Large black key"
+    itemstack pickaxe:
+        name "minecraft:wooden_pickaxe"
+    blockstate air:
+        name "minecraft:air"
+    blockstate redstone_torch:
+        name "minecraft:redstone_torch"
+
+on rightclickposition woodrack:
+    if hasitem(mysteriouskey):
+        message fmt_yellow()+"Nothing more can be found here" 80
+    else:
+        message "You find a mysterious small key!"
+        give mysteriouskey
+    cancel
+
+on rightclickposition brokenfloortile:
+    if hasitemmain(pickaxe):
+        message "You further destroy the broken floor" 80
+        message "and you find some gold" 80
+        setblock brokenfloortile air
+        sound brokenblock "enigma:rockbreaking"
+        give coin
+    else:
+        message "This floor looks slightly damaged" 80
+        message "But you cannot break it with your hands" 80
+    cancel
+
+on rightclickitem mysteriouskey:
+    message fmt_yellow()+"This does not seem to do anything" 80
+    cancel
+
+on death:
+    hp 5
+    command "clear"
+    fxanim colorandback 20 0 0 0 0 1 1 0 0
+    pstate main death
+    cancel
+
+pscope "death_sequence" pstate(main) == death:
+
+    on delay 20:
+        fxanim color 100 0 0 0 0 1 0 0 0
+
+    on delay 120:
+        kill enigma
+        restore "game"
+        teleport start
+        lookat irondoor
+        fxanim color 50 1 0 0 0 0 0 0 0
+        pstate main begin
+
+
+pscope "main" true:
+
+    on setup:
+        teleport darkstart
+        setting chat false
+        command "gamemode adventure"
+        command "clear"
+        command "difficulty normal"
+        kill enigma
+        fxanim color 1 1 0 0 0 1 0 0 0
+        pstate main intro
+
+pscope "intro" pstate(main) == intro:
+
+    on activate:
+        message "You are in the darkness..." 100
+
+    on delay 140:
+        message "What is happening?" 100
+
+    on delay 280:
+        message "Slowly you start opening your eyes" 100
+
+    on delay 320:
+        teleport start
+        lookat irondoor
+        fxanim color 60 1 0 0 0 0 0 0 0
+
+    on delay 360:
+        pstate main begin:
+
+pscope "begin" pstate(main) == begin:
+
+    on rightclickposition brokenblock:
+        if hasitemmain(pickaxe):
+            message "You further destroy the broken block" 80
+            setblock brokenblock air
+            sound brokenblock "enigma:rockbreaking"
+        else:
+            message "The block looks slightly damaged" 80
+            message "But you cannot break it with your hands" 80
+        cancel
+
+    on rightclickposition bed:
+        if hasitem(pickaxe):
+            message fmt_yellow()+"Nothing more can be found here" 80
+        else:
+            message "You find a pickaxe. This might be useful!"
+            give pickaxe
+        cancel
+
+    on rightclickposition below_brokenblock:
+        message "You hear the door open!"
+        fxanim rotate 20 yaw() pitch() yaw(irondoor) pitch(irondoor)
+        setblock irondoor_torch redstone_torch
+        pstate main corridor
+
+pscope "corridor" pstate(main) == corridor:
+
+    on activate:
+        var skeleton_active 0
+
+    on repeat 10:
+        if distance(playerpos(),skeleton_activation) < 2:
+            if $skeleton_active == 0:
+                var skeleton_active 1
+        else:
+            if $skeleton_active == 1:
+                var skeleton_active 2
+                setblock sitting_skeleton air
+                spawn sitting_skeleton skeleton_risen
+
+    # @ Solve double routine
+    on rightclickposition woodendoor_up:
+        if hasitem(mysteriouskey):
+            if hasitem(largeblackkey):
+                message fmt_yellow()+"The door unlocks and you open it" 80
+                sound woodendoor "enigma:locking"
+                setblock woodendoor_torch redstone_torch
+                take largeblackkey
+            else:
+                message fmt_yellow()+"The door will not open" 80
+        else:
+            message fmt_yellow()+"You feel that you have missed something" 80
+        message "test"
+        cancel
+
+    on rightclickposition woodendoor:
+        if hasitem(mysteriouskey):
+            if hasitem(largeblackkey):
+                message fmt_yellow()+"The door unlocks and you open it" 80
+                sound woodendoor "enigma:locking"
+                setblock woodendoor_torch redstone_torch
+                take largeblackkey
+            else:
+                message fmt_yellow()+"The door will not open" 80
+        else:
+            message fmt_yellow()+"You feel that you have missed something" 80
+        cancel
+
+    on rightclickposition haystack:
+        if hasitem(largeblackkey):
+            message fmt_yellow()+"Nothing more can be found here" 80
+        else:
+            if random() < .7:
+                message fmt_yellow()+"You cannot find anything" 80
+                message fmt_yellow()+"Perhaps look a little better?" 80
+            else:
+                message fmt_yellow()+"You find a large black key" 80
+                give largeblackkey
+        cancel
+
+
+  
+
+  

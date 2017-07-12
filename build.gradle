@@ -63,7 +63,7 @@ dependencies {
     deobfCompile "mcjty.theoneprobe:TheOneProbe:1.1x-1.4.1-51"
     deobfCompile "com.github.mcjty:compatlayer:1.11.2-0.2.6"
     deobfCompile "com.github.mcjty:intwheel:1.1x-1.2.0"
-    //deobfCompile "com.github.mcjty:lostcities:1.1x-0.0.16beta"
+    deobfCompile "com.github.mcjty:lostcities:1.1x-0.0.16beta"
 }
 
 processResources
