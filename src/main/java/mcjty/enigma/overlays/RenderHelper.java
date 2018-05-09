@@ -39,7 +39,7 @@ public class RenderHelper {
         GlStateManager.translate(0.0F, (float) entity.getYOffset(), 0.0F);
         Minecraft.getMinecraft().getRenderManager().playerViewY = 180F;
         try {
-            Minecraft.getMinecraft().getRenderManager().doRenderEntity(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, false);
+            Minecraft.getMinecraft().getRenderManager().renderEntity(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1.0F, false);
         } catch (Exception e) {
             Enigma.logger.error("Error rendering entity!", e);
         }
@@ -341,7 +341,7 @@ public class RenderHelper {
         int b1 = brightness >> 16 & 65535;
         int b2 = brightness & 65535;
         GlStateManager.pushMatrix();
-        mcjty.theoneprobe.rendering.RenderHelper.rotateToPlayer();
+        rotateToPlayer();
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder buffer = tessellator.getBuffer();
         buffer.begin(7, DefaultVertexFormats.POSITION_TEX_LMAP_COLOR);
