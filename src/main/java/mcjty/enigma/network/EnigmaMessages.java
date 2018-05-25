@@ -16,7 +16,7 @@ public class EnigmaMessages {
         INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(channelName);
 
         // Server side
-//        net.registerMessage(PacketGetGridStatus.Handler.class, PacketGetGridStatus.class, PacketHandler.nextID(), Side.SERVER);
+//        net.registerMessage(PacketGetGridStatus.Handler.class, PacketGetGridStatus.class, PacketHandler.nextPacketID(), Side.SERVER);
 
         // Client side
         INSTANCE.registerMessage(PacketAddMessage.Handler.class, PacketAddMessage.class, nextID(), Side.CLIENT);
