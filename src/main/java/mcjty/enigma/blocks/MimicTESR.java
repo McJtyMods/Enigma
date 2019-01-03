@@ -17,6 +17,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.WorldType;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.MinecraftForgeClient;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -124,5 +125,7 @@ public class MimicTESR extends TileEntitySpecialRenderer<MimicTE> {
         }
     }
 
-
+    public static void register() {
+        ClientRegistry.bindTileEntitySpecialRenderer(MimicTE.class, new MimicTESR());
+    }
 }
