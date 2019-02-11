@@ -1,6 +1,8 @@
 package mcjty.enigma;
 
 
+import mcjty.enigma.api.IEnigmaScript;
+import mcjty.enigma.apiimp.EnigmaScript;
 import mcjty.enigma.commands.*;
 import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.proxy.CommonProxy;
@@ -12,6 +14,9 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
 import org.apache.logging.log4j.Logger;
+
+import java.util.Optional;
+import java.util.function.Function;
 
 @Mod(modid = Enigma.MODID, name = Enigma.MODNAME,
         dependencies =
@@ -33,6 +38,7 @@ public class Enigma {
     @Mod.Instance(MODID)
     public static Enigma instance;
     public static Logger logger;
+    public static EnigmaScript enigmaScript = new EnigmaScript();
 
     public static boolean lostcities = false;
 
@@ -63,6 +69,20 @@ public class Enigma {
     @Mod.EventHandler
     public void serverStopped(FMLServerStoppedEvent event) {
         ProgressHolder.clearInstance();
+    }
+
+    @Mod.EventHandler
+    public void imcCallback(FMLInterModComms.IMCEvent event) {
+        for (FMLInterModComms.IMCMessage message : event.getMessages()) {
+            if (message.key.equalsIgnoreCase("getEnigmaScript")) {
+                Optional<Function<IEnigmaScript, Void>> value = message.getFunctionValue(IEnigmaScript.class, Void.class);
+                if (value.isPresent()) {
+                    value.get().apply(enigmaScript);
+                } else {
+                    logger.warn("Some mod didn't return a valid result with getEnigmaScript!");
+                }
+            }
+        }
     }
 
 
