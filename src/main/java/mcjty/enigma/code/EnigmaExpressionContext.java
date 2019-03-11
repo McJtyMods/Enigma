@@ -1,6 +1,5 @@
 package mcjty.enigma.code;
 
-import mcjty.enigma.Enigma;
 import mcjty.enigma.compat.LostCitySupport;
 import mcjty.enigma.parser.Expression;
 import mcjty.enigma.parser.ExpressionContext;
@@ -10,6 +9,7 @@ import mcjty.enigma.progress.MobConfig;
 import mcjty.enigma.progress.PlayerProgress;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
+import mcjty.enigma.setup.ModSetup;
 import mcjty.enigma.varia.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -67,9 +67,9 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
         FUNCTIONS.put("fmt_italic", (context, o) -> String.valueOf(TextFormatting.ITALIC));
         FUNCTIONS.put("fmt_reset", (context, o) -> String.valueOf(TextFormatting.RESET));
 
-        FUNCTIONS.put("lc_valid", (context, o) -> Enigma.lostcities && LostCitySupport.isLostCity(context.getWorld()));
+        FUNCTIONS.put("lc_valid", (context, o) -> ModSetup.lostcities && LostCitySupport.isLostCity(context.getWorld()));
         FUNCTIONS.put("lc_floor0", (context, o) -> {
-            if (Enigma.lostcities) {
+            if (ModSetup.lostcities) {
                 Progress progress = ProgressHolder.getProgress(context.getWorld());
                 BlockPosDim namedPosition = progress.getNamedPosition(o[0]);
                 return LostCitySupport.getFloor0Height(context.getWorld(), namedPosition.getPos());

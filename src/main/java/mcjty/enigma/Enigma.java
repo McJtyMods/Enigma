@@ -5,15 +5,14 @@ import mcjty.enigma.api.IEnigmaScript;
 import mcjty.enigma.apiimp.EnigmaScript;
 import mcjty.enigma.commands.*;
 import mcjty.enigma.progress.ProgressHolder;
-import mcjty.enigma.proxy.CommonProxy;
+import mcjty.enigma.setup.IProxy;
+import mcjty.enigma.setup.ModSetup;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.*;
-import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -32,15 +31,13 @@ public class Enigma {
 
     public static final String SHIFT_MESSAGE = "<Press Shift>";
 
-    @SidedProxy(clientSide = "mcjty.enigma.proxy.ClientProxy", serverSide = "mcjty.enigma.proxy.ServerProxy")
-    public static CommonProxy proxy;
+    @SidedProxy(clientSide = "mcjty.enigma.setup.ClientProxy", serverSide = "mcjty.enigma.setup.ServerProxy")
+    public static IProxy proxy;
+    public static ModSetup setup = new ModSetup();
 
     @Mod.Instance(MODID)
     public static Enigma instance;
-    public static Logger logger;
     public static EnigmaScript enigmaScript = new EnigmaScript();
-
-    public static boolean lostcities = false;
 
     public static CreativeTabs tabEnigma = new CreativeTabs("Enigma") {
         @Override
@@ -51,18 +48,19 @@ public class Enigma {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event){
-        logger = event.getModLog();
+        setup.preInit(event);
         proxy.preInit(event);
     }
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent e) {
+        setup.init(e);
         proxy.init(e);
-        lostcities = Loader.isModLoaded("lostcities");
     }
 
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
+        setup.postInit(e);
         proxy.postInit(e);
     }
 
@@ -79,7 +77,7 @@ public class Enigma {
                 if (value.isPresent()) {
                     value.get().apply(enigmaScript);
                 } else {
-                    logger.warn("Some mod didn't return a valid result with getEnigmaScript!");
+                    setup.getLogger().warn("Some mod didn't return a valid result with getEnigmaScript!");
                 }
             }
         }

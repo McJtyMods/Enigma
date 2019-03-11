@@ -24,7 +24,7 @@ public class CmdReset extends CommandBase {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        Enigma.logger.info("Reset status:");
+        Enigma.setup.getLogger().info("Reset status:");
         RootScope.reset(server.getEntityWorld());
         ITextComponent component = new TextComponentString(TextFormatting.RED + "Total Enigma State Reset!");
         if (sender instanceof EntityPlayer) {

@@ -38,22 +38,22 @@ public class CmdStates extends CommandBase {
         } else {
             sender.sendMessage(component);
         }
-        Enigma.logger.info("Current status:");
+        Enigma.setup.getLogger().info("Current status:");
         Progress progress = ProgressHolder.getProgress(server.getEntityWorld());
 
         for (Map.Entry<Integer, Integer> entry : progress.getStates().entrySet()) {
             String name = STRINGS.get(entry.getKey());
             String value = STRINGS.get(entry.getValue());
-            Enigma.logger.info("State: " + name + " = " + value);
+            Enigma.setup.getLogger().info("State: " + name + " = " + value);
         }
 
         for (Map.Entry<UUID, PlayerProgress> entry : progress.getPlayerProgress().entrySet()) {
             EntityPlayerMP player = server.getPlayerList().getPlayerByUUID(entry.getKey());
-            Enigma.logger.info("Player: " + entry.getKey() + (player == null ? "" : (" (" + player.getDisplayNameString() + ")")));
+            Enigma.setup.getLogger().info("Player: " + entry.getKey() + (player == null ? "" : (" (" + player.getDisplayNameString() + ")")));
             for (Map.Entry<Integer, Integer> pp : entry.getValue().getStates().entrySet()) {
                 String name = STRINGS.get(pp.getKey());
                 String value = STRINGS.get(pp.getValue());
-                Enigma.logger.info("    State: " + name + " = " + value);
+                Enigma.setup.getLogger().info("    State: " + name + " = " + value);
             }
         }
 

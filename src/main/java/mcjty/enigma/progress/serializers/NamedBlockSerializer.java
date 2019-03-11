@@ -25,7 +25,7 @@ public class NamedBlockSerializer implements NBTData<Integer, IBlockState> {
             IBlockState state = block.getStateFromMeta(meta);
             return state;
         } else {
-            Enigma.logger.warn("Block '" + regname + "' is missing!");
+            Enigma.setup.getLogger().warn("Block '" + regname + "' is missing!");
             return null;
         }
     }

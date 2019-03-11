@@ -62,10 +62,8 @@ public class RootScope {
     public static boolean reload(World world, EntityPlayer player) throws IOException {
         if (currentFile == null) {
             ITextComponent component = new TextComponentString(TextFormatting.RED + "No rules loaded!");
-            if (player instanceof EntityPlayer) {
-                ((EntityPlayer) player).sendStatusMessage(component, false);
-            } else {
-                player.sendMessage(component);
+            if (player != null) {
+                player.sendStatusMessage(component, false);
             }
             return false;
         }
@@ -86,7 +84,7 @@ public class RootScope {
             List<TokenizedLine> lines = RuleParser.parse(new BufferedReader(new InputStreamReader(inputstream)), new EnigmaExpressionContext(progress));
             return ProgramParser.parse(lines);
         } catch (ParserException e) {
-            Enigma.logger.log(Level.ERROR, "ERROR: " + e.getMessage() + " at line " + (e.getLinenumber()+1) + " (" + file.getName() + ")", e);
+            Enigma.setup.getLogger().log(Level.ERROR, "ERROR: " + e.getMessage() + " at line " + (e.getLinenumber()+1) + " (" + file.getName() + ")", e);
             throw new RuntimeException(e);
         }
     }

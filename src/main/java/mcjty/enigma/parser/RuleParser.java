@@ -16,17 +16,17 @@ public class RuleParser<T> {
 
     public static <T> List<TokenizedLine> parse(File file, @Nonnull ExpressionContext<T> expressionContext) throws ParserException {
         if (!file.exists()) {
-            Enigma.logger.log(Level.ERROR, "Error reading file " + file.getName());
+            Enigma.setup.getLogger().log(Level.ERROR, "Error reading file " + file.getName());
             throw new RuntimeException("Error reading file: " + file.getName());
         }
         try {
             BufferedReader reader = new BufferedReader(new FileReader(file));
             return parse(reader, expressionContext);
         } catch (FileNotFoundException e) {
-            Enigma.logger.log(Level.ERROR, "Error reading file " + file.getName());
+            Enigma.setup.getLogger().log(Level.ERROR, "Error reading file " + file.getName());
             throw new RuntimeException("Error reading file: " + file.getName());
         } catch (IOException e) {
-            Enigma.logger.log(Level.ERROR, "Error reading file " + file.getName());
+            Enigma.setup.getLogger().log(Level.ERROR, "Error reading file " + file.getName());
             throw new RuntimeException("Error reading file: " + file.getName());
         }
     }
