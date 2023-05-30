@@ -72,9 +72,9 @@ minecraft {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
-    compile "mezz.jei:jei_1.12:4.7.0.67"
-    compile "com.github.mcjty:lostcities:1.12-0.0.17beta"
-    compile "mcjty.theoneprobe:TheOneProbe-1.12:1.12-1.4.11-5"
+    compileOnly "mezz.jei:jei_${jei_version}"
+    compileOnly "com.github.mcjty:lostcities:1.12-0.0.17beta"
+    compileOnly "mcjty.theoneprobe:TheOneProbe-${top_version}"
     compileOnly "cofh:RedstoneFlux:1.12-2.0.0.1:universal"
 }
 
