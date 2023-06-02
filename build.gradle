@@ -6,6 +6,11 @@ buildscript {
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:3.+'
     }
+    configurations.all {
+        resolutionStrategy {
+            force 'org.ow2.asm:asm:6.0_BETA'
+        }
+    }
 }
 
 plugins {
