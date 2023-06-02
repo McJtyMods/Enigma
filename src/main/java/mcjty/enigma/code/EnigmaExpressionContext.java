@@ -78,6 +78,22 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
             }
         });
 
+        FUNCTIONS.put("property", (context, o) -> {
+            Progress progress = ProgressHolder.getProgress(context.getWorld());
+            BlockPosDim namedPosition = progress.getNamedPosition(o[0]);
+            if (namedPosition == null) {
+                throw new ExecutionException("Cannot find position " + o[0] + "!");
+            }
+            IBlockState state = context.getWorld().getBlockState(namedPosition.getPos());
+            String propertyName = ObjectTools.asStringSafe(o[1]);
+            // Get property value
+            return state.getProperties().entrySet().stream()
+                    .filter(entry -> entry.getKey().getName().equals(propertyName))
+                    .findFirst()
+                    .map(Map.Entry::getValue)
+                    .orElseThrow(() -> new ExecutionException("Cannot find property " + propertyName + " for block " + namedPosition.getPos()));
+        });
+
         FUNCTIONS.put("pos", (context, o) -> {
             if (o.length == 1) {
                 Progress progress = ProgressHolder.getProgress(context.getWorld());
@@ -106,6 +122,7 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
             }
         });
         FUNCTIONS.put("playerpos", (context, o) -> new BlockPosDim(context.getPlayer().getPosition(), context.getPlayer().getEntityWorld().provider.getDimension()));
+        FUNCTIONS.put("playername", (context, o) -> context.getPlayer().getName());
         FUNCTIONS.put("getx", (context, o) -> {
             Progress progress = ProgressHolder.getProgress(context.getWorld());
             BlockPosDim namedPosition = progress.getNamedPosition(o[0]);

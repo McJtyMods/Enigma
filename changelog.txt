@@ -1,2 +1,6 @@
+Upcoming:
+- Added new 'property' function with parameters position and property name. It will return the value of the property of the block at the given position
+- Added new 'playername' function with no parameters. It will return the name of the player who triggered the event
+
 1.12-0.0.1beta:
 - xxx
