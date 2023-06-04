@@ -18,9 +18,6 @@ public class ClientProxy implements IProxy {
 
     @Override
     public void preInit(FMLPreInitializationEvent e) {
-        ModItems.initModels();
-        ModBlocks.initModels();
-//        ModBlocks.initModels();
     }
 
     @Override

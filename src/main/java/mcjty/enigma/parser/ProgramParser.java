@@ -620,6 +620,9 @@ public class ProgramParser {
                 case PARTICLE:
                     actionBlock.addAction(new ParticleAction(line.getParameters().get(0), line.getParameters().get(1)));
                     break;
+                case INVADDITEM:
+                    actionBlock.addAction(new InvAddItemAction(line.getParameters().get(0), line.getParameters().get(1)));
+                    break;
                 default:
                     throw new ParserException("Unexpected command '" + line.getMainToken().name() + "' for action block!", linenumber);
             }

@@ -17,6 +17,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
@@ -26,6 +27,8 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -84,7 +87,7 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
             if (namedPosition == null) {
                 throw new ExecutionException("Cannot find position " + o[0] + "!");
             }
-            IBlockState state = context.getWorld().getBlockState(namedPosition.getPos());
+            IBlockState state = namedPosition.getWorld().getBlockState(namedPosition.getPos());
             String propertyName = ObjectTools.asStringSafe(o[1]);
             // Get property value
             return state.getProperties().entrySet().stream()
@@ -409,6 +412,72 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
                 Progress progress = ProgressHolder.getProgress(context.getWorld());
                 return progress.getNamedItemStack(o[0]);
             }
+        });
+        FUNCTIONS.put("inv_count", (context, o) -> {
+            // Count the number of items in the inventory
+            Progress progress = ProgressHolder.getProgress(context.getWorld());
+            BlockPosDim namedPosition = progress.getNamedPosition(o[0]);
+            TileEntity te = namedPosition.getWorld().getTileEntity(namedPosition.getPos());
+            if (te == null) {
+                return -1;
+            }
+            if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+                IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                if (handler != null) {
+                    int cnt = 0;
+                    for (int i = 0 ; i < handler.getSlots() ; i++) {
+                        ItemStack stack = handler.getStackInSlot(i);
+                        cnt += stack.getCount();
+                    }
+                    return cnt;
+                }
+            }
+            return -1;
+        });
+        FUNCTIONS.put("inv_getcount", (context, o) -> {
+            // Check the stack size of the item in the specific inventory (at position) at the specific slot
+            Progress progress = ProgressHolder.getProgress(context.getWorld());
+            BlockPosDim namedPosition = progress.getNamedPosition(o[0]);
+            int slot = ObjectTools.asIntSafe(o[1]);
+            TileEntity te = namedPosition.getWorld().getTileEntity(namedPosition.getPos());
+            if (te == null) {
+                return -1;
+            }
+            if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+                IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                if (handler != null) {
+                    if (slot >= handler.getSlots() || slot < 0) {
+                        throw new ExecutionException("Slot " + slot + " is out of bounds!");
+                    }
+                    ItemStack stack = handler.getStackInSlot(slot);
+                    if (stack.isEmpty()) {
+                        return 0;
+                    } else {
+                        return stack.getCount();
+                    }
+                }
+            }
+            return -1;
+        });
+        FUNCTIONS.put("inv_get", (context, o) -> {
+            // Check the stack of the item in the specific inventory (at position) at the specific slot
+            Progress progress = ProgressHolder.getProgress(context.getWorld());
+            BlockPosDim namedPosition = progress.getNamedPosition(o[0]);
+            int slot = ObjectTools.asIntSafe(o[1]);
+            TileEntity te = namedPosition.getWorld().getTileEntity(namedPosition.getPos());
+            if (te == null) {
+                return ItemStack.EMPTY;
+            }
+            if (te.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null)) {
+                IItemHandler handler = te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+                if (handler != null) {
+                    if (slot >= handler.getSlots() || slot < 0) {
+                        throw new ExecutionException("Slot " + slot + " is out of bounds!");
+                    }
+                    return handler.getStackInSlot(slot);
+                }
+            }
+            return ItemStack.EMPTY;
         });
         FUNCTIONS.put("hasitem", (context, o) -> {
             Progress progress = ProgressHolder.getProgress(context.getWorld());

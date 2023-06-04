@@ -59,7 +59,8 @@ public enum MainToken {
     FXANIM(true, 0, 0),        // fxanim <animname> ...
     AGGRESSIVE(false, 1, 1),   // aggressive <boolean>
     DELAY(false, 1, 1),        // delay <time>
-    TAG(false, 1, 1);          // tag <tagname>
+    TAG(false, 1, 1),          // tag <tagname>
+    INVADDITEM(false, 2, 2);   // invadditem <position> <item>
 
     private final boolean hasSecondaryToken;
     private final int minParameters;

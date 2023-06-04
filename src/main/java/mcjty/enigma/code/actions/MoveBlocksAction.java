@@ -32,7 +32,6 @@ public class MoveBlocksAction extends Action {
     @Override
     public void dump(int indent) {
         System.out.println(StringUtils.repeat(' ', indent) + "MoveBlocks: " + area + " to " + destination);
-
     }
 
     private static class Remembered {
