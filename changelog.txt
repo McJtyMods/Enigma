@@ -4,8 +4,10 @@ Upcoming:
     - 'playername' function with no parameters. It will return the name of the player who triggered the event
     - 'inv_get' function with parameters position and slot. It will return the itemstack in the given slot of the inventory at the given position
     - 'inv_getcount' function with parameters position and slot. It will return the count of the itemstack in the given slot of the inventory at the given position
-    - 'inv_count' function with the position as a parameter. It will return the number of items in the inventory at the given position
-- New 'invadditem' command to add an item to an inventory
+    - 'inv_count' function with the position as a parameter. It will return the number of items in the inventory at the given position. There is also an optional item parameter to only count that item
+- New commands:
+    - 'invadditem' command to add an item to an inventory
+    - 'invsetitem' command to set a specific slot of an inventory to an item
 - Fixed block and item model registration
 
 1.12-0.0.1beta:

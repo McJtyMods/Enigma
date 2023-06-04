@@ -60,7 +60,8 @@ public enum MainToken {
     AGGRESSIVE(false, 1, 1),   // aggressive <boolean>
     DELAY(false, 1, 1),        // delay <time>
     TAG(false, 1, 1),          // tag <tagname>
-    INVADDITEM(false, 2, 2);   // invadditem <position> <item>
+    INVADDITEM(false, 2, 2),   // invadditem <position> <item>
+    INVSETITEM(false, 3, 3);   // invadditem <position> <slot> <item>
 
     private final boolean hasSecondaryToken;
     private final int minParameters;

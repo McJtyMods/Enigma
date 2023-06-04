@@ -417,6 +417,12 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
             // Count the number of items in the inventory
             Progress progress = ProgressHolder.getProgress(context.getWorld());
             BlockPosDim namedPosition = progress.getNamedPosition(o[0]);
+
+            ItemStack desired = ItemStack.EMPTY;
+            if (o.length > 1) {
+                desired = progress.getNamedItemStack(o[1]);
+            }
+
             TileEntity te = namedPosition.getWorld().getTileEntity(namedPosition.getPos());
             if (te == null) {
                 return -1;
@@ -427,7 +433,9 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
                     int cnt = 0;
                     for (int i = 0 ; i < handler.getSlots() ; i++) {
                         ItemStack stack = handler.getStackInSlot(i);
-                        cnt += stack.getCount();
+                        if (desired.isEmpty() || stack.isItemEqual(desired)) {
+                            cnt += stack.getCount();
+                        }
                     }
                     return cnt;
                 }

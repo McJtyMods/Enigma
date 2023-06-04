@@ -623,6 +623,9 @@ public class ProgramParser {
                 case INVADDITEM:
                     actionBlock.addAction(new InvAddItemAction(line.getParameters().get(0), line.getParameters().get(1)));
                     break;
+                case INVSETITEM:
+                    actionBlock.addAction(new InvSetItemAction(line.getParameters().get(0), line.getParameters().get(1), line.getParameters().get(2)));
+                    break;
                 default:
                     throw new ParserException("Unexpected command '" + line.getMainToken().name() + "' for action block!", linenumber);
             }
