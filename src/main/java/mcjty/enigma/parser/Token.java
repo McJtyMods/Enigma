@@ -7,6 +7,8 @@ public enum Token {
     OBTAINITEM(1),      // on obtainitem <item>
     OBTAINTAG(1),       // on obtaintag <tagname>
     BREAKBLOCK(1),      // on breakblock <position>
+    ENTERAREA(1),       // on enterarea <area>
+    LEAVEAREA(1),       // on leavearea <area>
     RIGHTCLICKBLOCK(1), // on rightclickblock <block>
     RIGHTCLICKPOSITION(1), // on rightclickblock <position>
     RIGHTCLICKITEM(1),  // on rightclickitem <item>

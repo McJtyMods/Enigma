@@ -99,6 +99,12 @@ public class ProgramParser {
                 break;
             case BREAKBLOCK:
                 break;
+            case ENTERAREA:
+                scope.addOnEnterArea(actionBlock, line.getParameters().get(0), true);
+                break;
+            case LEAVEAREA:
+                scope.addOnEnterArea(actionBlock, line.getParameters().get(0), false);
+                break;
             case RIGHTCLICKBLOCK:
                 scope.addOnRightClickBlock(actionBlock, line.getParameters().get(0));
                 break;
@@ -181,6 +187,30 @@ public class ProgramParser {
                         line.getParameters().get(7), line.getParameters().get(8), true);
             default:
                 throw new ParserException("Unexpected token '" + secondaryToken.name() + "' for 'fxanim' command!", line.getLineNumber());
+        }
+    }
+
+    private static Action parseWhile(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line) throws ParserException {
+        if (!line.isEndsWithColon()) {
+            throw new ParserException("Expected ':' after 'WHILE' statement", line.getLineNumber());
+        } else {
+            Expression<EnigmaFunctionContext> condition = line.getParameters().get(0);
+            ActionBlock actionBlock = new ActionBlock();
+            parseActionBlock(context, actionBlock);
+            return new WhileAction(condition, actionBlock);
+        }
+    }
+
+    private static Action parseFor(ParsingContext<EnigmaFunctionContext> context, TokenizedLine<EnigmaFunctionContext> line) throws ParserException {
+        if (!line.isEndsWithColon()) {
+            throw new ParserException("Expected ':' after 'FOR' statement", line.getLineNumber());
+        } else {
+            Expression<EnigmaFunctionContext> variable = line.getParameters().get(0);
+            Expression<EnigmaFunctionContext> start = line.getParameters().get(1);
+            Expression<EnigmaFunctionContext> end = line.getParameters().get(2);
+            ActionBlock actionBlock = new ActionBlock();
+            parseActionBlock(context, actionBlock);
+            return new ForAction(variable, start, end, actionBlock);
         }
     }
 
@@ -522,7 +552,10 @@ public class ProgramParser {
                     actionBlock.addAction(new CallAction(line.getParameters().get(0)));
                     break;
                 case FOR:
-                    actionBlock.addAction(new ForAction(line.getParameters().get(0), line.getParameters().get(1), line.getParameters().get(2), line.getParameters().get(3)));
+                    actionBlock.addAction(parseFor(context, line));
+                    break;
+                case WHILE:
+                    actionBlock.addAction(parseWhile(context, line));
                     break;
                 case IF:
                     actionBlock.addAction(parseIf(context, line));

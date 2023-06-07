@@ -13,7 +13,8 @@ public enum MainToken {
     ON(true, 0, 0),
     BLOCK(false, 1, 1),        // block <name>:
     CALL(false, 1, 1),         // call <name>
-    FOR(false, 4, 4),          // for <variable> <start> <end> <name>
+    FOR(false, 3, 3),          // for <variable> <start> <end>
+    WHILE(false, 1, 1),        // while <expression>
     POSITION(false, 5, 5),     // position <name> <x> <y> <z> <dim>
     AREA(false, 3, 8),         // area <name> <x1> <y1> <z1> <x2> <y2> <z2> <dim> or <name> <pos1> <pos2>
     LOOKAT(false, 1, 1),       // lookat <position>

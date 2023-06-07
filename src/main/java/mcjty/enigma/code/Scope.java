@@ -6,11 +6,13 @@ import mcjty.enigma.parser.Expression;
 import mcjty.enigma.parser.ObjectTools;
 import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
+import mcjty.enigma.varia.Area;
 import mcjty.enigma.varia.InventoryHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -33,6 +35,7 @@ public class Scope {
     private final List<ActionBlock> onSetup = new ArrayList<>();
     private final List<ActionBlock> onLogin = new ArrayList<>();
     private final List<DelayedAction> onDelay = new ArrayList<>();
+    private final List<EnterAreaAction> onEnterArea = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onRightClickItem = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onRightClickBlock = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onRightClickPosition = new ArrayList<>();
@@ -42,6 +45,30 @@ public class Scope {
     private final List<Scope> nestedScopes = new ArrayList<>();
     private final List<Scope> nestedPlayerScopes = new ArrayList<>();
     private final Map<String, ActionBlock> namedActionBlocks = new HashMap<>();
+
+    public static class EnterAreaAction {
+        private final ActionBlock actionBlock;
+        private final Expression<EnigmaFunctionContext> area;
+        private final boolean enter;
+
+        public EnterAreaAction(ActionBlock actionBlock, Expression<EnigmaFunctionContext> area, boolean enter) {
+            this.actionBlock = actionBlock;
+            this.area = area;
+            this.enter = enter;
+        }
+
+        public ActionBlock getActionBlock() {
+            return actionBlock;
+        }
+
+        public Expression<EnigmaFunctionContext> getArea() {
+            return area;
+        }
+
+        public boolean isEnter() {
+            return enter;
+        }
+    }
 
     public static class DelayedAction {
         private final ActionBlock actionBlock;
@@ -176,6 +203,32 @@ public class Scope {
         }
     }
 
+    private static int counter = 0;
+
+    private void onEnterArea(TickEvent.PlayerTickEvent event, EnigmaFunctionContext context, boolean enter) {
+        counter--;
+        if (counter < 0) {
+            counter = 10;
+        } else {
+            return;
+        }
+        try {
+            for (EnterAreaAction action : onEnterArea) {
+                if (action.isEnter() == enter) {
+                    Progress progress = ProgressHolder.getProgress(event.player.getEntityWorld());
+                    Area namedArea = progress.getNamedArea(action.getArea().eval(context));
+                    // @todo
+
+                    if (ObjectTools.asBoolSafe(action.getArea().eval(context))) {
+                        action.getActionBlock().execute(context);
+                    }
+                }
+            }
+        } catch (ExecutionException e) {
+            handleException(e);
+        }
+    }
+
     private void performActions(EnigmaFunctionContext context, List<ActionBlock> actions) {
         try {
             for (ActionBlock block : actions) {
@@ -224,6 +277,10 @@ public class Scope {
 
     public void addOnSetup(ActionBlock actionBlock) {
         onSetup.add(actionBlock);
+    }
+
+    public void addOnEnterArea(ActionBlock actionBlock, Expression<EnigmaFunctionContext> area, boolean enter) {
+        onEnterArea.add(new EnterAreaAction(actionBlock, area, enter));
     }
 
     public void addOnDelay(ActionBlock actionBlock, Expression<EnigmaFunctionContext> delayPar, boolean repeating) {

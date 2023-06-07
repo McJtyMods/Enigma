@@ -24,7 +24,6 @@ public class MessageAction extends Action {
     @Override
     public void dump(int indent) {
         System.out.println(StringUtils.repeat(' ', indent) + "Message: " + message);
-
     }
 
     @Override

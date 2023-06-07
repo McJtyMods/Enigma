@@ -1,6 +1,9 @@
 package mcjty.enigma.code.actions;
 
-import mcjty.enigma.code.*;
+import mcjty.enigma.code.Action;
+import mcjty.enigma.code.ActionBlock;
+import mcjty.enigma.code.EnigmaFunctionContext;
+import mcjty.enigma.code.ExecutionException;
 import mcjty.enigma.parser.Expression;
 import mcjty.enigma.parser.ObjectTools;
 import org.apache.commons.lang3.StringUtils;
@@ -11,21 +14,21 @@ public class ForAction extends Action {
     @Nonnull private final Expression<EnigmaFunctionContext> varname;
     @Nonnull private final Expression<EnigmaFunctionContext> start;
     @Nonnull private final Expression<EnigmaFunctionContext> end;
-    @Nonnull private final Expression<EnigmaFunctionContext> actionBlockName;
+    @Nonnull private final ActionBlock actionBlock;
 
     public ForAction(Expression<EnigmaFunctionContext> varname,
                      Expression<EnigmaFunctionContext> start,
                      Expression<EnigmaFunctionContext> end,
-                     Expression<EnigmaFunctionContext> actionBlockName) {
+                     ActionBlock actionBlock) {
         this.varname = varname;
         this.start = start;
         this.end = end;
-        this.actionBlockName = actionBlockName;
+        this.actionBlock = actionBlock;
     }
 
     @Override
     public void dump(int indent) {
-        System.out.println(StringUtils.repeat(' ', indent) + "For: " + varname + " from " + start + " to " + end + " -> " + actionBlockName);
+        System.out.println(StringUtils.repeat(' ', indent) + "For: " + varname + " from " + start + " to " + end);
     }
 
     @Override
@@ -34,18 +37,9 @@ public class ForAction extends Action {
         int f1 = ObjectTools.asIntSafe(start.eval(context));
         int f2 = ObjectTools.asIntSafe(end.eval(context));
 
-        Object e = actionBlockName.eval(context);
-        ScopeInstance scopeInstance = context.getScopeInstance();
-        if (scopeInstance == null) {
-            scopeInstance = RootScope.getRootInstance(context.getWorld());
-        }
-        ActionBlock block = scopeInstance.getScope().findNamedBlock(ObjectTools.asStringSafe(e));
-        if (block == null) {
-            throw new ExecutionException("Cannot find code block with name: " + e);
-        }
         for (int i = f1 ; i < f2 ; i++) {
             context.setLocalVar(var, i);
-            block.execute(context);
+            actionBlock.execute(context);
         }
     }
 }
