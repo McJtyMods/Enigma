@@ -15,6 +15,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemHandlerHelper;
 import org.apache.commons.lang3.StringUtils;
 
 public class InvAddItemAction extends Action {
@@ -60,6 +61,6 @@ public class InvAddItemAction extends Action {
         if (handler == null) {
             throw new ExecutionException("Not a tile entity with an inventory '" + pos + "'!");
         }
-        handler.insertItem(0, itemStack, false);
+        ItemHandlerHelper.insertItem(handler, itemStack, false);
     }
 }

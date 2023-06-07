@@ -9,6 +9,7 @@ Upcoming:
 - New commands:
     - 'invadditem' command to add an item to an inventory
     - 'invsetitem' command to set a specific slot of an inventory to an item
+    - 'for' command to loop over a list of values and call a block of code
 - Fixed block and item model registration
 
 1.12-0.0.1beta:

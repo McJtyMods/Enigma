@@ -23,7 +23,7 @@ public class SetHpAction extends Action {
     @Override
     public void execute(EnigmaFunctionContext context) throws ExecutionException {
         checkPlayer(context);
-        double hp = ObjectTools.asIntSafe(this.hp.eval(context));
+        double hp = ObjectTools.asDoubleSafe(this.hp.eval(context));
         context.getPlayer().setHealth((float) hp);
     }
 }

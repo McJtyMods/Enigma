@@ -521,6 +521,9 @@ public class ProgramParser {
                 case CALL:
                     actionBlock.addAction(new CallAction(line.getParameters().get(0)));
                     break;
+                case FOR:
+                    actionBlock.addAction(new ForAction(line.getParameters().get(0), line.getParameters().get(1), line.getParameters().get(2), line.getParameters().get(3)));
+                    break;
                 case IF:
                     actionBlock.addAction(parseIf(context, line));
                     break;
