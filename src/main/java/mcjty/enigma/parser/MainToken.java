@@ -63,7 +63,8 @@ public enum MainToken {
     DELAY(false, 1, 1),        // delay <time>
     TAG(false, 1, 1),          // tag <tagname>
     INVADDITEM(false, 2, 2),   // invadditem <position> <item>
-    INVSETITEM(false, 3, 3);   // invadditem <position> <slot> <item>
+    INVSETITEM(false, 3, 3),   // invadditem <position> <slot> <item>
+    INVCLEAR(false, 1, 1);     // invclear <position>
 
     private final boolean hasSecondaryToken;
     private final int minParameters;
