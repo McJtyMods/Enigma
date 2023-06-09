@@ -4,6 +4,8 @@ import mcjty.enigma.code.ScopeID;
 import mcjty.enigma.progress.serializers.*;
 import mcjty.enigma.varia.Area;
 import mcjty.enigma.varia.BlockPosDim;
+import mcjty.enigma.varia.Sensor;
+import mcjty.enigma.varia.Sphere;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,15 +22,17 @@ import static mcjty.enigma.varia.StringRegister.STRINGS;
 
 public class Progress {
 
-    private static final NBTData<Integer, Object> VARIABLE_SERIALIZER = new VariableSerializer();
-    private static final NBTData<UUID, PlayerProgress> PLAYER_SERIALIZER = new PlayerSerializer();
-    private static final NBTData<Integer, Integer> STATE_SERIALIZER = new StateSerializer();
-    private static final NBTData<Integer, BlockPosDim> POSITION_SERIALIZER = new PositionSerializer();
-    private static final NBTData<Integer, Area> AREA_SERIALIZER = new AreaSerializer();
-    private static final NBTData<Integer, ParticleConfig> PARTICLE_SERIALIZER = new ParticleSerializer();
-    private static final NBTData<Integer, MobConfig> MOB_SERIALIZER = new MobConfigSerializer();
-    private static final NBTData<Integer, IBlockState> NAMEDBLOCK_SERIALIZER = new NamedBlockSerializer();
-    private static final NBTData<Integer, ItemStack> ITEMSTACK_SERIALIZER = new ItemStackSerializer();
+    public static final NBTData<Integer, Object> VARIABLE_SERIALIZER = new VariableSerializer();
+    public static final NBTData<UUID, PlayerProgress> PLAYER_SERIALIZER = new PlayerSerializer();
+    public static final NBTData<Integer, Integer> STATE_SERIALIZER = new StateSerializer();
+    public static final NBTData<Integer, BlockPosDim> POSITION_SERIALIZER = new PositionSerializer();
+    public static final NBTData<Integer, Area> AREA_SERIALIZER = new AreaSerializer();
+    public static final NBTData<Integer, Sphere> SPHERE_SERIALIZER = new SphereSerializer();
+    public static final NBTData<Integer, Sensor> SENSOR_SERIALIZER = new SensorSerializer();
+    public static final NBTData<Integer, ParticleConfig> PARTICLE_SERIALIZER = new ParticleSerializer();
+    public static final NBTData<Integer, MobConfig> MOB_SERIALIZER = new MobConfigSerializer();
+    public static final NBTData<Integer, IBlockState> NAMEDBLOCK_SERIALIZER = new NamedBlockSerializer();
+    public static final NBTData<Integer, ItemStack> ITEMSTACK_SERIALIZER = new ItemStackSerializer();
 
     private final Map<UUID, PlayerProgress> playerProgress = new HashMap<>();
     private final InternedKeyMap<Integer> states = new InternedKeyMap<>();
@@ -37,6 +41,8 @@ public class Progress {
     private final InternedKeyMap<ParticleConfig> namedParticleConfigs = new InternedKeyMap<>();
     private final InternedKeyMap<MobConfig> namedMobConfigs = new InternedKeyMap<>();
     private final InternedKeyMap<Area> namedAreas = new InternedKeyMap<>();
+    private final InternedKeyMap<Sphere> namedSpheres = new InternedKeyMap<>();
+    private final InternedKeyMap<Sensor> namedSensors = new InternedKeyMap<>();
 
     private final InternedKeyMap<BlockPosDim> namedPositions = new InternedKeyMap<>();
     private final Map<BlockPosDim, Integer> positionsToName = new HashMap<>();
@@ -54,6 +60,8 @@ public class Progress {
         states.clear();
         namedPositions.clear();
         namedAreas.clear();
+        namedSpheres.clear();
+        namedSensors.clear();
         positionsToName.clear();
         playerProgress.clear();
         namedItemStacks.clear();
@@ -69,6 +77,37 @@ public class Progress {
         return states;
     }
 
+    public void addNamedSensor(String name, Sensor sensor) {
+        namedSensors.put(name, sensor);
+    }
+
+    public Sensor getNamedSensor(Object o) {
+        if (o instanceof Integer) {
+            return namedSensors.get(o);
+        } else if (o instanceof String) {
+            return namedSensors.get((String) o);
+        } else if (o instanceof Sensor) {
+            return (Sensor) o;
+        } else {
+            return null;
+        }
+    }
+
+    public void addNamedSphere(String name, Sphere sphere) {
+        namedSpheres.put(name, sphere);
+    }
+
+    public Sphere getNamedSphere(Object o) {
+        if (o instanceof Integer) {
+            return namedSpheres.get(o);
+        } else if (o instanceof String) {
+            return namedSpheres.get((String) o);
+        } else if (o instanceof Sphere) {
+            return (Sphere) o;
+        } else {
+            return null;
+        }
+    }
     public void addNamedArea(String name, Area value) {
         namedAreas.put(name, value);
     }
@@ -233,6 +272,8 @@ public class Progress {
         NBTDataSerializer.deserialize(nbt, "players", playerProgress, PLAYER_SERIALIZER);
         NBTDataSerializer.deserialize(nbt, "variables", namedVariables, VARIABLE_SERIALIZER);
         NBTDataSerializer.deserialize(nbt, "areas", namedAreas, AREA_SERIALIZER);
+        NBTDataSerializer.deserialize(nbt, "sphere", namedSpheres, SPHERE_SERIALIZER);
+        NBTDataSerializer.deserialize(nbt, "sensors", namedSensors, SENSOR_SERIALIZER);
         readInitializedScopes(nbt);
         rootActivated = nbt.getBoolean("rootActivated");
 
@@ -247,7 +288,7 @@ public class Progress {
 
     }
 
-    public void readInitializedScopes(NBTTagCompound nbt) {
+    private void readInitializedScopes(NBTTagCompound nbt) {
         NBTTagList list = nbt.getTagList("scopes", Constants.NBT.TAG_STRING);
         for (int i = 0 ; i < list.tagCount() ; i++) {
             NBTTagString tc = (NBTTagString) list.get(i);
@@ -267,6 +308,8 @@ public class Progress {
         NBTDataSerializer.serialize(compound, "mobs", namedMobConfigs, MOB_SERIALIZER);
         NBTDataSerializer.serialize(compound, "variables", namedVariables, VARIABLE_SERIALIZER);
         NBTDataSerializer.serialize(compound, "areas", namedAreas, AREA_SERIALIZER);
+        NBTDataSerializer.serialize(compound, "spheres", namedSpheres, SPHERE_SERIALIZER);
+        NBTDataSerializer.serialize(compound, "sensors", namedSensors, SENSOR_SERIALIZER);
         writeInitializedScopes(compound);
         return compound;
     }

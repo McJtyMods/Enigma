@@ -563,6 +563,9 @@ public class ProgramParser {
                 case DELAY:
                     actionBlock.addAction(parseDelay(context, line));
                     break;
+                case SENSOR:
+                    actionBlock.addAction(new SensorAction(line.getParameters().get(0), line.getParameters().get(1)));
+                    break;
                 case CREATEPARTICLES:
                     actionBlock.addAction(parseParticleConfig(context, line));
                     break;
@@ -616,6 +619,12 @@ public class ProgramParser {
                                 line.getParameters().get(0),
                                 line.getParameters().get(1), line.getParameters().get(2)));
                     }
+                    break;
+                case SPHERE:
+                    actionBlock.addAction(new SphereAction(
+                            line.getParameters().get(0),
+                            line.getParameters().get(1), line.getParameters().get(2), line.getParameters().get(3),
+                            line.getParameters().get(4), line.getParameters().get(5)));
                     break;
                 case HP:
                     actionBlock.addAction(new SetHpAction(line.getParameters().get(0)));

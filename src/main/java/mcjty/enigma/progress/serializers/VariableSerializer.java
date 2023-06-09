@@ -3,6 +3,7 @@ package mcjty.enigma.progress.serializers;
 import mcjty.enigma.progress.NBTData;
 import mcjty.enigma.varia.Area;
 import mcjty.enigma.varia.BlockPosDim;
+import mcjty.enigma.varia.Sphere;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 
@@ -32,6 +33,9 @@ public class VariableSerializer implements NBTData<Integer, Object> {
             v = new Area(new BlockPos(tag.getInteger("vax1"), tag.getInteger("vay1"), tag.getInteger("vaz1")),
                     new BlockPos(tag.getInteger("vax2"), tag.getInteger("vay2"), tag.getInteger("vaz2")),
                     tag.getInteger("vad"));
+        } else if (tag.hasKey("vsx")) {
+            v = new Sphere(new BlockPos(tag.getInteger("vsx"), tag.getInteger("vsy"), tag.getInteger("vsz")),
+                    tag.getInteger("vsd"), tag.getInteger("vsr"));
         }
         return v;
     }
@@ -63,6 +67,13 @@ public class VariableSerializer implements NBTData<Integer, Object> {
                 tc.setInteger("vay2", a.getPos2().getY());
                 tc.setInteger("vaz2", a.getPos2().getZ());
                 tc.setInteger("vad", a.getDimension());
+            } else if (v instanceof Sphere) {
+                Sphere s = (Sphere) v;
+                tc.setInteger("vsx", s.getPos().getX());
+                tc.setInteger("vsy", s.getPos().getY());
+                tc.setInteger("vsz", s.getPos().getZ());
+                tc.setInteger("vsd", s.getDimension());
+                tc.setInteger("vsr", s.getRadius());
             }
         }
     }

@@ -1,5 +1,6 @@
 package mcjty.enigma.varia;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
@@ -64,6 +65,26 @@ public class Area implements IPositional<Area> {
     @Nonnull
     public BlockPos getPos2() {
         return pos2;
+    }
+
+    @Override
+    public boolean isInside(BlockPos pos) {
+        return pos.getX() >= pos1.getX() && pos.getX() <= pos2.getX() &&
+                pos.getY() >= pos1.getY() && pos.getY() <= pos2.getY() &&
+                pos.getZ() >= pos1.getZ() && pos.getZ() <= pos2.getZ();
+    }
+
+    @Override
+    public void serializeNBT(NBTTagCompound tc) {
+        BlockPos p1 = getPos1();
+        tc.setInteger("x1", p1.getX());
+        tc.setInteger("y1", p1.getY());
+        tc.setInteger("z1", p1.getZ());
+        BlockPos p2 = getPos2();
+        tc.setInteger("x2", p2.getX());
+        tc.setInteger("y2", p2.getY());
+        tc.setInteger("z2", p2.getZ());
+        tc.setInteger("dim", getDimension());
     }
 
     @Override

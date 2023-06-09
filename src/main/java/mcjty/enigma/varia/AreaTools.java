@@ -11,9 +11,13 @@ public class AreaTools {
         if (namedPosition == null) {
             Area namedArea = progress.getNamedArea(pos);
             if (namedArea == null) {
-                throw new ExecutionException("Cannot find named position or area '" + pos + "'!");
+                Sphere namedSphere = progress.getNamedSphere(pos);
+                if (namedSphere == null) {
+                    throw new ExecutionException("Cannot find named position, area or sphere '" + pos + "'!");
+                } else {
+                    return namedSphere.getIterator();
+                }
             } else {
-                WorldServer world = namedArea.getWorld();
                 return namedArea.getIterator();
             }
         } else {
@@ -26,7 +30,12 @@ public class AreaTools {
         if (namedPosition == null) {
             Area namedArea = progress.getNamedArea(pos);
             if (namedArea == null) {
-                throw new ExecutionException("Cannot find named position or area '" + pos + "'!");
+                Sphere namedSphere = progress.getNamedSphere(pos);
+                if (namedSphere == null) {
+                    throw new ExecutionException("Cannot find named position, area or sphere '" + pos + "'!");
+                } else {
+                    return namedSphere;
+                }
             } else {
                 return namedArea;
             }

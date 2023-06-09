@@ -17,6 +17,7 @@ public enum MainToken {
     WHILE(false, 1, 1),        // while <expression>
     POSITION(false, 5, 5),     // position <name> <x> <y> <z> <dim>
     AREA(false, 3, 8),         // area <name> <x1> <y1> <z1> <x2> <y2> <z2> <dim> or <name> <pos1> <pos2>
+    SPHERE(false, 6, 6),       // sphere <name> <x> <y> <z> <dim> <radius>
     LOOKAT(false, 1, 1),       // lookat <position>
     COMMAND(false, 1, 1),      // command <command>
     SCOPE(false, 2, 2),        // scope <id>, <expression>
@@ -61,6 +62,7 @@ public enum MainToken {
     FXANIM(true, 0, 0),        // fxanim <animname> ...
     AGGRESSIVE(false, 1, 1),   // aggressive <boolean>
     DELAY(false, 1, 1),        // delay <time>
+    SENSOR(false, 1, 1),       // sensor <position/area>
     TAG(false, 1, 1),          // tag <tagname>
     INVADDITEM(false, 2, 2),   // invadditem <position> <item>
     INVSETITEM(false, 3, 3),   // invadditem <position> <slot> <item>

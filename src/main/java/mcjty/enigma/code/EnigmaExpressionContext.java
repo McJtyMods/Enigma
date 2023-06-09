@@ -565,7 +565,7 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
                 }
                 pos2 = player.getPosition();
             }
-            return BlockPosDim.distance(pos1.getPos(), pos2);
+            return Math.sqrt(BlockPosDim.squaredDistance(pos1.getPos(), pos2));
         });
 
     }

@@ -164,4 +164,12 @@ public class ForgeEventHandlers {
         }
     }
 
+    public void onPlayerTickEvent(TickEvent.PlayerTickEvent event) {
+        if (!event.player.getEntityWorld().isRemote && event.phase == TickEvent.Phase.END) {
+            EntityPlayer player = event.player;
+            World world = player.getEntityWorld();
+            EnigmaFunctionContext context = new EnigmaFunctionContext(world, player);
+            RootScope.getRootInstance(world).forActiveScopes(context, (ctxt, scope) -> scope.onPlayerTick(event, ctxt));
+        }
+    }
 }

@@ -8,6 +8,9 @@ import mcjty.enigma.progress.Progress;
 import mcjty.enigma.progress.ProgressHolder;
 import mcjty.enigma.varia.Area;
 import mcjty.enigma.varia.InventoryHelper;
+import mcjty.enigma.varia.Sensor;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -35,7 +38,7 @@ public class Scope {
     private final List<ActionBlock> onSetup = new ArrayList<>();
     private final List<ActionBlock> onLogin = new ArrayList<>();
     private final List<DelayedAction> onDelay = new ArrayList<>();
-    private final List<EnterAreaAction> onEnterArea = new ArrayList<>();
+    private final List<SensorAction> onSensor = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onRightClickItem = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onRightClickBlock = new ArrayList<>();
     private final List<Pair<ActionBlock, Expression<EnigmaFunctionContext>>> onRightClickPosition = new ArrayList<>();
@@ -46,14 +49,14 @@ public class Scope {
     private final List<Scope> nestedPlayerScopes = new ArrayList<>();
     private final Map<String, ActionBlock> namedActionBlocks = new HashMap<>();
 
-    public static class EnterAreaAction {
+    public static class SensorAction {
         private final ActionBlock actionBlock;
-        private final Expression<EnigmaFunctionContext> area;
+        private final Expression<EnigmaFunctionContext> sensor;
         private final boolean enter;
 
-        public EnterAreaAction(ActionBlock actionBlock, Expression<EnigmaFunctionContext> area, boolean enter) {
+        public SensorAction(ActionBlock actionBlock, Expression<EnigmaFunctionContext> sensor, boolean enter) {
             this.actionBlock = actionBlock;
-            this.area = area;
+            this.sensor = sensor;
             this.enter = enter;
         }
 
@@ -61,8 +64,8 @@ public class Scope {
             return actionBlock;
         }
 
-        public Expression<EnigmaFunctionContext> getArea() {
-            return area;
+        public Expression<EnigmaFunctionContext> getSensor() {
+            return sensor;
         }
 
         public boolean isEnter() {
@@ -205,22 +208,32 @@ public class Scope {
 
     private static int counter = 0;
 
-    private void onEnterArea(TickEvent.PlayerTickEvent event, EnigmaFunctionContext context, boolean enter) {
+    public void onPlayerTick(TickEvent.PlayerTickEvent event, EnigmaFunctionContext ctxt) {
         counter--;
         if (counter < 0) {
             counter = 10;
         } else {
             return;
         }
+        EntityPlayerMP player = (EntityPlayerMP) event.player;
         try {
-            for (EnterAreaAction action : onEnterArea) {
-                if (action.isEnter() == enter) {
-                    Progress progress = ProgressHolder.getProgress(event.player.getEntityWorld());
-                    Area namedArea = progress.getNamedArea(action.getArea().eval(context));
-                    // @todo
-
-                    if (ObjectTools.asBoolSafe(action.getArea().eval(context))) {
-                        action.getActionBlock().execute(context);
+            for (SensorAction action : onSensor) {
+                Progress progress = ProgressHolder.getProgress(player.getEntityWorld());
+                Sensor sensor = progress.getNamedSensor(action.getSensor().eval(ctxt));
+                if (sensor != null) {
+                    switch(sensor.testPlayer(player)) {
+                        case ADDED:
+                            if (action.isEnter()) {
+                                action.getActionBlock().execute(ctxt);
+                            }
+                            break;
+                        case REMOVED:
+                            if (!action.isEnter()) {
+                                action.getActionBlock().execute(ctxt);
+                            }
+                            break;
+                        case NOTHING:
+                            break;
                     }
                 }
             }
@@ -279,8 +292,8 @@ public class Scope {
         onSetup.add(actionBlock);
     }
 
-    public void addOnEnterArea(ActionBlock actionBlock, Expression<EnigmaFunctionContext> area, boolean enter) {
-        onEnterArea.add(new EnterAreaAction(actionBlock, area, enter));
+    public void addOnEnterArea(ActionBlock actionBlock, Expression<EnigmaFunctionContext> sensor, boolean enter) {
+        onSensor.add(new SensorAction(actionBlock, sensor, enter));
     }
 
     public void addOnDelay(ActionBlock actionBlock, Expression<EnigmaFunctionContext> delayPar, boolean repeating) {
@@ -366,6 +379,22 @@ public class Scope {
         for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onLeftClickPosition) {
             System.out.println(StringUtils.repeat(' ', indent+4) + "On Left Click Position (" + pair.getValue() + "):");
             pair.getKey().dump(indent+4);
+        }
+        for (Pair<ActionBlock, Expression<EnigmaFunctionContext>> pair : onRightClickItem) {
+            System.out.println(StringUtils.repeat(' ', indent+4) + "On Right Click Item (" + pair.getValue() + "):");
+            pair.getKey().dump(indent+4);
+        }
+        for (ActionBlock block : onDeath) {
+            System.out.println(StringUtils.repeat(' ', indent+4) + "On Death:");
+            block.dump(indent+4);
+        }
+        for (ActionBlock block : onLogin) {
+            System.out.println(StringUtils.repeat(' ', indent+4) + "On Login:");
+            block.dump(indent+4);
+        }
+        for (SensorAction action : onSensor) {
+            System.out.println(StringUtils.repeat(' ', indent+4) + "On Enter Area (" + action.sensor + "):");
+            action.actionBlock.dump(indent+4);
         }
         for (Scope scope : nestedScopes) {
             scope.dump(indent+4);

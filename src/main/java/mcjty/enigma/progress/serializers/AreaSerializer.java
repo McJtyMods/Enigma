@@ -23,14 +23,6 @@ public class AreaSerializer implements NBTData<Integer, Area> {
     @Override
     public void serialize(NBTTagCompound tc, Integer key, Area value) {
         tc.setString("s", STRINGS.get(key));
-        BlockPos p1 = value.getPos1();
-        tc.setInteger("x1", p1.getX());
-        tc.setInteger("y1", p1.getY());
-        tc.setInteger("z1", p1.getZ());
-        BlockPos p2 = value.getPos2();
-        tc.setInteger("x2", p2.getX());
-        tc.setInteger("y2", p2.getY());
-        tc.setInteger("z2", p2.getZ());
-        tc.setInteger("dim", value.getDimension());
+        value.serializeNBT(tc);
     }
 }

@@ -2,50 +2,53 @@ package mcjty.enigma.varia;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 
 import javax.annotation.Nonnull;
 
-public class BlockPosDim implements IPositional<BlockPosDim> {
+public class Sphere implements IPositional<Sphere> {
 
     @Nonnull private final BlockPos pos;
     private final int dimension;
+    private final int radius;
+    private final int sqRadius;
 
-    public BlockPosDim(@Nonnull BlockPos pos, int dimension) {
+    public Sphere(@Nonnull BlockPos pos, int dimension, int radius) {
         this.pos = pos;
         this.dimension = dimension;
+        this.radius = radius;
+        this.sqRadius = radius * radius;
     }
 
     @Override
-    public BlockPosDim up(int amount) {
-        return new BlockPosDim(pos.up(amount), dimension);
+    public Sphere up(int amount) {
+        return new Sphere(pos.up(amount), dimension, radius);
     }
 
     @Override
-    public BlockPosDim down(int amount) {
-        return new BlockPosDim(pos.down(amount), dimension);
+    public Sphere down(int amount) {
+        return new Sphere(pos.down(amount), dimension, radius);
     }
 
     @Override
-    public BlockPosDim west(int amount) {
-        return new BlockPosDim(pos.west(amount), dimension);
+    public Sphere west(int amount) {
+        return new Sphere(pos.west(amount), dimension, radius);
     }
 
     @Override
-    public BlockPosDim east(int amount) {
-        return new BlockPosDim(pos.east(amount), dimension);
+    public Sphere east(int amount) {
+        return new Sphere(pos.east(amount), dimension, radius);
     }
 
     @Override
-    public BlockPosDim south(int amount) {
-        return new BlockPosDim(pos.south(amount), dimension);
+    public Sphere south(int amount) {
+        return new Sphere(pos.south(amount), dimension, radius);
     }
 
     @Override
-    public BlockPosDim north(int amount) {
-        return new BlockPosDim(pos.north(amount), dimension);
+    public Sphere north(int amount) {
+        return new Sphere(pos.north(amount), dimension, radius);
     }
 
     @Override
@@ -55,6 +58,7 @@ public class BlockPosDim implements IPositional<BlockPosDim> {
         tc.setInteger("y", pos.getY());
         tc.setInteger("z", pos.getZ());
         tc.setInteger("dim", getDimension());
+        tc.setInteger("radius", radius);
     }
 
     @Override
@@ -68,47 +72,17 @@ public class BlockPosDim implements IPositional<BlockPosDim> {
         return dimension;
     }
 
+    public int getRadius() {
+        return radius;
+    }
+
     @Override
     public boolean isInside(BlockPos pos) {
-        return pos.equals(this.pos);
+        return squaredDistance(pos, getPos()) <= sqRadius;
     }
 
     public IAreaIterator getIterator() {
-        return new IAreaIterator() {
-            private boolean first = true;
-
-            @Override
-            public void restart() {
-                first = true;
-            }
-
-            @Override
-            public BlockPos getBottomLeft() {
-                return pos;
-            }
-
-            @Override
-            public BlockPos getTopRight() {
-                return pos;
-            }
-
-            @Override
-            public boolean advance() {
-                boolean f = first;
-                first = false;
-                return f;
-            }
-
-            @Override
-            public BlockPos current() {
-                return pos;
-            }
-
-            @Override
-            public World getWorld() {
-                return BlockPosDim.this.getWorld();
-            }
-        };
+        return new SphereIterator(this);
     }
 
 
@@ -117,7 +91,7 @@ public class BlockPosDim implements IPositional<BlockPosDim> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        BlockPosDim that = (BlockPosDim) o;
+        Sphere that = (Sphere) o;
 
         if (dimension != that.dimension) return false;
         if (!pos.equals(that.pos)) return false;

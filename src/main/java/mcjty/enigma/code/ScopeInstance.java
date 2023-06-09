@@ -109,7 +109,6 @@ public class ScopeInstance {
             // from start
             context.setScopeInstance(this);
             scope.onActivate(context);
-            System.out.println("Scope.activate");
         }
 
         clearTimers();
