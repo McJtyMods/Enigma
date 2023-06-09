@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public class Sensor {
-    public static enum SensorOp {
+    public enum SensorOp {
         ADDED, REMOVED, NOTHING
     }
 

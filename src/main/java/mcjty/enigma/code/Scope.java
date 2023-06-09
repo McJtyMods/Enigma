@@ -20,10 +20,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static mcjty.enigma.varia.StringRegister.STRINGS;
 
@@ -217,23 +214,39 @@ public class Scope {
         }
         EntityPlayerMP player = (EntityPlayerMP) event.player;
         try {
+            // Test all sensors and keep a set of sensors that activated and another set of sensors that got deactivated
+            Set<Sensor> activated = new HashSet<>();
+            Set<Sensor> deactivated = new HashSet<>();
             for (SensorAction action : onSensor) {
                 Progress progress = ProgressHolder.getProgress(player.getEntityWorld());
                 Sensor sensor = progress.getNamedSensor(action.getSensor().eval(ctxt));
                 if (sensor != null) {
                     switch(sensor.testPlayer(player)) {
                         case ADDED:
-                            if (action.isEnter()) {
-                                action.getActionBlock().execute(ctxt);
-                            }
+                            activated.add(sensor);
                             break;
                         case REMOVED:
-                            if (!action.isEnter()) {
-                                action.getActionBlock().execute(ctxt);
-                            }
+                            deactivated.add(sensor);
                             break;
                         case NOTHING:
                             break;
+                    }
+                }
+            }
+
+
+            for (SensorAction action : onSensor) {
+                Progress progress = ProgressHolder.getProgress(player.getEntityWorld());
+                Sensor sensor = progress.getNamedSensor(action.getSensor().eval(ctxt));
+                if (sensor != null) {
+                    if (activated.contains(sensor)) {
+                        if (action.isEnter()) {
+                            action.getActionBlock().execute(ctxt);
+                        }
+                    } else if (deactivated.contains(sensor)) {
+                        if (!action.isEnter()) {
+                            action.getActionBlock().execute(ctxt);
+                        }
                     }
                 }
             }

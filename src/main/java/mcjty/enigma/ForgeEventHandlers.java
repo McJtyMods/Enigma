@@ -164,6 +164,7 @@ public class ForgeEventHandlers {
         }
     }
 
+    @SubscribeEvent
     public void onPlayerTickEvent(TickEvent.PlayerTickEvent event) {
         if (!event.player.getEntityWorld().isRemote && event.phase == TickEvent.Phase.END) {
             EntityPlayer player = event.player;

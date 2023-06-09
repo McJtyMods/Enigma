@@ -62,7 +62,7 @@ public enum MainToken {
     FXANIM(true, 0, 0),        // fxanim <animname> ...
     AGGRESSIVE(false, 1, 1),   // aggressive <boolean>
     DELAY(false, 1, 1),        // delay <time>
-    SENSOR(false, 1, 1),       // sensor <position/area>
+    SENSOR(false, 2, 2),       // sensor <name> <position/area>/<sphere>
     TAG(false, 1, 1),          // tag <tagname>
     INVADDITEM(false, 2, 2),   // invadditem <position> <item>
     INVSETITEM(false, 3, 3),   // invadditem <position> <slot> <item>

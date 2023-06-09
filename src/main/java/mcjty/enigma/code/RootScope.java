@@ -85,7 +85,7 @@ public class RootScope {
             return ProgramParser.parse(lines);
         } catch (ParserException e) {
             Enigma.setup.getLogger().log(Level.ERROR, "ERROR: " + e.getMessage() + " at line " + (e.getLinenumber()+1) + " (" + file.getName() + ")", e);
-            throw new RuntimeException(e);
+            throw new RuntimeException(e.getMessage() + " (at line " + e.getLinenumber() + ")", e);
         }
     }
 }

@@ -31,8 +31,6 @@ public class SensorAction extends Action {
         String name = ObjectTools.asStringSafe(this.name.eval(context));
         IPositional<?> a = progress.getNamedArea(area.eval(context));
         if (a == null) {
-            a = progress.getNamedPosition(area.eval(context));
-        } else {
             throw new ExecutionException("Cannot find named area or position '" + area + "'!");
         }
         progress.addNamedSensor(name, new Sensor(a));
