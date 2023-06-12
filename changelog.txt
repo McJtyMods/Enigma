@@ -12,6 +12,7 @@ Upcoming:
     - 'for' command to loop over a list of values and call a block of code
     - 'while' command to loop over a block of code while a condition is true
 - Fixed block and item model registration
+- 'e_action' can now also do 'call'
 
 1.12-0.0.1beta:
 - xxx

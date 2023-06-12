@@ -74,6 +74,9 @@ public class CmdAction extends CommandBase {
                 case TELEPORT:
                     new TeleportAction(tokenizedLine.getParameters().get(0)).execute(context);
                     break;
+                case CALL:
+                    new CallAction(tokenizedLine.getParameters().get(0)).execute(context);
+                    break;
                 default:
                     ITextComponent component = new TextComponentString(TextFormatting.RED + "Unknown action!");
                     if (sender instanceof EntityPlayer) {
