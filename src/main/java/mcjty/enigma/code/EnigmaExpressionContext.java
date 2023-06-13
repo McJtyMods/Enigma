@@ -380,6 +380,18 @@ public class EnigmaExpressionContext implements ExpressionContext<EnigmaFunction
             }
             return STRINGS.get(progress.getNamedBlock(state));
         });
+        FUNCTIONS.put("replacestring", (context, o) -> {
+            String s = ObjectTools.asStringSafe(o[0]);
+            String s1 = ObjectTools.asStringSafe(o[1]);
+            String s2 = ObjectTools.asStringSafe(o[2]);
+            return s.replace(s1, s2);
+        });
+        FUNCTIONS.put("replaceregex", (context, o) -> {
+            String s = ObjectTools.asStringSafe(o[0]);
+            String s1 = ObjectTools.asStringSafe(o[1]);
+            String s2 = ObjectTools.asStringSafe(o[2]);
+            return s.replaceAll(s1, s2);
+        });
         FUNCTIONS.put("substring", (context, o) -> {
             String s = ObjectTools.asStringSafe(o[0]);
             int idx1 = ObjectTools.asIntSafe(o[1]);
